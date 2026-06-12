@@ -126,7 +126,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
           {item.details && (
             <div className="flex flex-col gap-1.5 animate-fadeIn">
               <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-                {lang === 'en' ? 'Summary & Directives' : 'Ringkasan & Arahan Pekerjaan'}
+                {lang === 'en' ? 'Summary & Directives' : 'Ringkasan Misi'}
               </span>
               <p className="font-sans text-[14.5px] sm:text-[15px] text-primary/95 leading-relaxed font-light">
                 {item.details}

@@ -92,10 +92,10 @@ const SLIDES: Slide[] = [
     contentId: (
       <div className="flex flex-col gap-3.5 text-secondary">
         <p>
-          Desain visual adalah kenyamanan utama ketika kita menjelajahi dunia digital. Ini meliputi penyusunan identitas merek, pembuatan ilustrasi, serta tata letak artistik yang membuat tampilan layar terasa hangat dan hidup.
+          Desain visual adalah kenyamanan utama ketika kita menjelajahi dunia digital. Ini meliputi penyusunan identitas merek, pembuatan ilustrasi, serta tata letak artistik yang membuat tampilan layar terasa hangat dan menyambut.
         </p>
         <p>
-          Desain yang cerdas bukan sekadar hiasan. Saat kita merapikan tipografi dan mengatur jarak tombol dengan cermat, kita sedang membuat sistem rumit menjadi sangat mudah dibaca. Tampilan yang bersih meredakan rasa bingung pengguna dan menyapa mereka dengan ramah.
+          Desain yang cerdas bukan sekadar hiasan. Saat kita merapikan tipografi dan mengatur jarak tombol dengan cermat, kita sedang membuat sistem rumit menjadi sangat mudah dibaca. Tampilan yang bersih meredakan stres dan menyambut Anda ke dalam ruang digital.
         </p>
       </div>
     )
@@ -148,7 +148,7 @@ const SLIDES: Slide[] = [
           <li className="flex gap-2 items-start">
             <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
             <div>
-              <strong className="text-primary font-medium font-sans">AI & Desain (AI × Desain):</strong> Memanfaatkan sistem gambar generatif untuk merajut cerita visual, serta mengubah kalkulasi rumit jaringan komputer menjadi data seni yang komunikatif.
+              <strong className="text-primary font-medium font-sans">AI & Desain (AI × Desain):</strong> Memanfaatkan sistem gambar generatif untuk merajut cerita visual, serta mengubah kalkulasi rumit jaringan saraf menjadi visualisasi artistik yang mudah dipahami.
             </div>
           </li>
           <li className="flex gap-2 items-start">

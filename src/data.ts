@@ -70,6 +70,7 @@ export const WORK_ITEMS: BackgroundItem[] = [
     dateRange: "Jan 2026 - Present",
     popoutCopy: "Architecting agent workflows and building large-scale automated chatbots used by nationwide-level organizations. I focus on orchestration, security, and making sure the runtime behaves exactly as intended.",
     details: "I design and build enterprise LLM-based agent systems and chatbot pipelines. My work involves designing agent tools, routing client queries through stateful recovery steps, and deploying reliable architectures from prototype to production.",
+    logoPath: "/logos/kma.png",
     highlights: [
       "Process complex user queries: Design and build agentic workflows with knowledge retrieval, SQL querying, and MCP integrations to automate multi-step client workflows.",
       "Support nationwide entities: Develop production-ready chatbot components to handle high volumes without throughput degradation or prompt context leakage.",
@@ -85,6 +86,7 @@ export const WORK_ITEMS: BackgroundItem[] = [
     dateRange: "Jun 2024 - Dec 2025",
     popoutCopy: "Led enterprise LLM-based chatbot architectures, optimizing model accuracy and RAG precision while directing a multi-disciplinary development team.",
     details: "I was the technical lead for corporate AI assistant initiatives. I designed RAG pipelines, guided UI/UX standards, and synchronized structural knowledge updates across dynamic systems.",
+    logoPath: "/logos/telkom.png",
     highlights: [
       "Enterprise chatbot delivery: Architected the core system behind automated WhatsApp AI agents and company information chatbots, ensuring high-reliability text generation.",
       "Boosted engagement by 850%: Successfully aligned product directions with business metrics, driving outstanding user growth and high satisfaction ratings across multiple enterprise divisions.",
@@ -100,6 +102,7 @@ export const WORK_ITEMS: BackgroundItem[] = [
     dateRange: "Apr 2018 - Apr 2019",
     popoutCopy: "Designed core gameplay physics and optimized pathfinding AI for computer-controlled opponents, creating balanced and responsive experiences.",
     details: "As a gameplay developer, I specialized in rendering optimization, visual assets integration, and algorithmic enhancements inside high-performance game instances.",
+    logoPath: "/logos/gameloft.png",
     highlights: [
       "Optimized opponent AI: Built sophisticated computer-controlled units with adaptive tactics, lowering processing costs while raising player engagement.",
       "Engineered game mechanics: Coded standard gameplay physics and graphics pipelines to maintain high render framerates.",
@@ -115,6 +118,7 @@ export const WORK_ITEMS: BackgroundItem[] = [
     dateRange: "Jul 2016 - Sep 2016",
     popoutCopy: "Built secure back-end platforms to automate internal applicant screenings and hiring evaluations.",
     details: "Designed and prototyped candidate screening tools using Microsoft ASP.NET environments, cooperating with talent acquisition teams to establish programmatic metrics.",
+    logoPath: "/logos/metrodata.png",
     highlights: [
       "Streamlined recruitment: Created an automated test-evaluation portal, improving onboarding speeds and system reliability.",
       "Constructed custom back-ends: Focused on scalability, transaction isolation, and secure database operations.",
@@ -133,6 +137,7 @@ export const EDUCATION_ITEMS: BackgroundItem[] = [
     dateRange: "Sep 2020 - Feb 2023",
     popoutCopy: "Researched deep reinforcement learning and model optimization, designing an efficient AlphaZero implementation tailored for constrained environments.",
     details: "My graduate curriculum centered on advanced machine learning algorithms, model interpretability, and system optimization. My research was fully funded by premium regional scholarships.",
+    logoPath: "/logos/tue.png",
     highlights: [
       "Scholarships: Recipient of the prestigious Amandus H. Lundqvist Scholarship Program (ALSP) and the Holland Scholarship (HS) for academic achievements.",
       "Thesis research: Successfully adapted AlphaZero to International Draughts on high-performance high-compute clusters with 7 million self-play iterations.",
@@ -148,6 +153,7 @@ export const EDUCATION_ITEMS: BackgroundItem[] = [
     dateRange: "Sep 2013 - Sep 2017",
     popoutCopy: "Acquired a solid grounding in software engineering, fuzzy logic, and data structures. I used my final project to design intelligent adaptive gameplay mechanics.",
     details: "Specialized in data modeling, object-oriented software patterns, and game systems. Formulated deep conceptual knowledge of lower-level compilers and parallel scripting.",
+    logoPath: "/logos/its.png",
     highlights: [
       "Final Project: Developed an ANFIS fuzzy logic difficulty-balancing system in an action-adventure game to regulate interactive challenges automatically.",
       "Strong academic record: Graduated with honors and an IPK of 3.48/4.00, demonstrating consistent problem-solving capabilities.",

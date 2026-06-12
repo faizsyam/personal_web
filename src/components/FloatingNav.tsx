@@ -55,7 +55,7 @@ export default function FloatingNav({ activeSection, lang }: FloatingNavProps) {
             damping: 18,
             mass: 0.8
           }}
-          className="fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 z-50 py-1.5 px-2 rounded-full backdrop-blur-md bg-bg/80 border border-surface/95 shadow-[0_16px_36px_rgba(24,24,21,0.08),0_1px_4px_rgba(24,24,21,0.03),inset_0_1px_0_rgba(255,255,255,0.1)] select-none"
+          className="fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 z-50 py-1.5 px-2 rounded-full backdrop-blur-xl bg-bg/20 border border-surface/50 shadow-[0_16px_36px_rgba(24,24,21,0.08),0_1px_4px_rgba(24,24,21,0.03),inset_0_1px_0_rgba(255,255,255,0.3)] select-none" style={{ background: 'rgba(245, 243, 238, 0.35)' }}
           id="floating-navigation"
         >
           <div className="flex items-center gap-1">

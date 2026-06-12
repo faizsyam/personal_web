@@ -37,4 +37,5 @@ export interface BackgroundItem {
   details?: string;
   highlights?: string[];
   skills?: string[];
+  logoPath?: string;
 }

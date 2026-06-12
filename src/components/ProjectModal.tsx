@@ -156,7 +156,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
           {/* Stack list */}
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {lang === 'en' ? 'Architecture Stack' : 'Kumpulan Teknologi'}
+              {lang === 'en' ? 'Architecture Stack' : 'Tumpukan Teknologi'}
             </span>
             <div className="flex flex-wrap gap-1.5" id="modal-stack-tags">
               {project.stack.map((item, idx) => (
