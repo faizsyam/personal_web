@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Mail, 
-  Linkedin, 
-  Github, 
-  ChevronRight, 
-  ArrowUpRight, 
-  BookOpen, 
-  ChevronDown, 
-  Globe, 
+import {
+  Mail,
+  Linkedin,
+  Github,
+  ArrowUpRight,
+  BookOpen,
+  ChevronDown,
+  Globe,
   Instagram,
   Briefcase,
   Brain,
@@ -28,7 +27,10 @@ import {
   EDUCATION_ITEMS,
   WRITINGS,
 } from './data';
-import { Project, BackgroundItem } from './types';
+import { Project, BackgroundItem, Writing } from './types';
+
+import { useLanguage } from './hooks/useLanguage';
+import { useScrollSpy, useScrollTo } from './hooks/useScrollSpy';
 
 import CustomCursor from './components/CustomCursor';
 import FloatingNav from './components/FloatingNav';
@@ -36,7 +38,7 @@ import ProjectModal from './components/ProjectModal';
 import BackgroundModal from './components/BackgroundModal';
 import VennDiagram from './components/VennDiagram';
 import InteractiveGridBackground from './components/InteractiveGridBackground';
-import { InteractiveTitle, InteractivePhrase, InteractiveSubtitle } from './components/InteractiveHeroText';
+import { InteractiveSubtitle } from './components/InteractiveHeroText';
 import HelloSticker from './components/HelloSticker';
 import PortraitReveal from './components/PortraitReveal';
 import IntroArticleModal from './components/IntroArticleModal';
@@ -44,7 +46,7 @@ import IntroArticleModal from './components/IntroArticleModal';
 function renderTimelineLogo(id: string, isLatest?: boolean) {
   const logoClass = isLatest
     ? "w-4 h-4 text-highlight transition-colors duration-200 group-hover:text-[#F5F3EE]"
-    : "w-4 h-4 text-highlight opacity-70 dark:opacity-85 group-hover:opacity-100 transition-all duration-200";
+    : "w-4 h-4 text-highlight opacity-70 dark:opacity-80 group-hover:opacity-100 transition-all duration-200";
 
   switch (id) {
     case 'work-1':
@@ -68,6 +70,18 @@ function renderTimelineLogo(id: string, isLatest?: boolean) {
     default:
       return null;
   }
+}
+
+interface ContactLink {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  display: string;
+  href: string;
+  onClick?: (e: React.MouseEvent) => void;
+  brandClass: string;
+  iconBgClass: string;
+  accentTextClass: string;
 }
 
 const TRANSLATIONS = {
@@ -100,7 +114,6 @@ const TRANSLATIONS = {
 };
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState('home');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedBackground, setSelectedBackground] = useState<BackgroundItem | null>(null);
   const [hoveredTimelineId, setHoveredTimelineId] = useState<string | null>(null);
@@ -111,7 +124,15 @@ export default function App() {
   const [isIntroArticleOpen, setIsIntroArticleOpen] = useState(false);
   const [obfuscatedEmail, setObfuscatedEmail] = useState('Retrieve email');
   const [copied, setCopied] = useState(false);
-  const [lang, setLang] = useState<'en' | 'id'>('en');
+
+  // Language with localStorage persistence
+  const { lang, toggleLang } = useLanguage();
+
+  // Scroll spy with RAF debouncing
+  const activeSection = useScrollSpy(['about', 'work', 'projects', 'writing', 'contact'], {
+    offset: 0.4,
+    threshold: 180,
+  });
 
   useEffect(() => {
     // Standardizing on light mode as requested
@@ -119,9 +140,12 @@ export default function App() {
     localStorage.removeItem('theme');
   }, []);
 
-  const t = (key: string) => {
-    return TRANSLATIONS[lang]?.[key as keyof typeof TRANSLATIONS['en']] || TRANSLATIONS['en']?.[key as keyof typeof TRANSLATIONS['en']] || key;
-  };
+  const t = useCallback(
+    (key: string) => {
+      return TRANSLATIONS[lang]?.[key as keyof typeof TRANSLATIONS['en']] || TRANSLATIONS['en']?.[key as keyof typeof TRANSLATIONS['en']] || key;
+    },
+    [lang]
+  );
 
   useEffect(() => {
     const user = 'faizsyam06';
@@ -137,28 +161,7 @@ export default function App() {
     window.location.href = `mailto:faizsyam06@gmail.com`;
   };
 
-  useEffect(() => {
-    const sections = ['about', 'work', 'projects', 'writing', 'contact'];
-    const handleScrollTracking = () => {
-      const scrollPos = window.scrollY + window.innerHeight * 0.4;
-      if (window.scrollY < 180) { setActiveSection('home'); return; }
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) { setActiveSection(sectionId); break; }
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScrollTracking, { passive: true });
-    return () => window.removeEventListener('scroll', handleScrollTracking);
-  }, []);
-
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 56, behavior: 'smooth' });
-  };
+  const scrollTo = useScrollTo(56);
 
   const handleTimelineClick = (item: BackgroundItem) => setSelectedBackground(item);
 
@@ -263,7 +266,7 @@ export default function App() {
             {/* Language Switch */}
             <div className="relative flex items-center p-[3px] rounded-full border border-surface bg-bg/50 hover:border-accent/20 hover:bg-bg/80 transition-all duration-300 shadow-[0_1px_2px_rgba(24,24,21,0.02)] select-none">
               <button
-                onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+                onClick={toggleLang}
                 className={`relative w-9 h-6 sm:w-10 sm:h-6.5 rounded-full text-[10px] font-mono tracking-wider font-extrabold transition-colors duration-200 cursor-pointer focus:outline-none flex items-center justify-center ${
                   lang === 'en' ? 'text-bg font-black' : 'text-secondary/80 hover:text-primary'
                 }`}
@@ -282,7 +285,7 @@ export default function App() {
                 )}
               </button>
               <button
-                onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+                onClick={toggleLang}
                 className={`relative w-9 h-6 sm:w-10 sm:h-6.5 rounded-full text-[10px] font-mono tracking-wider font-extrabold transition-colors duration-200 cursor-pointer focus:outline-none flex items-center justify-center ${
                   lang === 'id' ? 'text-bg font-black' : 'text-secondary/80 hover:text-primary'
                 }`}
@@ -308,7 +311,7 @@ export default function App() {
       <main className="w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col gap-28 sm:gap-36 pb-24 relative z-10">
 
         {/* ── HERO ── */}
-        <section id="home" className="pt-3 sm:pt-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16 items-start min-h-[60vh]">
+        <section id="home" className="pt-10 sm:pt-14 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16 items-start min-h-[60vh]">
 
           {/* Left */}
           <div className="flex flex-col">
@@ -319,36 +322,52 @@ export default function App() {
             <InteractiveSubtitle className="max-w-[500px] mb-10 text-[15.5px] sm:text-[16.5px] leading-relaxed font-light">
               {lang === 'en' ? (
                 <span className="flex flex-col gap-3.5 text-left">
-                  <motion.span 
-                    className="relative inline-block text-[17.5px] sm:text-[19px] font-medium text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all group"
-                    whileHover={{ 
-                      y: -1.5,
-                      backgroundColor: "var(--color-highlight-selection)",
-                      boxShadow: "0 4px 14px rgba(27, 62, 116, 0.04)"
-                    }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 24 }}
+                  <motion.div
+                    className="relative inline-block text-[17.5px] sm:text-[19px] font-medium text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
+                    whileHover="hover"
+                    initial="initial"
                   >
-                    I'm an ML Engineer who builds intelligent systems with a focus on both technical depth and user experience.
-                    <span className="absolute bottom-0 left-2 right-2 h-[1.2px] bg-highlight/35 origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
-                  </motion.span>
+                    {("I'm an ML Engineer who builds intelligent systems with a focus on both technical depth and user experience.").split(' ').map((word, i, arr) => (
+                      <motion.span
+                        key={`${word}-${i}`}
+                        className="relative inline-block"
+                        variants={{
+                          initial: { y: 0 },
+                          hover: { y: -2.5 }
+                        }}
+                        transition={{ delay: i * 0.025, type: 'spring', stiffness: 450, damping: 20 }}
+                      >
+                        {word}
+                        {i < arr.length - 1 && <span>&nbsp;</span>}
+                      </motion.span>
+                    ))}
+                  </motion.div>
                   <span>
                     From AI agents to production applications, I care as much about how things work as how they feel to use.
                   </span>
                 </span>
               ) : (
                 <span className="flex flex-col gap-3.5 text-left">
-                  <motion.span 
-                    className="relative inline-block text-[17.5px] sm:text-[19px] font-medium text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all group"
-                    whileHover={{ 
-                      y: -1.5,
-                      backgroundColor: "var(--color-highlight-selection)",
-                      boxShadow: "0 4px 14px rgba(27, 62, 116, 0.04)"
-                    }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 24 }}
+                  <motion.div
+                    className="relative inline-block text-[17.5px] sm:text-[19px] font-medium text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
+                    whileHover="hover"
+                    initial="initial"
                   >
-                    Saya seorang ML Engineer yang membangun sistem cerdas dengan fokus pada kedalaman teknis dan pengalaman pengguna.
-                    <span className="absolute bottom-0 left-2 right-2 h-[1.2px] bg-highlight/35 origin-center scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
-                  </motion.span>
+                    {("Saya seorang ML Engineer yang membangun sistem cerdas dengan fokus pada kedalaman teknis dan pengalaman pengguna.").split(' ').map((word, i, arr) => (
+                      <motion.span
+                        key={`${word}-${i}`}
+                        className="relative inline-block"
+                        variants={{
+                          initial: { y: 0 },
+                          hover: { y: -2.5 }
+                        }}
+                        transition={{ delay: i * 0.025, type: 'spring', stiffness: 450, damping: 20 }}
+                      >
+                        {word}
+                        {i < arr.length - 1 && <span>&nbsp;</span>}
+                      </motion.span>
+                    ))}
+                  </motion.div>
                   <span>
                     Mulai dari AI agent hingga aplikasi yang digunakan di dunia nyata, saya peduli tidak hanya pada bagaimana teknologi bekerja, tetapi juga bagaimana rasanya saat digunakan.
                   </span>
@@ -421,8 +440,8 @@ export default function App() {
               className="flex lg:hidden flex-col sm:flex-row gap-5 items-center sm:items-start p-5 mt-10 rounded-2xl border border-surface bg-white hover:bg-[#fafcfe] hover:border-highlight/35 hover:shadow-[0_18px_38px_rgba(24,24,21,0.06)] transition-[border-color,background-color,box-shadow] duration-150 dot-matrix shadow-sm cursor-pointer group"
             >
               <PortraitReveal
-                baseSrc="/images/faiz_profile_1780237519567.png"
-                revealSrc="/images/faiz_schematic_1781198958081.jpg"
+                baseSrc="/images/profile_1.webp"
+                revealSrc="/images/profile_2.webp"
                 alt="Faiz portrait"
                 className="w-28 h-28 sm:w-32 sm:h-36 rounded-xl flex-shrink-0 relative"
                 aspectRatioClass=""
@@ -461,8 +480,8 @@ export default function App() {
               className="rounded-2xl border border-surface bg-white p-3 hover:bg-[#fafcfe] hover:border-highlight/45 hover:shadow-[0_24px_48px_rgba(43,76,126,0.08)] transition-[border-color,background-color,box-shadow] duration-150 group dot-matrix cursor-pointer shadow-sm"
             >
               <PortraitReveal
-                baseSrc="/images/faiz_profile_1780237519567.png"
-                revealSrc="/images/faiz_schematic_1781198958081.jpg"
+                baseSrc="/images/profile_1.webp"
+                revealSrc="/images/profile_2.webp"
                 alt="Faiz portrait"
                 aspectRatioClass="aspect-[4/5]"
               />
@@ -601,7 +620,7 @@ export default function App() {
                     <div className="absolute -left-[3px] top-0 w-1.5 h-1.5 rounded-full bg-highlight/60" />
                     <div className="absolute -left-[3px] bottom-0 w-1.5 h-1.5 rounded-full bg-highlight/60" />
 
-                    {visibleItems.map((item: any, idx: number) => {
+                    {visibleItems.map((item: BackgroundItem, idx: number) => {
                       const isLatest = item.id === latestId;
                       return (
                         <motion.div
@@ -640,7 +659,7 @@ export default function App() {
                           {isLatest && (
                             <div className="w-full h-24 sm:h-28 overflow-hidden rounded-t-[10px] relative border-b border-surface/40">
                               <img
-                                src={item.id === 'work-1' ? '/images/current_role_banner_1780409148139.png' : '/images/latest_edu_banner_1780409168466.png'}
+                                src={item.id === 'work-1' ? '/images/insignia.webp' : '/images/tue.webp'}
                                 alt={`${item.role} Banner`}
                                 className="w-full h-full object-cover select-none pointer-events-none group-hover:scale-106 transition-transform duration-700 ease-out"
                                 referrerPolicy="no-referrer"
@@ -714,7 +733,7 @@ export default function App() {
                               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                               className="relative z-10 flex flex-col gap-5 mt-1 pl-11 -ml-11 pr-6 -mr-6"
                             >
-                              {hiddenItems.map((item: any, hIdx: number) => {
+                              {hiddenItems.map((item: BackgroundItem, hIdx: number) => {
                                 const isLatest = false;
                                 const idx = visibleItems.length + hIdx;
                                 return (
@@ -872,7 +891,7 @@ export default function App() {
                                   ],
                                   skills: ['English Proficiency', 'Academic Reading', 'Technical Writing', 'International Communication']
                                 }
-                              ].map((item: any, cIdx: number) => {
+                              ].map((item: BackgroundItem, cIdx: number) => {
                                 const isLatest = false;
                                 const idx = visibleItems.length + cIdx;
                                 return (
@@ -1029,7 +1048,7 @@ export default function App() {
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {WRITINGS.map((write: any, idx: number) => {
+            {WRITINGS.map((write: Writing, idx: number) => {
               const isHovered = hoveredWritingId === write.id;
               const isExpanded = expandedWritingId === write.id;
 
@@ -1220,7 +1239,7 @@ export default function App() {
                   iconBgClass: 'bg-gray-900/[0.05] text-[#181815] dark:text-[#FFAF33] group-hover:bg-[#181815] dark:group-hover:bg-[#FFAF33] group-hover:text-white dark:group-hover:text-bg',
                   accentTextClass: 'group-hover:text-gray-950 dark:group-hover:text-primary',
                 },
-              ].map(({ id, icon, label, display, href, onClick, brandClass, iconBgClass, accentTextClass }: any, gridIdx: number) => (
+              ].map(({ id, icon, label, display, href, onClick, brandClass, iconBgClass, accentTextClass }: ContactLink, gridIdx: number) => (
                 <motion.a
                   key={label}
                   href={href}

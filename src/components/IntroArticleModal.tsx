@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface IntroArticleModalProps {
   isOpen: boolean;
@@ -193,239 +193,197 @@ const SLIDES: Slide[] = [
 export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticleModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+
+  const handleNext = () => {
+    if (currentSlide < SLIDES.length - 1) setCurrentSlide(p => p + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentSlide > 0) setCurrentSlide(p => p - 1);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      } else if (e.key === 'ArrowRight') {
-        handleNext();
-      } else if (e.key === 'ArrowLeft') {
-        handlePrev();
-      }
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
     };
 
     if (isOpen) {
       window.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
-      if (modalRef.current) {
-        modalRef.current.focus();
-      }
+      modalRef.current?.focus();
     }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose, currentSlide]);
-
-  const handleNext = () => {
-    if (currentSlide < SLIDES.length - 1) {
-      setDirection(1);
-      setCurrentSlide(prev => prev + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentSlide > 0) {
-      setDirection(-1);
-      setCurrentSlide(prev => prev - 1);
-    }
-  };
-
-  const handleGoToSlide = (index: number) => {
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
-  };
+  }, [isOpen, currentSlide]);
 
   if (!isOpen) return null;
 
   const activeSlide = SLIDES[currentSlide];
+  const progress = ((currentSlide + 1) / SLIDES.length) * 100;
 
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+        className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="story-modal-title"
       >
-        {/* Semi-transparent blur overlay */}
+        {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.22 }}
+          transition={{ duration: 0.25 }}
           onClick={onClose}
-          className="fixed inset-0 bg-[#161614]/70 backdrop-blur-md cursor-pointer"
+          className="fixed inset-0 bg-[#161614]/60 backdrop-blur-xl cursor-pointer"
         />
 
-        {/* Modal Container */}
+        {/* Modal */}
         <motion.div
           ref={modalRef}
           tabIndex={-1}
-          initial={{ opacity: 0, y: 30, scale: 0.96 }}
+          initial={{ opacity: 0, y: 40, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 15, scale: 0.96 }}
-          transition={{
-            type: 'spring',
-            stiffness: 420,
-            damping: 24,
-            mass: 0.85
-          }}
-          className="relative bg-bg w-full max-w-4xl h-auto max-h-[90vh] rounded-2xl shadow-[0_32px_80px_rgba(24,24,21,0.22),0_1px_3px_rgba(24,24,21,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] border border-surface/80 overflow-y-auto z-10 p-6 sm:p-9 flex flex-col gap-6 font-sans text-primary focus:outline-none scrollbar"
+          exit={{ opacity: 0, y: 20, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 26, mass: 0.8 }}
+          className="relative bg-bg w-full max-w-2xl h-auto max-h-[92vh] rounded-2xl shadow-2xl border border-surface/60 overflow-hidden z-10 flex flex-col font-sans text-primary scrollbar"
         >
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            aria-label="Close modal"
-            className="absolute top-6 right-6 text-secondary hover:text-accent p-2 rounded-full hover:bg-surface/50 border border-transparent hover:border-surface/40 transition-colors duration-150 focus:outline-none z-35"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          {/* Header */}
+          <div className="relative flex-shrink-0">
+            {/* Full-width Image */}
+            <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] overflow-hidden bg-surface/30">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeSlide.id}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  src={activeSlide.image}
+                  alt={lang === 'en' ? activeSlide.titleEn : activeSlide.titleId}
+                  referrerPolicy="no-referrer"
+                  className="absolute inset-0 w-full h-full object-cover select-none"
+                />
+              </AnimatePresence>
 
-          {/* Modal Header */}
-          <div className="flex flex-col gap-1.5 pr-8">
-            <span className="text-[10px] font-mono text-highlight tracking-widest uppercase font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-highlight animate-pulse" />
-              {lang === 'en' ? 'Core Ideology Presentation' : 'Presentasi Ideologi Dasar'}
-            </span>
-            <h1
-              id="story-modal-title"
-              className="font-serif text-xl sm:text-2xl font-medium tracking-tight text-primary leading-tight"
-            >
-              {lang === 'en' ? (
-                <>Building Things That <span className="text-highlight">Actually Matter</span></>
-              ) : (
-                <>Membangun Sesuatu Yang <span className="text-highlight">Benar-Benar Bermanfaat</span></>
-              )}
-            </h1>
-          </div>
+              {/* Gradient overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-bg/30 via-transparent to-bg/30" />
 
-          <div className="h-[1px] w-full bg-surface" />
-
-          {/* Slider Content - Side-by-Side Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start min-h-[300px]">
-            {/* Left side: Customized Blueprint Illustration with Zoom Out sequence */}
-            <div className="col-span-1 md:col-span-5 flex flex-col gap-2.5">
-              <div className="relative w-full aspect-video md:aspect-[4/3] rounded-xl overflow-hidden bg-surface/20 border border-surface/50 shadow-sm flex-shrink-0 group">
-                {/* Vintage spectrum draft lining overlay */}
-                <div className="absolute inset-0 bg-grid-fine opacity-[0.14] pointer-events-none z-10" />
-                
-                <AnimatePresence mode="wait" custom={direction}>
-                  <motion.img
-                    key={activeSlide.id}
-                    custom={direction}
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.03 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    src={activeSlide.image}
-                    alt={lang === 'en' ? activeSlide.titleEn : activeSlide.titleId}
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover select-none"
-                  />
-                </AnimatePresence>
-
-                {/* Glass neon overlay strip */}
-                <div className="absolute bottom-3 left-3 bg-[#111110]/80 backdrop-blur-sm border border-white/10 px-2.5 py-1 rounded-md text-[9px] font-mono font-bold tracking-wider text-highlight uppercase pointer-events-none z-20">
-                  {lang === 'en' ? `Blueprint Sequence — Slide ${activeSlide.num}` : `Urutan Blueprint — Slide ${activeSlide.num}`}
-                </div>
-              </div>
-              <p className="font-mono text-[9.5px] text-secondary/60 text-center leading-normal">
-                {lang === 'en' 
-                  ? "A stylized technical zoom-out illustrating each layer of our product philosophy."
-                  : "Urutan zoom-out teknis yang mengilustrasikan tiap lapisan filosofi produk kami."}
-              </p>
-            </div>
-
-            {/* Right side: Interactive story information */}
-            <div className="col-span-1 md:col-span-7 flex flex-col justify-between h-full min-h-[220px] md:min-h-[280px]">
-              <div className="flex flex-col gap-4">
-                {/* Active Slide Heading badge & title */}
-                <div className="flex items-center gap-2.5">
-                  <span className="font-mono text-xs font-bold text-highlight bg-highlight/10 px-2 py-0.5 rounded border border-highlight/25 flex-shrink-0">
-                    {activeSlide.num}
-                  </span>
-                  <h2 className="font-serif text-lg font-medium text-primary tracking-tight">
-                    {lang === 'en' ? activeSlide.titleEn : activeSlide.titleId}
-                  </h2>
-                </div>
-
-                {/* Animated Body text container */}
-                <div className="relative min-h-[140px] text-[13.5px] sm:text-[14px]">
-                  <AnimatePresence mode="wait" custom={direction}>
-                    <motion.div
-                      key={activeSlide.id}
-                      custom={direction}
-                      variants={{
-                        enter: (dir: number) => ({ x: dir > 0 ? 15 : -15, opacity: 0 }),
-                        center: { x: 0, opacity: 1 },
-                        exit: (dir: number) => ({ x: dir < 0 ? 15 : -15, opacity: 0 })
-                      }}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      {lang === 'en' ? activeSlide.contentEn : activeSlide.contentId}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+              {/* Slide progress bar */}
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-surface/40">
+                <motion.div
+                  className="h-full bg-highlight/70 rounded-r-full"
+                  initial={{ width: `${(currentSlide / SLIDES.length) * 100}%` }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                />
               </div>
 
-              {/* Slider Controls Navigation */}
-              <div className="flex items-center justify-between border-t border-surface/40 pt-4 mt-6">
-                {/* Left/Right controls */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handlePrev}
-                    disabled={currentSlide === 0}
-                    className={`p-2 rounded-xl border border-surface transition-all duration-150 flex items-center justify-center focus:outline-none ${
-                      currentSlide === 0 
-                        ? 'opacity-30 cursor-not-allowed text-secondary bg-transparent' 
-                        : 'text-primary hover:text-highlight hover:border-highlight/40 hover:bg-white/60 bg-white/20 cursor-pointer shadow-sm'
-                    }`}
-                    aria-label="Previous slide"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    disabled={currentSlide === SLIDES.length - 1}
-                    className={`p-2 rounded-xl border border-surface transition-all duration-150 flex items-center justify-center focus:outline-none ${
-                      currentSlide === SLIDES.length - 1 
-                        ? 'opacity-30 cursor-not-allowed text-secondary bg-transparent' 
-                        : 'text-primary hover:text-highlight hover:border-highlight/40 hover:bg-white/60 bg-white/20 cursor-pointer shadow-sm'
-                    }`}
-                    aria-label="Next slide"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                aria-label="Close modal"
+                className="absolute top-3 right-3 p-2 rounded-full text-white/80 hover:text-white hover:bg-white/10 border border-white/20 backdrop-blur-sm transition-all duration-200 focus:outline-none z-10"
+              >
+                <X className="h-4 w-4" />
+              </button>
 
-                {/* Clickable bullet indicators */}
-                <div className="flex items-center gap-1.5">
-                  {SLIDES.map((slide, idx) => (
-                    <button
-                      key={slide.id}
-                      onClick={() => handleGoToSlide(idx)}
-                      className={`h-2.5 rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${
-                        idx === currentSlide 
-                          ? 'w-6 bg-highlight' 
-                          : 'w-2.5 bg-surface hover:bg-secondary/40'
-                      }`}
-                      aria-label={`Go to slide ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                {/* Progress fraction text */}
-                <span className="font-mono text-[10px] text-secondary font-bold tracking-wider">
-                  {activeSlide.num} / {SLIDES.length.toString().padStart(2, '0')}
+              {/* Slide counter */}
+              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#111110]/60 backdrop-blur-sm border border-white/10 z-10">
+                <span className="text-[10px] font-mono text-white/90 tracking-widest font-bold uppercase">
+                  {activeSlide.num}
                 </span>
               </div>
+            </div>
+
+            {/* Title + Slide nav (below image) */}
+            <div className="px-6 sm:px-8 pt-5 pb-0">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSlide.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col gap-2"
+                >
+                  <h2 className="font-serif text-xl sm:text-[22px] font-medium text-primary tracking-tight leading-snug">
+                    {lang === 'en' ? activeSlide.titleEn : activeSlide.titleId}
+                  </h2>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Content body */}
+          <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-5">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSlide.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+                className="text-[14px] sm:text-[15px] leading-relaxed"
+              >
+                {lang === 'en' ? activeSlide.contentEn : activeSlide.contentId}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Bottom Navigation Bar */}
+          <div className="flex-shrink-0 border-t border-surface/40 px-6 sm:px-8 py-4 bg-bg/50 backdrop-blur-sm">
+            <div className="flex items-center justify-between">
+              {/* Prev */}
+              <button
+                onClick={handlePrev}
+                disabled={currentSlide === 0}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-medium transition-all duration-200 border ${
+                  currentSlide === 0
+                    ? 'opacity-30 cursor-not-allowed text-secondary border-transparent'
+                    : 'text-primary border-surface hover:border-highlight/40 hover:text-highlight hover:bg-white/60 cursor-pointer'
+                }`}
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+                {currentSlide > 0 ? SLIDES[currentSlide - 1].num : '—'}
+              </button>
+
+              {/* Dots */}
+              <div className="flex items-center gap-1.5">
+                {SLIDES.map((slide, idx) => (
+                  <button
+                    key={slide.id}
+                    onClick={() => setCurrentSlide(idx)}
+                    className="group relative p-1 focus:outline-none"
+                    aria-label={`Go to slide ${idx + 1}`}
+                  >
+                    <div className={`h-2 rounded-full transition-all duration-500 ease-out ${
+                      idx === currentSlide ? 'w-8 bg-highlight' : 'w-2 bg-surface group-hover:bg-secondary/40'
+                    }`} />
+                  </button>
+                ))}
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={handleNext}
+                disabled={currentSlide === SLIDES.length - 1}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-medium transition-all duration-200 border ${
+                  currentSlide === SLIDES.length - 1
+                    ? 'opacity-30 cursor-not-allowed text-secondary border-transparent'
+                    : 'text-primary border-surface hover:border-highlight/40 hover:text-highlight hover:bg-white/60 cursor-pointer'
+                }`}
+              >
+                {currentSlide < SLIDES.length - 1 ? SLIDES[currentSlide + 1].num : '—'}
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
         </motion.div>

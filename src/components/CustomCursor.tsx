@@ -5,6 +5,7 @@ export default function CustomCursor() {
   const [hoverType, setHoverType] = useState<'link' | 'detail' | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // Position coordinates of primary cursor pointer
   const cursorX = useMotionValue(-100);
@@ -27,8 +28,18 @@ export default function CustomCursor() {
     };
     checkTouch();
 
-    if (isTouchDevice) {
-      return;
+    // Respect prefers-reduced-motion for accessibility
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(motionQuery.matches);
+    const handleMotionChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    motionQuery.addEventListener('change', handleMotionChange);
+
+    if (isTouchDevice || motionQuery.matches) {
+      return () => {
+        motionQuery.removeEventListener('change', handleMotionChange);
+      };
     }
 
     const moveCursor = (e: MouseEvent) => {
@@ -82,15 +93,17 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeaveWindow);
       document.removeEventListener('mouseenter', handleMouseEnterWindow);
       document.documentElement.classList.remove('custom-cursor-active');
+      motionQuery.removeEventListener('change', handleMotionChange);
     };
-  }, [cursorX, cursorY, isVisible, isTouchDevice]);
+  }, [cursorX, cursorY, isVisible, isTouchDevice, prefersReducedMotion]);
 
-  if (isTouchDevice || !isVisible) {
+  // Respect prefers-reduced-motion: skip custom cursor entirely
+  if (isTouchDevice || prefersReducedMotion || !isVisible) {
     return null;
   }
 
   const isHovered = hoverType !== null;
-  
+
   // Custom design values relative to hover type
   const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
   const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
@@ -122,7 +135,7 @@ export default function CustomCursor() {
         }}
       >
         {hoverType === 'detail' && (
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-[8px] font-mono font-bold text-accent tracking-widest uppercase select-none pointer-events-none"

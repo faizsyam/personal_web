@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ClickRipple {
   x: number; // Document X
@@ -16,19 +16,19 @@ interface ClickRipple {
  */
 function checkIsHoveringOverContent(el: Element | null): boolean {
   if (!el) return false;
-  
+
   const tagName = el.tagName.toUpperCase();
   if (tagName === 'HTML' || tagName === 'BODY' || el.id === 'root') {
     return false;
   }
-  
+
   // Direct text/media content and input controls
   const isDirectContentTag = [
-    'A', 'BUTTON', 'SPAN', 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
-    'LI', 'LABEL', 'INPUT', 'TEXTAREA', 'IMG', 'SVG', 'PATH', 'CODE', 
+    'A', 'BUTTON', 'SPAN', 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+    'LI', 'LABEL', 'INPUT', 'TEXTAREA', 'IMG', 'SVG', 'PATH', 'CODE',
     'PRE', 'TABLE', 'TR', 'TD', 'TH', 'STRONG', 'EM', 'I', 'B'
   ].includes(tagName);
-  
+
   if (isDirectContentTag) {
     return true;
   }
@@ -46,8 +46,8 @@ function checkIsHoveringOverContent(el: Element | null): boolean {
   while (current && current !== document.body && current.id !== 'root') {
     const cls = current.className || '';
     if (typeof cls === 'string' && (
-      cls.includes('card') || 
-      cls.includes('badge') || 
+      cls.includes('card') ||
+      cls.includes('badge') ||
       cls.includes('btn') ||
       cls.includes('button') ||
       cls.includes('nav') ||
@@ -71,36 +71,38 @@ function checkIsHoveringOverContent(el: Element | null): boolean {
 
 export default function InteractiveGridBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [isDark, setIsDark] = useState(false);
-  
+
+  // Use ref for dark mode to avoid re-renders
+  const isDarkRef = useRef(false);
+
   // Mouse position tracking
   const mouseRef = useRef({ x: -1000, y: -1000, active: false });
   const lerpMouseRef = useRef({ x: -1000, y: -1000 });
-  
+
   // Dynamic warp power transition state
   const warpStrengthRef = useRef(0);
-  
+
   // Smart hover state
   const isHoveringOverContentRef = useRef(false);
-  
+
   // Click Ripples state
   const ripplesRef = useRef<ClickRipple[]>([]);
-  
+
   // Track scroll position to calculate document-space coordinates
   const scrollRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    // 1. Detect dark mode state and update dynamically
+    // 1. Detect dark mode state and update dynamically via ref (NOT state)
     const checkDark = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
+      isDarkRef.current = document.documentElement.classList.contains('dark');
     };
-    
+
     checkDark();
-    
+
     const observer = new MutationObserver(() => {
       checkDark();
     });
-    
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class']
@@ -157,7 +159,7 @@ export default function InteractiveGridBackground() {
 
     let animationId: number;
     let frameCount = 0;
-    
+
     // Resize function
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -183,7 +185,7 @@ export default function InteractiveGridBackground() {
         const dy = currentY - my;
         const distSq = dx * dx + dy * dy;
         const radiusSq = radius * radius;
-        
+
         if (distSq < radiusSq) {
           const dist = Math.sqrt(distSq);
           if (dist > 0) {
@@ -258,7 +260,7 @@ export default function InteractiveGridBackground() {
         // Disappear gradually if mouse goes off screen
         lerpMouseRef.current.x += (-2000 - lerpMouseRef.current.x) * 0.08;
         lerpMouseRef.current.y += (-2000 - lerpMouseRef.current.y) * 0.08;
-        
+
         // Smoothly deflate the warp back to a completely flat grid
         warpStrengthRef.current += (0 - warpStrengthRef.current) * 0.12;
 
@@ -272,12 +274,13 @@ export default function InteractiveGridBackground() {
       // Base Grid spacing properties
       const gapCoarse = 40;
       const gapFine = 10;
-      
+
       // Compute starting points aligned with document scrolling
       const startX = -dX % gapCoarse;
       const startY = -dY % gapCoarse;
 
       // Draw Grid Lines with Highlight Hover Effects
+      const isDark = isDarkRef.current;
       const baseLineColorCoarse = isDark ? 'rgba(236, 234, 228, 0.06)' : 'rgba(24, 24, 21, 0.07)';
       const baseLineColorFine = isDark ? 'rgba(236, 234, 228, 0.02)' : 'rgba(24, 24, 21, 0.03)';
 
@@ -285,7 +288,7 @@ export default function InteractiveGridBackground() {
       ctx.lineWidth = 0.5;
       ctx.strokeStyle = baseLineColorFine;
       ctx.beginPath();
-      
+
       for (let x = -dX % gapFine; x < canvas.width; x += gapFine) {
         if (x % gapCoarse !== startX) { // Skip lines shared with coarse grid
           ctx.moveTo(x, 0);
@@ -333,15 +336,15 @@ export default function InteractiveGridBackground() {
         }
         return false;
       };
-      
+
       // Draw Coarse Vertical Lines with optional local bulge warp
       const drawVerticalLine = (xVal: number) => {
         const affected = isVerticalLineAffected(xVal);
-        
+
         ctx.beginPath();
         ctx.lineWidth = 1;
         ctx.strokeStyle = baseLineColorCoarse;
-        
+
         if (!affected) {
           ctx.moveTo(xVal, 0);
           ctx.lineTo(xVal, canvas.height);
@@ -350,7 +353,7 @@ export default function InteractiveGridBackground() {
           // Curved warped section
           const steps = 24; // Fluid subdivision
           const stepSize = canvas.height / steps;
-          
+
           ctx.moveTo(xVal, 0);
           for (let i = 1; i <= steps; i++) {
             const curY = i * stepSize;
@@ -364,11 +367,11 @@ export default function InteractiveGridBackground() {
       // Draw Coarse Horizontal Lines with optional local bulge warp
       const drawHorizontalLine = (yVal: number) => {
         const affected = isHorizontalLineAffected(yVal);
-        
+
         ctx.beginPath();
         ctx.lineWidth = 1;
         ctx.strokeStyle = baseLineColorCoarse;
-        
+
         if (!affected) {
           ctx.moveTo(0, yVal);
           ctx.lineTo(canvas.width, yVal);
@@ -376,7 +379,7 @@ export default function InteractiveGridBackground() {
         } else {
           const steps = 24;
           const stepSize = canvas.width / steps;
-          
+
           ctx.moveTo(0, yVal);
           for (let i = 1; i <= steps; i++) {
             const curX = i * stepSize;
@@ -401,7 +404,7 @@ export default function InteractiveGridBackground() {
       const currentRipples = ripplesRef.current;
       for (let i = currentRipples.length - 1; i >= 0; i--) {
         const rip = currentRipples[i];
-        
+
         // Propagate outward smoothly
         rip.radius += (rip.maxRadius - rip.radius) * 0.075;
         rip.life -= 1;
@@ -425,7 +428,8 @@ export default function InteractiveGridBackground() {
       window.removeEventListener('resize', resizeCanvas);
       observer.disconnect();
     };
-  }, [isDark]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <canvas
