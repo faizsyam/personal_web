@@ -1,0 +1,6 @@
+{
+  "name": "Faizuddarain Syam",
+  "description": "Single-page personal website of Faizuddarain Syam (Faiz), AI engineer and designer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

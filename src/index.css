@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Caveat:wght@400..700&family=Permanent+Marker&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --grid-color-fine: rgba(24, 24, 21, 0.05);
+  --grid-color-coarse: rgba(24, 24, 21, 0.12);
+  
+  --color-glass-panel: rgba(245, 243, 238, 0.7);
+  --color-glass-card: rgba(255, 255, 255, 0.3);
+  --color-glass-card-hover: rgba(255, 255, 255, 0.85);
+  --color-glass-shadow-1: rgba(24, 24, 21, 0.02);
+  --color-glass-shadow-2: rgba(24, 24, 21, 0.03);
+  --color-glass-inset: rgba(255, 255, 255, 0.6);
+  --color-glass-inset-card: rgba(255, 255, 255, 0.4);
+  --color-highlight-selection: rgba(43, 76, 126, 0.12);
+}
+
+.dark {
+  --color-bg: #121210;
+  --color-primary: #ECEAE4;
+  --color-secondary: #8DA9C4;
+  --color-accent: #A5C4D4;
+  --color-highlight: #5F93E8;
+  --color-rose-gold: #5F93E8;
+  --color-surface: #242421;
+
+  --grid-color-fine: rgba(236, 234, 228, 0.045);
+  --grid-color-coarse: rgba(236, 234, 228, 0.12);
+
+  --color-glass-panel: rgba(18, 18, 16, 0.75);
+  --color-glass-card: rgba(24, 24, 21, 0.4);
+  --color-glass-card-hover: rgba(30, 30, 27, 0.9);
+  --color-glass-shadow-1: rgba(0, 0, 0, 0.15);
+  --color-glass-shadow-2: rgba(0, 0, 0, 0.25);
+  --color-glass-inset: rgba(255, 255, 255, 0.04);
+  --color-glass-inset-card: rgba(255, 255, 255, 0.03);
+  --color-highlight-selection: rgba(95, 147, 232, 0.2);
+}
+
+@theme {
+  --font-sans: "General Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-handwriting: "Caveat", cursive, sans-serif;
+  --font-marker: "Permanent Marker", cursive, sans-serif;
+  --color-bg: #FAF9F6;
+  --color-primary: #111110;
+  --color-secondary: #2D3D4E;
+  --color-accent: #15293E;
+  --color-highlight: #1B3E74;
+  --color-rose-gold: #1B3E74;
+  --color-surface: #E3DFCE;
+
+  --animate-spin-slow: spin 16s linear infinite;
+}
+
+@layer base {
+  html, body {
+    background-color: var(--color-bg);
+    color: var(--color-primary);
+    font-family: var(--font-sans);
+    transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Make sure focus outlines look great */
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+}
+
+/* Technical drafting grids for physical aesthetic depth */
+@utility bg-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, var(--grid-color-coarse) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color-coarse) 1px, transparent 1px);
+}
+
+@utility bg-grid-fine {
+  background-size: 10px 10px;
+  background-image: 
+    linear-gradient(to right, var(--grid-color-fine) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color-fine) 1px, transparent 1px);
+}
+
+/* Refined micro dot indicators */
+@utility dot-matrix {
+  background-image: radial-gradient(rgba(24, 24, 21, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Glassmorphism overlays with physically accurate depth */
+@utility glass-panel {
+  backdrop-filter: blur(12px);
+  background-color: var(--color-glass-panel);
+  box-shadow: 
+    0 1px 2px var(--color-glass-shadow-1),
+    0 8px 30px var(--color-glass-shadow-2),
+    inset 0 1px 0 var(--color-glass-inset);
+}
+
+@utility glass-card {
+  background-color: var(--color-glass-card);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(236, 234, 228, 0.5);
+  box-shadow: 
+    0 1px 3px var(--color-glass-shadow-1),
+    inset 0 1px 0 var(--color-glass-inset-card);
+}
+
+@utility glass-card-hover {
+  background-color: var(--color-glass-card-hover);
+  border-color: rgba(43, 76, 126, 0.15);
+  box-shadow:
+    0 10px 30px -10px var(--color-glass-shadow-2),
+    0 1px 2px var(--color-glass-shadow-1),
+    inset 0 1px 0 var(--color-glass-inset);
+}
+
+/* Custom cursor active class only on hover-capable pointer devices */
+@media (any-hover: hover) {
+  .custom-cursor-active, 
+  .custom-cursor-active a, 
+  .custom-cursor-active button, 
+  .custom-cursor-active [role="button"],
+  .custom-cursor-active input,
+  .custom-cursor-active textarea {
+    cursor: none !important;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* Selection colors */
+::selection {
+  background-color: var(--color-highlight-selection);
+  color: var(--color-primary);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
