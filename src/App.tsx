@@ -125,6 +125,7 @@ export default function App() {
   const [isWorkExpanded, setIsWorkExpanded] = useState(false);
   const [isEduExpanded, setIsEduExpanded] = useState(false);
   const [isIntroArticleOpen, setIsIntroArticleOpen] = useState(false);
+  const [showMoreProjects, setShowMoreProjects] = useState(false);
   const [obfuscatedEmail, setObfuscatedEmail] = useState('Retrieve email');
   const [copied, setCopied] = useState(false);
 
@@ -180,53 +181,52 @@ export default function App() {
 
   // ─── Shared animation constants ──────────────────
   const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
+  const easeSnappy: [number, number, number, number] = [0.0, 0, 0.2, 1];
 
   const springHover = {
     type: 'spring' as const,
-    stiffness: 520,
-    damping: 26,
-    mass: 0.5,
+    stiffness: 650,
+    damping: 24,
+    mass: 0.35,
   };
 
   const springTap = {
     type: 'spring' as const,
-    stiffness: 680,
-    damping: 22,
-    mass: 0.45,
+    stiffness: 800,
+    damping: 20,
+    mass: 0.3,
   };
 
   const springReveal = {
     type: 'spring' as const,
-    stiffness: 300,
-    damping: 28,
-    mass: 0.7,
+    stiffness: 500,
+    damping: 26,
+    mass: 0.5,
   };
 
-  // Animation variants — snappy spring-mass with elegant deceleration
+  // Animation variants — snappy and responsive, no per-card delay
   const timelineVariants = {
-    hidden: { opacity: 0, x: -24 },
-    visible: (i: number) => ({
+    hidden: { opacity: 0, x: -20 },
+    visible: {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.65,
-        ease: easeOutExpo,
-        delay: i * 0.07,
+        duration: 0.4,
+        ease: easeSnappy,
       },
-    }),
+    },
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 28 },
-    visible: (i: number) => ({
+    hidden: { opacity: 0, y: 20 },
+    visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.65,
-        ease: easeOutExpo,
-        delay: i * 0.07,
+        duration: 0.4,
+        ease: easeSnappy,
       },
-    }),
+    },
   };
 
   return (
@@ -267,8 +267,8 @@ export default function App() {
               <motion.button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                whileHover={{ y: -3, transition: { type: 'spring', stiffness: 500, damping: 28, mass: 0.5 } }}
-                whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                 transition={{
                   type: 'spring',
                   stiffness: 480,
@@ -443,18 +443,18 @@ export default function App() {
             >
               <motion.button
                 onClick={() => scrollTo('projects')}
-                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 480, damping: 24, mass: 0.5 } }}
+                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
                 whileTap={{ scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-bg text-[13.5px] font-medium hover:bg-accent/90 hover:shadow-[0_8px_20px_rgba(43,76,126,0.15)] transition-[background-color,box-shadow] duration-200 cursor-pointer focus:outline-none"
               >
                 {lang === 'en' ? 'View projects' : 'Lihat proyek'} <span>→</span>
               </motion.button>
               <motion.button
                 onClick={() => scrollTo('writing')}
-                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 480, damping: 24, mass: 0.5 } }}
+                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
                 whileTap={{ scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary text-[13.5px] transition-[background-color,border-color] duration-200 cursor-pointer focus:outline-none"
               >
                 {lang === 'en' ? 'Read writing' : 'Baca tulisan'}
@@ -479,8 +479,8 @@ export default function App() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ y: -3, transition: { type: 'spring', stiffness: 480, damping: 24, mass: 0.5 } }}
-                  whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                  whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                   transition={{ type: 'spring', stiffness: 450, damping: 14 }}
                   className="inline-flex items-center gap-1.5 text-[12px] text-secondary hover:text-primary px-3 py-1.5 rounded-full border border-surface/50 hover:border-primary hover:shadow-[0_4px_12px_rgba(24,24,21,0.06)] bg-white/20 hover:bg-white/60 transition-[border-color,background-color,box-shadow,color] duration-150"
                 >
@@ -493,8 +493,8 @@ export default function App() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -4, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+              whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="flex lg:hidden flex-col sm:flex-row gap-5 items-center sm:items-start p-5 mt-10 rounded-2xl border border-surface/60 bg-white hover:border-highlight/30 hover:shadow-md transition-all duration-300 shadow-sm cursor-pointer group"
             >
@@ -533,8 +533,8 @@ export default function App() {
           >
             {/* Photo card styled as a vintage physical specimen/draft slide */}
             <motion.div
-              whileHover={{ y: -6, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+              whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
               className="rounded-2xl border border-surface/60 bg-white p-3 hover:border-highlight/30 hover:shadow-lg transition-all duration-300 group cursor-pointer shadow-sm"
             >
               <PortraitReveal
@@ -571,7 +571,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3, margin: '-40px' }}
+            viewport={{ once: false, amount: 0.3, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col gap-3 mb-10"
           >
@@ -579,13 +579,20 @@ export default function App() {
               <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{t('briefIntro')}</span>
               <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{t('background')}</span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug mt-1">
-              {lang === 'en' ? (
-                <>At the intersection of<br className="hidden sm:block" /> <span className="text-highlight">AI, human, and creativity</span></>
-              ) : (
-                <>Di persimpangan antara<br className="hidden sm:block" /> <span className="text-highlight">AI, manusia, dan kreativitas</span></>
-              )}
-            </h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
+              <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug mt-1 flex-1">
+                {lang === 'en' ? (
+                  <>At the intersection of<br className="hidden sm:block" /> <span className="text-highlight">AI, human, and creativity</span></>
+                ) : (
+                  <>Di persimpangan antara<br className="hidden sm:block" /> <span className="text-highlight">AI, manusia, dan kreativitas</span></>
+                )}
+              </h2>
+              <img
+                src="/images/intro_banner.png"
+                alt=""
+                className="w-full sm:w-auto sm:max-w-[480px] lg:max-w-[560px] object-contain rounded-lg flex-shrink-0"
+              />
+            </div>
           </motion.div>
 
           <div className="flex flex-col lg:flex-row lg:items-start gap-10 lg:gap-16">
@@ -604,7 +611,7 @@ export default function App() {
                   key={i}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.3, margin: '-40px' }}
+                  viewport={{ once: false, amount: 0.3, margin: '120px' }}
                   transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1], delay: i * 0.12 }}
                 >
                   {p}
@@ -616,7 +623,7 @@ export default function App() {
                 onClick={() => setIsIntroArticleOpen(true)}
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3, margin: '-40px' }}
+                viewport={{ once: false, amount: 0.3, margin: '120px' }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
                 className="mt-3.5 group flex items-center gap-1.5 text-xs font-mono font-bold text-[#153d82] hover:text-[#081d45] transition-all duration-150 self-start cursor-pointer focus:outline-none"
               >
@@ -629,7 +636,7 @@ export default function App() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 24 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3, margin: '-40px' }}
+              viewport={{ once: false, amount: 0.3, margin: '120px' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
               className="flex-1 min-w-0 w-full lg:max-w-[720px] xl:max-w-[820px]"
             >
@@ -643,13 +650,29 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3, margin: '-40px' }}
+            viewport={{ once: false, amount: 0.3, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">Professional & Educational Arc</span>
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Background</span>
           </motion.div>
+
+          {/* Title + Image */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
+              {lang === 'en' ? (
+                <>My background<br className="hidden sm:block" /> <span className="text-highlight">work & education</span></>
+              ) : (
+                <>Latar belakang<br className="hidden sm:block" /> <span className="text-highlight">pekerjaan & pendidikan</span></>
+              )}
+            </h2>
+            <img
+              src="/images/banner_edu.png"
+              alt=""
+              className="w-full sm:w-auto sm:max-w-[360px] lg:max-w-[420px] h-auto object-contain rounded-lg flex-shrink-0"
+            />
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Work column */}
@@ -684,14 +707,13 @@ export default function App() {
                         <motion.div
                           key={item.id}
                           id={`timeline-item-${item.id}`}
-                          custom={idx}
                           initial="hidden"
                           whileInView="visible"
-                          viewport={{ once: false, margin: '-85px' }}
+                          viewport={{ once: false, margin: '120px' }}
                           variants={timelineVariants}
-                          whileHover={{ y: -4, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                          whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
-                          transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+                          whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                          whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
                           onMouseEnter={() => setHoveredTimelineId(item.id)}
                           onMouseLeave={() => setHoveredTimelineId(null)}
                           onClick={() => handleTimelineClick(item)}
@@ -704,7 +726,7 @@ export default function App() {
                           {/* Emblem — uses real logo when available */}
                           <div className={`absolute -left-[35px] top-[14px] w-11 h-11 rounded-full border flex items-center justify-center overflow-hidden transition-[border-color,background-color,box-shadow] duration-300 z-10 ${
                             isLatest
-                              ? 'border-highlight/60 bg-white group-hover:bg-highlight group-hover:border-highlight group-hover:shadow-[0_2px_8px_rgba(43,76,126,0.3)]'
+                              ? 'border-highlight/60 bg-white'
                               : 'border-highlight/25 dark:border-highlight/45 bg-white group-hover:border-highlight/60 group-hover:bg-bg'
                           }`}>
                             {item.logoPath ? (
@@ -717,7 +739,7 @@ export default function App() {
                           {isLatest && (
                             <div className="w-full h-24 sm:h-28 overflow-hidden rounded-t-[10px] relative border-b border-surface/40">
                               <img
-                                src={item.id === 'work-1' ? '/images/insignia.webp' : '/images/tue.webp'}
+                                src={item.id === 'work-1' ? '/images/insignia.jpeg' : '/images/tue.jpg'}
                                 alt={`${item.role} Banner`}
                                 className="w-full h-full object-cover select-none pointer-events-none group-hover:scale-106 transition-transform duration-700 ease-out"
                                 referrerPolicy="no-referrer"
@@ -771,7 +793,7 @@ export default function App() {
                           </span>
                           <motion.div
                             animate={{ rotate: isWorkExpanded ? 180 : 0 }}
-                            transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+                            transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
                           >
                             <ChevronDown className="w-3.5 h-3.5" />
                           </motion.div>
@@ -798,12 +820,11 @@ export default function App() {
                                   <motion.div
                                     key={item.id}
                                     id={`timeline-item-${item.id}`}
-                                    custom={idx}
                                     initial="hidden"
                                     animate="visible"
                                     variants={timelineVariants}
-                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                                     onMouseEnter={() => setHoveredTimelineId(item.id)}
                                     onMouseLeave={() => setHoveredTimelineId(null)}
                                     onClick={() => handleTimelineClick(item)}
@@ -856,7 +877,7 @@ export default function App() {
                           </span>
                           <motion.div
                             animate={{ rotate: isEduExpanded ? 180 : 0 }}
-                            transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+                            transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
                           >
                             <ChevronDown className="w-3.5 h-3.5" />
                           </motion.div>
@@ -954,12 +975,11 @@ export default function App() {
                                   <motion.div
                                     key={item.id}
                                     id={`timeline-item-${item.id}`}
-                                    custom={idx}
                                     initial="hidden"
                                     animate="visible"
                                     variants={timelineVariants}
-                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                                     onMouseEnter={() => setHoveredTimelineId(item.id)}
                                     onMouseLeave={() => setHoveredTimelineId(null)}
                                     onClick={() => handleTimelineClick(item)}
@@ -1009,7 +1029,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '-80px' }}
+            viewport={{ once: false, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -1017,45 +1037,72 @@ export default function App() {
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Built & Research</span>
           </motion.div>
 
+          {/* Title + Image */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
+              {lang === 'en' ? (
+                <>What I've been<br className="hidden sm:block" /> <span className="text-highlight">working on</span></>
+              ) : (
+                <>Yang sudah<br className="hidden sm:block" /> <span className="text-highlight">saya kerjakan</span></>
+              )}
+            </h2>
+            <img
+              src="/images/banner_work.png"
+              alt=""
+              className="w-full sm:w-auto sm:max-w-[640px] lg:max-w-[720px] h-auto object-contain rounded-lg flex-shrink-0"
+            />
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {PROJECTS.map((project, idx) => {
-              // High contrast status styling
+            {(() => {
               const getStatusStyle = (status: string) => {
                 if (status === 'Completed') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
                 if (status === 'Research') return 'text-[#9A6200] bg-[#FFF8EB] border border-[#F5DFBF]';
                 return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]'; // Active
               };
-
-              return (
+              return PROJECTS.slice(0, 4).map((project, idx) => (
                 <motion.div
                   key={project.id}
                   id={`project-card-${project.id}`}
                   onClick={() => setSelectedProject(project)}
-                  custom={idx}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, margin: '-85px' }}
+                  viewport={{ once: false, margin: '120px' }}
                   variants={cardVariants}
-                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
-                  className="group relative flex flex-col gap-5 p-5 sm:p-6 rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm"
+                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                  className="group relative flex flex-col rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm overflow-hidden"
                 >
-                  <div className="flex flex-col gap-2.5 flex-1">
+                  {/* Image at top — flush with card edges, no padding */}
+                  {project.imagePath && (
+                    <div className="w-full h-48 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-grid-fine opacity-10 pointer-events-none z-10" />
+                      <img
+                        src={project.imagePath}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                      />
+                      {/* Subtle bottom fade for seamless transition to content */}
+                      <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
+                      {/* Status badge — overlaid on image */}
+                      <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getStatusStyle(project.status)}`}>
+                        {project.status}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Content below — with padding */}
+                  <div className="flex flex-col gap-2.5 p-5 sm:p-6 flex-1">
                     <div className="flex items-start justify-between gap-3">
                       <h4 className="text-[16.5px] font-sans text-primary group-hover:text-highlight transition-colors duration-150 font-semibold flex items-center gap-1.5 leading-tight">
                         {project.name}
                         <ArrowUpRight className="w-4 h-4 opacity-0 scale-50 -translate-x-1.5 translate-y-1.5 group-hover:opacity-90 group-hover:scale-100 group-hover:translate-x-0 group-hover:translate-y-0 text-highlight flex-shrink-0 group-hover:rotate-12 transition-all duration-300" />
                       </h4>
-                      <span className={`text-[9.5px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold group-hover:scale-105 transition-all duration-300 ${getStatusStyle(project.status)}`}>
-                        {project.status}
-                      </span>
                     </div>
-
                     <p className="text-[13.5px] sm:text-[14px] leading-relaxed text-[#2C3E50] font-light">
                       {project.subtitle}
                     </p>
-
-                    <div className="flex flex-wrap gap-1.5 mt-2">
+                    <div className="flex flex-wrap gap-1.5 mt-1">
                       {project.domainTags.map((tag: string, i: number) => (
                         <span key={i} className="text-[9.5px] font-mono tracking-wider uppercase text-[#33465C] px-2.5 py-0.5 bg-[#F2F4F7] border border-[#DEE2E6] rounded-md font-semibold group-hover:bg-white group-hover:text-highlight group-hover:border-[#CCD5E4] transition-all duration-300">
                           {tag}
@@ -1063,23 +1110,103 @@ export default function App() {
                       ))}
                     </div>
                   </div>
-
-                  {project.imagePath && (
-                    <div className="w-full h-44 rounded-xl border border-[#DEE2E6] overflow-hidden relative bg-surface/20">
-                      {/* Add a subtle technical grid inside the image container to accent ML focus */}
-                      <div className="absolute inset-0 bg-grid-fine opacity-20 pointer-events-none z-10" />
-                      <img
-                        src={project.imagePath}
-                        alt=""
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 opacity-[0.88] group-hover:opacity-100 mix-blend-multiply"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#181815]/5 via-transparent to-transparent opacity-80 group-hover:from-transparent transition-all duration-500" />
-                    </div>
-                  )}
                 </motion.div>
-              );
-            })}
+              ));
+            })()}
           </div>
+
+          {/* Hidden extra projects with expand/collapse */}
+          <AnimatePresence initial={false}>
+            {showMoreProjects && (
+              <motion.div
+                initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                animate={{ height: 'auto', opacity: 1, transitionEnd: { overflow: 'visible' } }}
+                exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-5 -mt-5"
+              >
+                {(() => {
+                  const getStatusStyle = (status: string) => {
+                    if (status === 'Completed') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
+                    if (status === 'Recent') return 'text-[#9A6200] bg-[#FFF8EB] border border-[#F5DFBF]';
+                    return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]'; // Active
+                  };
+                  return PROJECTS.slice(4).map((project, idx) => (
+                    <motion.div
+                      key={project.id}
+                      id={`project-card-${project.id}`}
+                      onClick={() => setSelectedProject(project)}
+                      initial="hidden"
+                      animate="visible"
+                      variants={cardVariants}
+                      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                      whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                      className="group relative flex flex-col rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm overflow-hidden"
+                    >
+                      {/* Image at top — flush with card edges, no padding */}
+                      {project.imagePath && (
+                        <div className="w-full h-48 relative overflow-hidden">
+                          <div className="absolute inset-0 bg-grid-fine opacity-10 pointer-events-none z-10" />
+                          <img
+                            src={project.imagePath}
+                            alt=""
+                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                          />
+                          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
+                          <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getStatusStyle(project.status)}`}>
+                            {project.status}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Content below — with padding */}
+                      <div className="flex flex-col gap-2.5 p-5 sm:p-6 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="text-[16.5px] font-sans text-primary group-hover:text-highlight transition-colors duration-150 font-semibold flex items-center gap-1.5 leading-tight">
+                            {project.name}
+                            <ArrowUpRight className="w-4 h-4 opacity-0 scale-50 -translate-x-1.5 translate-y-1.5 group-hover:opacity-90 group-hover:scale-100 group-hover:translate-x-0 group-hover:translate-y-0 text-highlight flex-shrink-0 group-hover:rotate-12 transition-all duration-300" />
+                          </h4>
+                        </div>
+                        <p className="text-[13.5px] sm:text-[14px] leading-relaxed text-[#2C3E50] font-light">
+                          {project.subtitle}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {project.domainTags.map((tag: string, i: number) => (
+                            <span key={i} className="text-[9.5px] font-mono tracking-wider uppercase text-[#33465C] px-2.5 py-0.5 bg-[#F2F4F7] border border-[#DEE2E6] rounded-md font-semibold group-hover:bg-white group-hover:text-highlight group-hover:border-[#CCD5E4] transition-all duration-300">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ));
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* More Projects Toggle */}
+          {PROJECTS.length > 4 && (
+            <motion.button
+              onClick={() => setShowMoreProjects(!showMoreProjects)}
+              whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+              className="self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary text-[13.5px] transition-[background-color,border-color] duration-200 cursor-pointer focus:outline-none mt-2"
+            >
+              <span className="font-mono text-[11px] tracking-wider uppercase font-semibold">
+                {showMoreProjects
+                  ? (lang === 'en' ? 'Show Less' : 'Tampilkan Lebih Sedikit')
+                  : (lang === 'en' ? `+ ${PROJECTS.length - 4} More Projects` : `+ ${PROJECTS.length - 4} Proyek Lainnya`)}
+              </span>
+              <motion.div
+                animate={{ rotate: showMoreProjects ? 180 : 0 }}
+                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </motion.div>
+            </motion.button>
+          )}
         </section>
 
         {/* ── WRITING ── */}
@@ -1087,7 +1214,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '-80px' }}
+            viewport={{ once: false, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -1095,57 +1222,66 @@ export default function App() {
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Rigorous Frames</span>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Title */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
+              {lang === 'en' ? (
+                <>Things I've been<br className="hidden sm:block" /> <span className="text-highlight">thinking about</span></>
+              ) : (
+                <>Hal yang sedang<br className="hidden sm:block" /> <span className="text-highlight">saya pikirkan</span></>
+              )}
+            </h2>
+          </div>
+
+          {/* Medium-style list layout */}
+          <div className="flex flex-col gap-4">
             {WRITINGS.map((write: Writing, idx: number) => {
               const isHovered = hoveredWritingId === write.id;
               const isExpanded = expandedWritingId === write.id;
 
-              // Topic tag category color coding for high visual hierarchy separation
               const getTopicTagStyle = (tag: string) => {
-                if (tag === 'Reinforcement Learning') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
-                if (tag === 'RAG Pipelines') return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]';
-                if (tag === 'LLM Agents') return 'text-[#5A3A6A] bg-[#F7F2F9] border border-[#DFCEE6]';
-                return 'text-[#B45028] bg-[#FAF3F0] border border-[#F3DEC2]'; // Explainable AI / default
+                if (tag === 'Education & AI') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
+                if (tag === 'Design & AI') return 'text-[#5A3A6A] bg-[#F7F2F9] border border-[#DFCEE6]';
+                if (tag === 'AI Engineering') return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]';
+                return 'text-[#B45028] bg-[#FAF3F0] border border-[#F3DEC2]'; // AI Strategy / default
               };
 
               return (
-                <motion.div
+                <motion.a
                   key={write.id}
                   id={`writing-item-${write.id}`}
-                  custom={idx}
+                  href={write.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, margin: '-85px' }}
+                  viewport={{ once: false, margin: '120px' }}
                   variants={cardVariants}
-                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                   onMouseEnter={() => setHoveredWritingId(write.id)}
                   onMouseLeave={() => setHoveredWritingId(null)}
                   onClick={(e) => handleWritingClick(write.id, e)}
-                  className="group flex flex-col gap-4 p-5 rounded-2xl border border-surface/60 bg-white cursor-pointer transition-[border-color,background-color,box-shadow] duration-150 hover:bg-[#fafdfb] hover:border-highlight/50 hover:shadow-lg shadow-sm"
+                  className="group flex flex-wrap items-start gap-4 sm:gap-5 p-4 sm:p-5 cursor-pointer rounded-2xl border border-surface/60 bg-white shadow-sm hover:border-highlight/40 hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="flex flex-col gap-2 flex-1">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`text-[9px] font-mono tracking-widest uppercase px-2 py-0.5 border rounded-md font-bold transition-transform duration-300 group-hover:scale-102 ${getTopicTagStyle(write.topicTag)}`}>
-                          {write.topicTag}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-[#4A607A] font-semibold group-hover:text-highlight transition-colors duration-250">{write.date}</span>
+                  {/* Left: Text content */}
+                  <div className="flex-1 flex flex-col gap-1.5 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-[9px] font-mono tracking-widest uppercase px-2 py-0.5 border rounded-md font-bold ${getTopicTagStyle(write.topicTag)}`}>
+                        {write.topicTag}
+                      </span>
+                      <span className="text-[10px] font-mono text-secondary/60 font-semibold">{write.date}</span>
                     </div>
 
-                    <h4 className="text-[15.5px] sm:text-[16.5px] font-serif tracking-tight text-primary group-hover:text-highlight transition-colors duration-150 font-semibold leading-snug">
-                      <a href={write.link} target="_blank" rel="noopener noreferrer" className="flex items-start justify-between gap-2 focus:outline-none">
-                        <span>{write.title}</span>
-                        <ArrowUpRight className="h-4 w-4 opacity-0 scale-50 group-hover:opacity-90 group-hover:scale-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:rotate-12 transition-all duration-300 text-highlight hidden lg:block flex-shrink-0 mt-0.5" />
-                      </a>
+                    <h4 className="text-[15.5px] sm:text-[17px] font-serif tracking-tight text-primary group-hover:text-highlight transition-colors duration-150 font-semibold leading-snug">
+                      {write.title}
                     </h4>
 
-                    <p className="text-[13.5px] text-[#2C3E50] leading-relaxed font-light">
+                    <p className="text-[13px] text-secondary leading-relaxed font-light line-clamp-2">
                       {write.framing}
                     </p>
 
-                    {/* Desktop hover extract */}
+                    {/* Desktop: excerpt on hover */}
                     <AnimatePresence initial={false}>
                       {isHovered && (
                         <motion.div
@@ -1155,24 +1291,27 @@ export default function App() {
                           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                           className="hidden lg:block overflow-hidden"
                         >
-                          <p className="text-[12.5px] leading-relaxed text-secondary border-l-2 border-highlight pl-3 mt-2 font-normal">
+                          <p className="text-[12px] leading-relaxed text-secondary/80 border-l-2 border-highlight pl-3 font-normal">
                             {write.excerpt}
                           </p>
                         </motion.div>
                       )}
                     </AnimatePresence>
+
+                    <div className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-highlight font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {lang === 'en' ? 'Read article' : 'Baca artikel'}
+                      <ArrowUpRight className="w-3 h-3" />
+                    </div>
                   </div>
 
+                  {/* Right: Thumbnail */}
                   {write.imagePath && (
-                    <div className="w-full h-36 rounded-xl border border-[#DEE2E6] overflow-hidden relative bg-surface/20">
-                      {/* Subtle blueprint drafts grid */}
-                      <div className="absolute inset-0 bg-grid-fine opacity-20 pointer-events-none z-10" />
+                    <div className="flex-shrink-0 h-20 sm:h-24 aspect-[4/3] rounded-lg overflow-hidden bg-surface/30 border border-surface/50 group-hover:border-highlight/20 transition-all duration-300">
                       <img
                         src={write.imagePath}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 opacity-[0.88] group-hover:opacity-100 mix-blend-multiply"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#181815]/5 via-transparent to-transparent opacity-80 group-hover:from-transparent transition-all duration-500" />
                     </div>
                   )}
 
@@ -1184,7 +1323,7 @@ export default function App() {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.22 }}
-                        className="block lg:hidden overflow-hidden bg-surface/30 p-3 rounded-lg"
+                        className="block lg:hidden overflow-hidden bg-surface/30 p-3 rounded-lg col-span-full w-full"
                       >
                         <p className="text-[13px] leading-relaxed text-secondary font-light mb-3">{write.excerpt}</p>
                         <a href={write.link} target="_blank" rel="noopener noreferrer" className="text-[11px] text-highlight font-mono inline-flex items-center gap-1 uppercase tracking-wider font-semibold">
@@ -1193,7 +1332,7 @@ export default function App() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </motion.div>
+                </motion.a>
               );
             })}
           </div>
@@ -1213,7 +1352,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '-80px' }}
+            viewport={{ once: false, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -1289,8 +1428,8 @@ export default function App() {
                   target={id !== 'email' ? '_blank' : undefined}
                   rel="noopener noreferrer"
                   onClick={onClick}
-                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 520, damping: 26, mass: 0.5 } }}
-                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 680, damping: 22, mass: 0.45 } }}
+                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                   initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false, margin: '-60px' }}

@@ -128,9 +128,6 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
           {/* Project blueprint image */}
           {project.imagePath && (
             <div className="flex flex-col gap-2 border border-surface/50 rounded overflow-hidden bg-bg p-2 sm:p-4 my-2" id="modal-image-wrapper">
-              <span className="text-[9px] font-mono text-secondary/60 tracking-wider uppercase">
-                {lang === 'en' ? 'ARCHITECTURAL SCHEMATIC OUTLINE (SYSTEM MODEL)' : 'OUTLINE SKEMATIS ARSITEKTUR (MODEL SISTEM)'}
-              </span>
               <img
                 src={project.imagePath}
                 alt={`${project.name} technical blueprint`}

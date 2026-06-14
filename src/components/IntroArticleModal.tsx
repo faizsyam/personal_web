@@ -24,7 +24,7 @@ const SLIDES: Slide[] = [
     num: "01",
     titleEn: "The Foundation: AI & ML Engineering",
     titleId: "Pondasi Utama: Rekayasa AI & ML",
-    image: "/images/ai_core_blueprint_1781203003745.jpg",
+    image: "/images/mira.png",
     contentEn: (
       <div className="flex flex-col gap-3.5 text-secondary">
         <p>
