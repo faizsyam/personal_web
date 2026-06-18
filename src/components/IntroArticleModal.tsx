@@ -101,71 +101,10 @@ const SLIDES: Slide[] = [
     )
   },
   {
-    id: "overlaps",
+    id: "intelligence-craft",
     num: "04",
-    titleEn: "Where They Meet: The Overlaps",
-    titleId: "Titik Temu: Di mana Mereka Melebur",
-    image: "/images/workspace_layer_blueprint_1781203056668.jpg",
-    contentEn: (
-      <div className="flex flex-col gap-3.5 text-secondary text-[13.5px]">
-        <p className="text-[14px]">
-          The real magic happens when these different worlds cross and support each other:
-        </p>
-        <ul className="flex flex-col gap-2.5 pl-1">
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium">AI & Interaction (AI × HCI):</strong> Writing clear prompts, designing natural chatbot dialogues, and creating environments where humans and AI collaborate seamlessly.
-            </div>
-          </li>
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium">AI & Design (AI × Design):</strong> Using smart generative imagery to tell visual stories, and transforming complex neural network math into readable, artistic charts.
-            </div>
-          </li>
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium">Interaction & Design (HCI × Design):</strong> Building quick mockups, interactive prototypes, and ensuring layouts are visually inclusive and accessible to everyone.
-            </div>
-          </li>
-        </ul>
-      </div>
-    ),
-    contentId: (
-      <div className="flex flex-col gap-3.5 text-secondary text-[13.5px]">
-        <p className="text-[14px]">
-          Keseruan sesungguhnya terjadi ketika tiga dunia berbeda ini saling beririsan dan bekerja sama secara harmonis:
-        </p>
-        <ul className="flex flex-col gap-2.5 pl-1">
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium font-sans">AI & Interaksi (AI × HCI):</strong> Merumuskan instruksi cerdas, merancang percakapan chatbot yang mengalir, dan membangun ruang kolaborasi yang alami antara manusia dengan AI.
-            </div>
-          </li>
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium font-sans">AI & Desain (AI × Desain):</strong> Memanfaatkan sistem gambar generatif untuk merajut cerita visual, serta mengubah kalkulasi rumit jaringan saraf menjadi visualisasi artistik yang mudah dipahami.
-            </div>
-          </li>
-          <li className="flex gap-2 items-start">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-            <div>
-              <strong className="text-primary font-medium font-sans">Interaksi & Desain (HCI × Design):</strong> Merancang konsep awal, menyusun prototipe interaktif, dan memastikan seluruh halaman bersifat inklusif serta mudah diakses semua orang (aksesibilitas).
-            </div>
-          </li>
-        </ul>
-      </div>
-    )
-  },
-  {
-    id: "center",
-    num: "05",
-    titleEn: "At the Center: AI Product Development",
-    titleId: "Di Pusat Utama: Pengembangan Produk AI",
+    titleEn: "Intelligence as a Craft",
+    titleId: "Kecerdasan sebagai Karya",
     image: "/images/workspace_layer_blueprint_1781203056668.jpg",
     contentEn: (
       <div className="flex flex-col gap-3.5 text-secondary">
@@ -174,6 +113,15 @@ const SLIDES: Slide[] = [
         </p>
         <p>
           My goal is not just to build a predictive backend model or design a static screen mockup. It is to craft living software products—like beautiful analytic dashboards, data visualizations, and interactive apps—that respect your time, clarify heavy numbers, and make complex technology feel like second nature.
+        </p>
+        <p>
+          Building intelligent systems is not just a technical exercise—it is a form of craftsmanship. Every line of code, every interaction design, every visual choice reflects a deliberate act of care. True intelligence in products comes not just from algorithms, but from the human intent that shapes them.
+        </p>
+        <p>
+          I see each project as an opportunity to blend rigor with artistry. Whether it is training a model, designing a data story, or refining a product's micro-interactions, the goal is the same: to build something that feels considered, trustworthy, and alive.
+        </p>
+        <p>
+          In the end, it is all about <strong className="text-primary">Intelligence as a Craft</strong>—where science meets art, and every detail matters.
         </p>
       </div>
     ),
@@ -184,6 +132,15 @@ const SLIDES: Slide[] = [
         </p>
         <p>
           Misi utama saya bukan sekadar meluncurkan sistem backend pintar secara terpisah atau menggambar sketsa layar yang diam. Melainkan merajut produk perangkat lunak utuh—seperti dashboard analitis yang indah, visualisasi data interaktif, dan aplikasi siap pakai—yang menghargai waktu Anda, menyederhanakan rumitnya data, dan membuat teknologi bekerja secara alami demi kehidupan harian Anda.
+        </p>
+        <p>
+          Membangun sistem cerdas bukan sekadar latihan teknis—ini adalah bentuk kriya. Setiap baris kode, setiap rancangan interaksi, setiap pilihan visual mencerminkan tindakan penuh kesungguhan. Kecerdasan sejati dalam sebuah produk tidak terlepas dari algoritma saja, tetapi dari niat manusia yang membentuknya.
+        </p>
+        <p>
+          Saya memandang setiap proyek sebagai kesempatan untuk memadukan ketelitian dengan seni. Baik saat melatih sebuah model, merancang narasi data, atau menyempurnakan mikro-interaksi sebuah produk, tujuannya tetap sama: membangun sesuatu yang terasa tulus, tepercaya, dan hidup.
+        </p>
+        <p>
+          Pada akhirnya, ini selalu tentang <strong className="text-primary">Kecerdasan sebagai Karya</strong>—di sana sains bertemu seni, dan setiap detail berarti.
         </p>
       </div>
     )

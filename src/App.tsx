@@ -352,11 +352,11 @@ export default function App() {
             <HelloSticker />
 
             {/* Description */}
-            <InteractiveSubtitle className="max-w-[500px] mb-10 text-[15.5px] sm:text-[16.5px] leading-relaxed font-light">
+            <InteractiveSubtitle className="max-w-[550px] mb-10 leading-relaxed font-light">
               {lang === 'en' ? (
                 <span className="flex flex-col gap-3.5 text-left">
                   <div
-                    className="relative inline-block text-[20px] sm:text-[24px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
+                    className="relative inline-block text-[22px] sm:text-[26px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
                   >
                     {("I build intelligent systems with a focus on both technical depth and user experience.").split(' ').map((word, i, arr) => {
                       const isHighlight = ["technical","depth","user","experience."].includes(word);
@@ -388,14 +388,14 @@ export default function App() {
                       );
                     })}
                   </div>
-                  <span>
+                  <span className="text-[16px] sm:text-[18px]">
                     From AI agents to production applications, I care as much about how things work as how they feel to use.
                   </span>
                 </span>
               ) : (
                 <span className="flex flex-col gap-3.5 text-left">
                   <div
-                    className="relative inline-block text-[20px] sm:text-[24px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
+                    className="relative inline-block text-[22px] sm:text-[26px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
                   >
                     {("Saya membangun sistem cerdas dengan fokus pada kedalaman teknis dan pengalaman pengguna.").split(' ').map((word, i, arr) => {
                       const isHighlight = ["kedalaman","teknis","pengalaman","pengguna."].includes(word);
@@ -427,7 +427,7 @@ export default function App() {
                       );
                     })}
                   </div>
-                  <span>
+                  <span className="text-[16px] sm:text-[18px]">
                     Mulai dari AI agent hingga aplikasi yang digunakan di dunia nyata, saya peduli tidak hanya pada bagaimana teknologi bekerja, tetapi juga bagaimana rasanya saat digunakan.
                   </span>
                 </span>
@@ -625,10 +625,13 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.3, margin: '120px' }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
-                className="mt-3.5 group flex items-center gap-1.5 text-xs font-mono font-bold text-[#153d82] hover:text-[#081d45] transition-all duration-150 self-start cursor-pointer focus:outline-none"
+                className="mt-4 group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-accent/20 hover:bg-accent/[0.06] hover:border-accent/35 transition-all duration-200 self-start cursor-pointer focus:outline-none shadow-sm"
               >
-                <span>{lang === 'en' ? 'Read More' : 'Baca Selengkapnya'}</span>
-                <span className="transition-transform duration-150 group-hover:translate-x-0.5 text-[#153d82]/60 group-hover:text-[#081d45]">→</span>
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="text-[10px] font-mono font-bold text-accent/70 tracking-wider uppercase">{lang === 'en' ? 'Read More' : 'Baca Selengkapnya'}</span>
+                  <span className="text-[13px] font-medium text-accent">Intelligence as a Craft</span>
+                </span>
+                <span className="transition-transform duration-200 group-hover:translate-x-0.5 text-accent/60 group-hover:text-accent">→</span>
               </motion.button>
             </div>
 
@@ -1231,6 +1234,11 @@ export default function App() {
                 <>Hal yang sedang<br className="hidden sm:block" /> <span className="text-highlight">saya pikirkan</span></>
               )}
             </h2>
+            <img
+              src="/images/banner_writing.png"
+              alt=""
+              className="w-full sm:w-auto sm:max-w-[300px] lg:max-w-[360px] h-auto object-contain rounded-lg flex-shrink-0"
+            />
           </div>
 
           {/* Medium-style list layout */}

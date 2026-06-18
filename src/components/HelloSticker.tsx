@@ -5,7 +5,7 @@ export default function HelloSticker() {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="relative inline-block w-full max-w-[240px] sm:max-w-[270px] mb-6 mt-2 select-none">
+    <div className="relative inline-block w-full max-w-[220px] sm:max-w-[250px] mb-4 mt-0 ml-7 select-none">
       {/* Decorative physical drop shadow behind the sticker */}
       <div
         className="absolute inset-[3px] bg-black/10 blur-[4px] rounded-xl transform rotate-[-2.5deg] pointer-events-none transition-opacity duration-300"
@@ -37,13 +37,13 @@ export default function HelloSticker() {
           stiffness: 220,
           damping: 18
         }}
-        className="relative w-full aspect-[16/10] select-none cursor-grab active:cursor-grabbing"
+        className="relative w-full aspect-[16/9.5] select-none cursor-grab active:cursor-grabbing"
       >
         {/* Cute faiz sticker — stuck on the label, peeks out top-left */}
         <motion.img
           src="/images/sticker_faiz_1.png"
           alt=""
-          className="absolute top-[24px] left-[-24px] w-[104px] h-auto pointer-events-none z-30 select-none"
+          className="absolute top-[24px] left-[-42px] w-[104px] h-auto pointer-events-none z-30 select-none"
           style={{ rotate: -6 }}
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -71,7 +71,7 @@ export default function HelloSticker() {
           <div className="absolute top-0 bottom-0 right-[12%] w-[1px] bg-black/[0.015] pointer-events-none" />
 
           {/* Classic Red Header Bar */}
-          <div className="bg-[#E22E2E] text-white flex flex-col items-center justify-center pt-3 pb-2.5 px-3 relative z-10 border-b-[0.5px] border-red-700/10">
+          <div className="bg-[#E22E2E] text-white flex flex-col items-center justify-center pt-2 pb-1.5 px-3 relative z-10 border-b-[0.5px] border-red-700/10">
             {/* Subtle glossy sheen reflection line on the red part */}
             <div className="absolute inset-x-0 top-0 h-[1.2px] bg-white/20" />
             <div className="absolute inset-0 bg-gradient-to-r from-white/[0.03] via-transparent to-black/[0.03]" />
@@ -98,7 +98,7 @@ export default function HelloSticker() {
               initial={{ scale: 0.82, opacity: 0, rotate: -5 }}
               animate={{ scale: 1, opacity: 1, rotate: -2.5 }}
               transition={{ delay: 0.35, type: 'spring', stiffness: 140 }}
-              className="flex flex-col items-center select-none mt-[-5px]"
+              className="flex flex-col items-center select-none mt-[-15px]"
             >
               {/* Ink bleed shadows */}
               <span
