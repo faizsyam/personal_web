@@ -22,6 +22,7 @@ export interface Project {
   domainTags: string[];
   status: 'Active' | 'Completed' | 'Research';
   context: LocStr;
+  challenge: LocStr;
   description: LocStr;
   depthTradeoff: LocStr;
   stack: string[];

@@ -235,22 +235,23 @@ export default function App() {
         </div>
       </header>
 
-      <main className="w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col gap-32 sm:gap-40 pb-24 relative z-10">
+      <main className="w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col gap-32 sm:gap-40 relative z-10">
 
         {/* ── HERO ── */}
-        <section id="home" className="relative pt-10 sm:pt-14 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16 items-start min-h-[60vh]">
+        <section id="home" className="relative grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16 min-h-screen min-h-[calc(100vh-56px)] pt-14 sm:pt-18 lg:pt-20">
           <Suspense fallback={null}>
             <FloatingGlyph />
           </Suspense>
 
           {/* Left */}
-          <div className="flex flex-col">
-            {/* Name Sticker */}
-            <HelloSticker />
+          <div className="flex flex-col justify-between lg:justify-start min-h-0">
+            <div className="flex flex-col gap-8 lg:gap-10 pt-4 lg:pt-0">
+              {/* Name Sticker */}
+              <HelloSticker />
 
-            {/* Description */}
-            <InteractiveSubtitle className="max-w-[550px] mb-10 leading-relaxed font-light">
-              {(() => {
+              {/* Description */}
+              <InteractiveSubtitle className="max-w-[550px] leading-relaxed font-light">
+                {(() => {
                 const headline = localize({ en: HERO.tagline.headlineEn, id: HERO.tagline.headlineId }, lang);
                 const tail = localize({ en: HERO.tagline.tailEn, id: HERO.tagline.tailId }, lang);
                 const highlightWords = localize({ en: HERO.tagline.highlightWordsEn, id: HERO.tagline.highlightWordsId }, lang);
@@ -350,7 +351,7 @@ export default function App() {
               whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
               whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex lg:hidden flex-col sm:flex-row gap-5 items-center sm:items-start p-5 mt-10 rounded-2xl border border-surface/60 bg-white hover:border-highlight/30 hover:shadow-md transition-all duration-300 shadow-sm cursor-pointer group"
+              className="flex lg:hidden flex-col sm:flex-row gap-5 items-center sm:items-start p-5 mt-auto rounded-2xl border border-surface/60 bg-white hover:border-highlight/30 hover:shadow-md transition-all duration-300 shadow-sm cursor-pointer group"
             >
               <PortraitReveal
                 baseSrc="/images/profile_1.webp"
@@ -373,13 +374,14 @@ export default function App() {
               </div>
             </motion.div>
           </div>
+        </div>
 
           {/* Right — profile panel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:flex flex-col gap-4 w-full"
+            className="hidden lg:flex flex-col gap-4 w-full min-h-0"
           >
             {/* Photo card styled as a vintage physical specimen/draft slide */}
             <motion.div

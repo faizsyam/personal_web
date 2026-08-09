@@ -43,6 +43,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
 
   const title = localize(project.subtitle, lang);
   const context = localize(project.context, lang);
+  const challenge = localize(project.challenge, lang);
   const description = localize(project.description, lang);
   const depthTradeoff = localize(project.depthTradeoff, lang);
 
@@ -122,6 +123,14 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
               {localize({ en: UI.modalLabels.project.contextEn, id: UI.modalLabels.project.contextId }, lang)}
             </span>
             <p className="font-light">{context}</p>
+          </div>
+
+          {/* The Challenge */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
+              {localize({ en: UI.modalLabels.project.challengeEn, id: UI.modalLabels.project.challengeId }, lang)}
+            </span>
+            <p className="font-light">{challenge}</p>
           </div>
 
           {/* Description */}

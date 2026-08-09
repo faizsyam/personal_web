@@ -51,6 +51,8 @@
       "closeId": "Tutup proyek",
       "contextEn": "Context",
       "contextId": "Konteks",
+      "challengeEn": "The Challenge",
+      "challengeId": "Tantangan",
       "solutionEn": "The Solution",
       "solutionId": "Solusi",
       "tradeoffsEn": "Tradeoffs & Decision Design",

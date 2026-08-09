@@ -13,6 +13,7 @@ const STATUS_MESSAGES = [
   'Rendering layouts…',
   'Loading schematics…',
   'Finalizing draft…',
+  'Mounting app…',
 ];
 
 function preloadImage(src: string): Promise<void> {
@@ -40,12 +41,12 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
     const updateProgress = () => {
       completedRef.current += 1;
-      const pct = (completedRef.current / total) * 100;
+      const pct = Math.min((completedRef.current / total) * 100, 99);
       setProgress(pct);
 
       const msgIdx = Math.min(
-        Math.floor((completedRef.current / total) * STATUS_MESSAGES.length),
-        STATUS_MESSAGES.length - 1
+        Math.floor((completedRef.current / total) * (STATUS_MESSAGES.length - 1)),
+        STATUS_MESSAGES.length - 2
       );
       setStatus(STATUS_MESSAGES[msgIdx] || 'Finalizing');
     };
@@ -70,16 +71,25 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       if (hasCompletedRef.current) return;
       hasCompletedRef.current = true;
 
-      setProgress(100);
-      setStatus('Complete');
-      setTimeout(onComplete, 500);
+      // Cap at 99% and show mounting status while app initializes
+      setProgress(99);
+      setStatus(STATUS_MESSAGES[STATUS_MESSAGES.length - 1]); // 'Mounting app…'
+
+      // Defer to next frame so React can mount the app, then complete
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setProgress(100);
+          setStatus('Complete');
+          setTimeout(onComplete, 300);
+        });
+      });
     }).catch((err) => {
       console.error('[LoadingScreen] Error during loading:', err);
       if (!hasCompletedRef.current) {
         hasCompletedRef.current = true;
         setProgress(100);
         setStatus('Complete');
-        setTimeout(onComplete, 500);
+        setTimeout(onComplete, 300);
       }
     });
   }, [images, onComplete]);
