@@ -2,6 +2,7 @@ import {StrictMode, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import LoadingScreen from './components/LoadingScreen.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 import './index.css';
 
 function Root() {
@@ -9,8 +10,13 @@ function Root() {
 
   return (
     <StrictMode>
-      {!isLoaded && <LoadingScreen onComplete={() => setIsLoaded(true)} />}
-      {isLoaded && <App />}
+      <ErrorBoundary>
+        {!isLoaded ? (
+          <LoadingScreen onComplete={() => setIsLoaded(true)} />
+        ) : (
+          <App />
+        )}
+      </ErrorBoundary>
     </StrictMode>
   );
 }

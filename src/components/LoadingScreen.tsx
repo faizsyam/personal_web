@@ -19,7 +19,7 @@ function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => resolve();
-    img.onerror = () => resolve();
+    img.onerror = () => resolve(); // Don't fail on individual image errors
     img.src = src;
   });
 }
@@ -28,6 +28,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('Initializing…');
   const completedRef = useRef(0);
+  const hasCompletedRef = useRef(false);
 
   const images = useMemo(() => {
     return (imageList as string[]) || [];
@@ -53,12 +54,33 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       promises.push(preloadImage(src).then(updateProgress));
     }
 
+    // Minimum display time - ensure loading screen shows for at least some time
     const minTime = new Promise<void>((r) => setTimeout(r, 900));
 
-    Promise.all([...promises, minTime]).then(() => {
+    // Safety timeout - if anything hangs, force complete after 10 seconds
+    const safetyTimeout = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.warn('[LoadingScreen] Safety timeout triggered, forcing completion');
+        resolve();
+      }, 10000);
+    });
+
+    Promise.all([...promises, minTime, safetyTimeout]).then(() => {
+      // Prevent duplicate completion calls
+      if (hasCompletedRef.current) return;
+      hasCompletedRef.current = true;
+
       setProgress(100);
       setStatus('Complete');
       setTimeout(onComplete, 500);
+    }).catch((err) => {
+      console.error('[LoadingScreen] Error during loading:', err);
+      if (!hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        setProgress(100);
+        setStatus('Complete');
+        setTimeout(onComplete, 500);
+      }
     });
   }, [images, onComplete]);
 

@@ -1,6 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { INTRO_SLIDES } from '../data/content';
+import { localize } from '../lib/localize';
+
+const ALLOWED_TAGS = ['em', 'strong', 'p', 'br', 'span', 'div'];
+
+function sanitizeHtml(html: string): string {
+  const tagRegex = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
+  return html.replace(tagRegex, (match, tagName) => {
+    if (ALLOWED_TAGS.includes(tagName.toLowerCase())) {
+      return match;
+    }
+    return '';
+  });
+}
+
+interface SlideData {
+  id: string;
+  num: string;
+  titleEn: string;
+  titleId: string;
+  image: string;
+  paragraphsEn: string[];
+  paragraphsId: string[];
+}
 
 interface IntroArticleModalProps {
   isOpen: boolean;
@@ -8,151 +32,14 @@ interface IntroArticleModalProps {
   lang: 'en' | 'id';
 }
 
-interface Slide {
-  id: string;
-  num: string;
-  titleEn: string;
-  titleId: string;
-  image: string;
-  contentEn: React.ReactNode;
-  contentId: React.ReactNode;
-}
-
-const SLIDES: Slide[] = [
-  {
-    id: "ai-ml",
-    num: "01",
-    titleEn: "The Foundation: AI & ML Engineering",
-    titleId: "Pondasi Utama: Rekayasa AI & ML",
-    image: "/images/mira.png",
-    contentEn: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Think of artificial intelligence as a powerful engine. Building it requires writing clean code, setting up neural networks, testing machine learning models, and building automatic pipelines to keep everything running in the background.
-        </p>
-        <p>
-          But code alone is only half the story. A brilliant model tucked away inside a lonely server endpoint can't help anyone. To make it truly valuable, we have to bring it out of the lab and into the hands of real people.
-        </p>
-      </div>
-    ),
-    contentId: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Bayangkan kecerdasan buatan seperti mesin mobil yang kuat. Membangunnya memerlukan kode pemrograman yang bersih, merancang jaringan saraf tiruan (neural networks), menguji model pintar, serta menjaga agar sistem tetap berjalan stabil di latar belakang.
-        </p>
-        <p>
-          Namun, baris kode barulah setengah jalan. Model yang luar biasa pintar sekalipun tidak akan membawa makna jika hanya tersimpan di dalam server yang sunyi. Agar berguna secara nyata, kita harus meluncurkannya ke dunia luar untuk bisa digunakan banyak orang.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: "hci",
-    num: "02",
-    titleEn: "The Connection: Human-Computer Interaction (HCI)",
-    titleId: "Hubungan Manusia-Komputer: HCI",
-    image: "/images/hci_layer_blueprint_1781203023489.jpg",
-    contentEn: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          This is where we focus on the human side of the screen. Before we write any code, we look at the big picture. We ask: <em>How do people actually work? What are their daily habits, and what are they trying to achieve?</em>
-        </p>
-        <p>
-          We run usability research and study workflows to design systems that feel natural, predictable, and friendly. It is not about making a system that is just technically smart; it is about building software you can easily understand and trust.
-        </p>
-      </div>
-    ),
-    contentId: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Di sinilah kita mulai berfokus pada manusia di depan layar. Sebelum menulis kode, kita melihat gambaran besarnya dahulu. Kita mempelajari kebiasaan harian pengguna, apa tujuan mereka, dan bagaimana teknologi bisa membantu mempermudah hidup mereka.
-        </p>
-        <p>
-          Lewat riset kemudahan penggunaan (usability) dan pemetaan alur kerja, kita menciptakan sistem yang terasa akrab, ramah, dan mudah ditebak. Ini bukan sekadar membuat program yang canggih secara teknis, melainkan tentang membangun perangkat lunak yang bersahabat dan tepercaya.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: "visual-creative",
-    num: "03",
-    titleEn: "The Feeling: Visual & Creative Design",
-    titleId: "Sentuhan Rasa: Desain Visual & Kreatif",
-    image: "/images/visual_layer_blueprint_1781203039742.jpg",
-    contentEn: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Visual design is the comfort that makes the digital journey enjoyable. It is about crafting clear brand identities, original illustrations, and digital layouts that make a screen feel warm and approachable.
-        </p>
-        <p>
-          Great design is never just decoration. When we align typography perfectly and space buttons out carefully, we are making complex systems instantly easier to read. A clean, beautiful layout lowers your stress and welcomes you into the digital space.
-        </p>
-      </div>
-    ),
-    contentId: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Desain visual adalah kenyamanan utama ketika kita menjelajahi dunia digital. Ini meliputi penyusunan identitas merek, pembuatan ilustrasi, serta tata letak artistik yang membuat tampilan layar terasa hangat dan menyambut.
-        </p>
-        <p>
-          Desain yang cerdas bukan sekadar hiasan. Saat kita merapikan tipografi dan mengatur jarak tombol dengan cermat, kita sedang membuat sistem rumit menjadi sangat mudah dibaca. Tampilan yang bersih meredakan stres dan menyambut Anda ke dalam ruang digital.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: "intelligence-craft",
-    num: "04",
-    titleEn: "Intelligence as a Craft",
-    titleId: "Kecerdasan sebagai Karya",
-    image: "/images/workspace_layer_blueprint_1781203056668.jpg",
-    contentEn: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Right in the middle of this diagram is my absolute playground: <strong>AI Product Development</strong>. It requires bringing all these horizons together to build cohesive, user-friendly solutions.
-        </p>
-        <p>
-          My goal is not just to build a predictive backend model or design a static screen mockup. It is to craft living software products—like beautiful analytic dashboards, data visualizations, and interactive apps—that respect your time, clarify heavy numbers, and make complex technology feel like second nature.
-        </p>
-        <p>
-          Building intelligent systems is not just a technical exercise—it is a form of craftsmanship. Every line of code, every interaction design, every visual choice reflects a deliberate act of care. True intelligence in products comes not just from algorithms, but from the human intent that shapes them.
-        </p>
-        <p>
-          I see each project as an opportunity to blend rigor with artistry. Whether it is training a model, designing a data story, or refining a product's micro-interactions, the goal is the same: to build something that feels considered, trustworthy, and alive.
-        </p>
-        <p>
-          In the end, it is all about <strong className="text-primary">Intelligence as a Craft</strong>—where science meets art, and every detail matters.
-        </p>
-      </div>
-    ),
-    contentId: (
-      <div className="flex flex-col gap-3.5 text-secondary">
-        <p>
-          Tepat di titik temu terdalam dari diagram ini adalah dunia bermain utama saya: <strong>Pengembangan Produk AI (AI Product Development)</strong>. Ranah ini memadukan seluruh pilar untuk melahirkan solusi digital yang nyaman digunakan manusia.
-        </p>
-        <p>
-          Misi utama saya bukan sekadar meluncurkan sistem backend pintar secara terpisah atau menggambar sketsa layar yang diam. Melainkan merajut produk perangkat lunak utuh—seperti dashboard analitis yang indah, visualisasi data interaktif, dan aplikasi siap pakai—yang menghargai waktu Anda, menyederhanakan rumitnya data, dan membuat teknologi bekerja secara alami demi kehidupan harian Anda.
-        </p>
-        <p>
-          Membangun sistem cerdas bukan sekadar latihan teknis—ini adalah bentuk kriya. Setiap baris kode, setiap rancangan interaksi, setiap pilihan visual mencerminkan tindakan penuh kesungguhan. Kecerdasan sejati dalam sebuah produk tidak terlepas dari algoritma saja, tetapi dari niat manusia yang membentuknya.
-        </p>
-        <p>
-          Saya memandang setiap proyek sebagai kesempatan untuk memadukan ketelitian dengan seni. Baik saat melatih sebuah model, merancang narasi data, atau menyempurnakan mikro-interaksi sebuah produk, tujuannya tetap sama: membangun sesuatu yang terasa tulus, tepercaya, dan hidup.
-        </p>
-        <p>
-          Pada akhirnya, ini selalu tentang <strong className="text-primary">Kecerdasan sebagai Karya</strong>—di sana sains bertemu seni, dan setiap detail berarti.
-        </p>
-      </div>
-    )
-  }
-];
-
 export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticleModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const slides = INTRO_SLIDES.slides as SlideData[];
+
   const handleNext = () => {
-    if (currentSlide < SLIDES.length - 1) setCurrentSlide(p => p + 1);
+    if (currentSlide < slides.length - 1) setCurrentSlide(p => p + 1);
   };
 
   const handlePrev = () => {
@@ -180,8 +67,9 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
 
   if (!isOpen) return null;
 
-  const activeSlide = SLIDES[currentSlide];
-  const progress = ((currentSlide + 1) / SLIDES.length) * 100;
+  const activeSlide = slides[currentSlide];
+  const progress = ((currentSlide + 1) / slides.length) * 100;
+  const paragraphs = lang === 'en' ? activeSlide.paragraphsEn : activeSlide.paragraphsId;
 
   return (
     <AnimatePresence>
@@ -237,7 +125,7 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-surface/40">
                 <motion.div
                   className="h-full bg-highlight/70 rounded-r-full"
-                  initial={{ width: `${(currentSlide / SLIDES.length) * 100}%` }}
+                  initial={{ width: `${(currentSlide / slides.length) * 100}%` }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 />
@@ -246,7 +134,7 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
               {/* Close button */}
               <button
                 onClick={onClose}
-                aria-label="Close modal"
+                aria-label={localize({ en: 'Close', id: 'Tutup' }, lang)}
                 className="absolute top-3 right-3 p-2 rounded-full text-white/80 hover:text-white hover:bg-white/10 border border-white/20 backdrop-blur-sm transition-all duration-200 focus:outline-none z-10"
               >
                 <X className="h-4 w-4" />
@@ -290,7 +178,16 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
                 className="text-[14px] sm:text-[15px] leading-relaxed"
               >
-                {lang === 'en' ? activeSlide.contentEn : activeSlide.contentId}
+                <div className="flex flex-col gap-3.5 text-secondary">
+                  {paragraphs.map((p, i) => (
+                    <p
+                      key={i}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHtml(p),
+                      }}
+                    />
+                  ))}
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -309,12 +206,12 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
                 }`}
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
-                {currentSlide > 0 ? SLIDES[currentSlide - 1].num : '—'}
+                {currentSlide > 0 ? slides[currentSlide - 1].num : '—'}
               </button>
 
               {/* Dots */}
               <div className="flex items-center gap-1.5">
-                {SLIDES.map((slide, idx) => (
+                {slides.map((slide, idx) => (
                   <button
                     key={slide.id}
                     onClick={() => setCurrentSlide(idx)}
@@ -331,14 +228,14 @@ export default function IntroArticleModal({ isOpen, onClose, lang }: IntroArticl
               {/* Next */}
               <button
                 onClick={handleNext}
-                disabled={currentSlide === SLIDES.length - 1}
+                disabled={currentSlide === slides.length - 1}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-medium transition-all duration-200 border ${
-                  currentSlide === SLIDES.length - 1
+                  currentSlide === slides.length - 1
                     ? 'opacity-30 cursor-not-allowed text-secondary border-transparent'
                     : 'text-primary border-surface hover:border-highlight/40 hover:text-highlight hover:bg-white/60 cursor-pointer'
                 }`}
               >
-                {currentSlide < SLIDES.length - 1 ? SLIDES[currentSlide + 1].num : '—'}
+                {currentSlide < slides.length - 1 ? slides[currentSlide + 1].num : '—'}
                 <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>

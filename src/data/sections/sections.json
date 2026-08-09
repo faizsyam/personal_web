@@ -1,0 +1,72 @@
+{
+  "navItems": [
+    { "id": "about", "labelEn": "Brief", "labelId": "Profil" },
+    { "id": "work", "labelEn": "Work", "labelId": "Karir" },
+    { "id": "projects", "labelEn": "Projects", "labelId": "Proyek" },
+    { "id": "writing", "labelEn": "Writing", "labelId": "Tulisan" },
+    { "id": "contact", "labelEn": "Contact", "labelId": "Kontak" }
+  ],
+  "eyebrows": {
+    "about": {
+      "eyebrowLeftEn": "Brief intro",
+      "eyebrowLeftId": "Profil Ringkas",
+      "eyebrowRightEn": "Background",
+      "eyebrowRightId": "Latar Belakang"
+    },
+    "work": {
+      "eyebrowLeftEn": "Professional & Educational Arc",
+      "eyebrowLeftId": "Lintas Karir & Pendidikan",
+      "eyebrowRightEn": "Background",
+      "eyebrowRightId": "Latar Belakang"
+    },
+    "projects": {
+      "eyebrowLeftEn": "Selected Works",
+      "eyebrowLeftId": "Karya Terpilih",
+      "eyebrowRightEn": "Built & Research",
+      "eyebrowRightId": "Bangun & Riset"
+    },
+    "writing": {
+      "eyebrowLeftEn": "Curated Writing",
+      "eyebrowLeftId": "Tulisan Pilihan",
+      "eyebrowRightEn": "Rigorous Frames",
+      "eyebrowRightId": "Bingkai Kritis"
+    },
+    "contact": {
+      "eyebrowLeftEn": "Get In Touch",
+      "eyebrowLeftId": "Hubungi Saya",
+      "eyebrowRightEn": "Collab & Conversation",
+      "eyebrowRightId": "Kolaborasi & Diskusi"
+    }
+  },
+  "titleHeadlines": {
+    "about": {
+      "line1En": "At the intersection of",
+      "line1Id": "Di persimpangan antara",
+      "line2En": "AI, human, and creativity",
+      "line2Id": "AI, manusia, dan kreativitas"
+    },
+    "work": {
+      "line1En": "My background",
+      "line1Id": "Latar belakang",
+      "line2En": "work & education",
+      "line2Id": "pekerjaan & pendidikan"
+    },
+    "projects": {
+      "line1En": "What I've been",
+      "line1Id": "Yang sudah",
+      "line2En": "working on",
+      "line2Id": "saya kerjakan"
+    },
+    "writing": {
+      "line1En": "Things I've been",
+      "line1Id": "Hal yang sedang",
+      "line2En": "thinking about",
+      "line2Id": "saya pikirkan"
+    }
+  },
+  "banners": {
+    "work": "/images/banner_edu.png",
+    "projects": "/images/banner_work.png",
+    "writing": "/images/banner_writing.png"
+  }
+}

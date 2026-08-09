@@ -1,68 +1,35 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { VENN } from '../data/content';
+import { localize } from '../lib/localize';
 
 type Zone = 'ai' | 'hci' | 'design' | 'ai-hci' | 'ai-design' | 'hci-design' | 'center';
 
-const SKILLS: { zone: Zone; text: string; x: number; y: number }[] = [
-  // AI only — pure engineering, no UX or visual
-  { zone: 'ai', text: 'LLM fine-tuning',              x: 155, y: 115 },
-  { zone: 'ai', text: 'Agentic AI workflows',         x: 130, y: 140 },
-  { zone: 'ai', text: 'Deep learning (CV, RL, NLP)',  x: 110, y: 165 },
-  { zone: 'ai', text: 'MLOps & deployment',           x: 110, y: 190 },
-  { zone: 'ai', text: 'MCTS & game search',           x: 130, y: 215 },
+interface VennSkill {
+  zone: Zone;
+  textEn: string;
+  textId: string;
+  x: number;
+  y: number;
+}
 
-  // HCI only — human & product focused, no ML or visuals
-  { zone: 'hci', text: 'Usability research',    x: 545, y: 115 },
-  { zone: 'hci', text: 'Product strategy',      x: 570, y: 140 },
-  { zone: 'hci', text: 'Team leadership',       x: 590, y: 165 },
-  { zone: 'hci', text: 'User growth strategy',  x: 590, y: 190 },
-  { zone: 'hci', text: 'Requirement analysis',  x: 570, y: 215 },
-  { zone: 'hci', text: 'Game theory',           x: 545, y: 240 },
+interface VennZone {
+  id: Zone;
+  titleEn: string;
+  titleId: string;
+}
 
-  // Design only — pure craft, no AI or interaction logic
-  { zone: 'design', text: 'Brand identity',      x: 350, y: 435 },
-  { zone: 'design', text: 'Graphic Design',      x: 350, y: 457 },
-  { zone: 'design', text: 'Illustration',         x: 350, y: 479 },
-  { zone: 'design', text: 'Social media design', x: 350, y: 501 },
-  { zone: 'design', text: 'Campaign design',     x: 350, y: 523 },
+interface HitRegion {
+  zone: Zone;
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+}
 
-  // AI × HCI — AI systems that are shaped by user needs
-  { zone: 'ai-hci', text: 'Prompt engineering',  x: 350, y: 55 },
-  { zone: 'ai-hci', text: 'AI agent evaluation', x: 350, y: 71 },
-  { zone: 'ai-hci', text: 'Conversational UX',   x: 350, y: 87 },
-  { zone: 'ai-hci', text: 'Human-AI collaboration',    x: 350, y: 103 },
-  { zone: 'ai-hci', text: 'Game AI & mechanics', x: 350, y: 119 },
-
-  // AI × Design — where models meet visual output
-  { zone: 'ai-design', text: 'Generative imagery',      x: 215, y: 310 },
-  { zone: 'ai-design', text: 'Neural interpretability', x: 200, y: 332 },
-  { zone: 'ai-design', text: 'AI Video Storytelling',   x: 200, y: 354 },
-  { zone: 'ai-design', text: 'Data art & visual ML',    x: 215, y: 376 },
-
-  // HCI × Design — interface craft guided by user understanding
-  { zone: 'hci-design', text: 'UI/UX design',       x: 485, y: 310 },
-  { zone: 'hci-design', text: 'Wireframing',         x: 500, y: 332 },
-  { zone: 'hci-design', text: 'Prototyping',         x: 500, y: 354 },
-  { zone: 'hci-design', text: 'Accessibility (a11y)', x: 485, y: 376 },
-
-  // Center — requires all three simultaneously
-  { zone: 'center', text: 'AI product development',  x: 350, y: 195 },
-  { zone: 'center', text: 'Intelligent interfaces',  x: 350, y: 213 },
-  { zone: 'center', text: 'Analytics dashboards',    x: 350, y: 231 },
-  { zone: 'center', text: 'Data visualisation',      x: 350, y: 249 },
-  { zone: 'center', text: 'AR / VR / interactive media',  x: 350, y: 267 },
-  { zone: 'center', text: 'Game design (Unity)',      x: 350, y: 285 },
-];
-
-const HIT_REGIONS: { zone: Zone; cx: number; cy: number; rx: number; ry: number }[] = [
-  { zone: 'ai',          cx: 132, cy: 165, rx: 50,  ry: 65 },
-  { zone: 'hci',         cx: 568, cy: 177, rx: 50,  ry: 75 },
-  { zone: 'design',      cx: 350, cy: 480, rx: 110, ry: 70 },
-  { zone: 'ai-hci',      cx: 350, cy: 87,  rx: 110, ry: 45 },
-  { zone: 'ai-design',   cx: 207, cy: 343, rx: 90,  ry: 45 },
-  { zone: 'hci-design',  cx: 493, cy: 343, rx: 90,  ry: 45 },
-  { zone: 'center',      cx: 350, cy: 240, rx: 110, ry: 60 },
-];
+const SKILLS = VENN.skills as VennSkill[];
+const ZONES = VENN.zones as VennZone[];
+const HIT_REGIONS = VENN.hitRegions as HitRegion[];
 
 // Idle text colors per zone — matching their circle's color family
 const IDLE_COLORS: Record<Zone, string> = {
@@ -149,6 +116,15 @@ export default function VennDiagram({ lang = 'en' }: VennDiagramProps) {
     return related[z].includes(hovered) ? 1.04 : 0.96;
   };
 
+  const zone = ZONES.find(z => z.id === 'ai');
+  const aiTitle = zone ? localize({ en: zone.titleEn, id: zone.titleId }, lang) : 'AI / ML ENGINEERING';
+
+  const hciZone = ZONES.find(z => z.id === 'hci');
+  const hciTitle = hciZone ? localize({ en: hciZone.titleEn, id: hciZone.titleId }, lang) : 'HUMAN-COMPUTER INTERACTION';
+
+  const designZone = ZONES.find(z => z.id === 'design');
+  const designTitle = designZone ? localize({ en: designZone.titleEn, id: designZone.titleId }, lang) : 'VISUAL CREATIVE';
+
   return (
     <div className="w-full flex flex-col items-center select-none">
       <div className="w-full border border-[#D5D1C4] rounded-2xl p-4 sm:p-6 bg-white/40 backdrop-blur-sm shadow-[0_1px_3px_rgba(24,24,21,0.02)] flex flex-col items-center">
@@ -206,7 +182,7 @@ export default function VennDiagram({ lang = 'en' }: VennDiagramProps) {
               userSelect: 'none',
               pointerEvents: 'none',
             }}
-          >AI / ML ENGINEERING</text>
+          >{aiTitle}</text>
 
           <text x="520" y="40" textAnchor="middle" fontSize="11"
             fontFamily="var(--font-mono, monospace)" letterSpacing="0.25em" fontWeight="600"
@@ -219,7 +195,7 @@ export default function VennDiagram({ lang = 'en' }: VennDiagramProps) {
               userSelect: 'none',
               pointerEvents: 'none',
             }}
-          >HUMAN-COMPUTER INTERACTION</text>
+          >{hciTitle}</text>
 
           <text x="350" y="585" textAnchor="middle" fontSize="11"
             fontFamily="var(--font-mono, monospace)" letterSpacing="0.25em" fontWeight="600"
@@ -232,7 +208,7 @@ export default function VennDiagram({ lang = 'en' }: VennDiagramProps) {
               userSelect: 'none',
               pointerEvents: 'none',
             }}
-          >VISUAL CREATIVE</text>
+          >{designTitle}</text>
 
           {/* === Skill labels — CSS transform-origin zoom === */}
           {SKILLS.map((s, i) => {
@@ -256,7 +232,7 @@ export default function VennDiagram({ lang = 'en' }: VennDiagramProps) {
                   pointerEvents: 'none',
                 }}
               >
-                {s.text}
+                {localize({ en: s.textEn, id: s.textId }, lang)}
               </text>
             );
           })}

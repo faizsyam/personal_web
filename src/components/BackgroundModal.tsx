@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { BackgroundItem } from '../types';
+import { localize } from '../lib/localize';
+import { UI } from '../data/content';
 import { X, Briefcase, GraduationCap } from 'lucide-react';
 
 interface BackgroundModalProps {
@@ -23,7 +25,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
     if (item) {
       window.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
-      
+
       if (modalRef.current) {
         modalRef.current.focus();
       }
@@ -36,6 +38,12 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
   }, [item, onClose]);
 
   if (!item) return null;
+
+  const details = localize(item.details, lang);
+  const popoutCopy = localize(item.popoutCopy, lang);
+  const highlights = item.highlights ? localize(item.highlights, lang) : [];
+  const role = localize(item.role, lang);
+  const organization = localize(item.organization, lang);
 
   return (
     <div
@@ -54,7 +62,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
         className="absolute inset-0 bg-[#181815]/65 backdrop-blur-md cursor-pointer"
         id="modal-backdrop-background"
       />
- 
+
       {/* Content Panel with deep layered shadows */}
       <motion.div
         ref={modalRef}
@@ -74,7 +82,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
         {/* Close Button */}
         <button
           onClick={onClose}
-          aria-label="Close modal"
+          aria-label={localize({ en: UI.modalLabels.background.closeEn, id: UI.modalLabels.background.closeId }, lang)}
           className="absolute top-6 right-6 text-secondary hover:text-accent p-2.5 rounded-full hover:bg-surface/60 border border-transparent hover:border-surface/40 transition-colors duration-150 interactive-item focus:outline-none"
           id="modal-background-close-trigger"
         >
@@ -90,9 +98,9 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
               <GraduationCap className="h-4.5 w-4.5" />
             )}
             <span className="text-[10px] font-mono tracking-widest uppercase font-semibold">
-              {item.type === 'work' 
-                ? (lang === 'en' ? 'Professional Track' : 'Jalur Profesional') 
-                : (lang === 'en' ? 'Academic & Research' : 'Akademis & Riset')}
+              {item.type === 'work'
+                ? localize({ en: UI.modalLabels.background.workTrackEn, id: UI.modalLabels.background.workTrackId }, lang)
+                : localize({ en: UI.modalLabels.background.eduTrackEn, id: UI.modalLabels.background.eduTrackId }, lang)}
             </span>
           </div>
 
@@ -101,7 +109,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
               id="modal-background-title"
               className="text-xl sm:text-2xl font-serif tracking-tight text-primary font-semibold"
             >
-              {item.role}
+              {role}
             </h2>
             <span
               className="inline-flex self-start sm:self-auto px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-widest uppercase border border-surface bg-surface/30 text-secondary"
@@ -110,9 +118,9 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
               {item.dateRange}
             </span>
           </div>
-          
+
           <p className="font-sans text-sm sm:text-base text-secondary/90 font-normal">
-            {item.organization}
+            {organization}
           </p>
         </div>
 
@@ -121,29 +129,27 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
 
         {/* Core Content */}
         <div className="flex flex-col gap-6 text-[15px] sm:text-base leading-relaxed text-primary">
-          
+
           {/* Narrative description */}
-          {item.details && (
+          {details && (
             <div className="flex flex-col gap-1.5 animate-fadeIn">
               <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-                {lang === 'en' ? 'Summary & Directives' : 'Ringkasan Misi'}
+                {localize({ en: UI.modalLabels.background.detailsEn, id: UI.modalLabels.background.detailsId }, lang)}
               </span>
               <p className="font-sans text-[14.5px] sm:text-[15px] text-primary/95 leading-relaxed font-light">
-                {item.details}
+                {details}
               </p>
             </div>
           )}
 
           {/* Highlights, Achievements, and Joined Organizations */}
-          {item.highlights && item.highlights.length > 0 && (
+          {highlights.length > 0 && (
             <div className="flex flex-col gap-3">
               <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-                {item.type === 'education' 
-                  ? (lang === 'en' ? 'Organizations Joined & Highlights' : 'Organisasi & Pencapaian Utama') 
-                  : (lang === 'en' ? 'Key Engagements & Impact' : 'Keterlibatan Utama & Dampak')}
+                {localize({ en: UI.modalLabels.background.highlightsEn, id: UI.modalLabels.background.highlightsId }, lang)}
               </span>
               <ul className="flex flex-col gap-3 text-[13.5px] sm:text-[14px] leading-relaxed font-sans font-light text-primary/90">
-                {item.highlights.map((highlight, index) => {
+                {highlights.map((highlight, index) => {
                   // Determine parts to bold (e.g. organization names in university like HIMTI BINUS before colons)
                   const parts = highlight.split(':');
                   const hasLabel = parts.length > 1;
@@ -171,7 +177,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
 
           {/* Short snapshot quote */}
           <div className="font-sans text-[13.5px] text-secondary italic font-light border-l border-surface/90 pl-3.5 bg-surface/10 py-1.5 rounded-r">
-            &ldquo;{item.popoutCopy}&rdquo;
+            &ldquo;{popoutCopy}&rdquo;
           </div>
         </div>
 
@@ -179,9 +185,7 @@ export default function BackgroundModal({ item, onClose, lang }: BackgroundModal
         {item.skills && item.skills.length > 0 && (
           <div className="flex flex-col gap-2 pt-4 border-t border-surface/50 mt-auto">
             <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {item.type === 'work' 
-                ? (lang === 'en' ? 'Applied Competencies' : 'Kompetensi Terapan') 
-                : (lang === 'en' ? 'Core Focus Areas' : 'Fokus Utama Studi')}
+              {localize({ en: UI.modalLabels.background.skillsEn, id: UI.modalLabels.background.skillsId }, lang)}
             </span>
             <div className="flex flex-wrap gap-1.5" id="modal-background-skills">
               {item.skills.map((skill, idx) => (

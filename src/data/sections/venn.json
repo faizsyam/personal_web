@@ -1,0 +1,53 @@
+{
+  "skills": [
+    { "zone": "ai", "textEn": "LLM fine-tuning", "textId": "LLM fine-tuning", "x": 155, "y": 115 },
+    { "zone": "ai", "textEn": "Agentic AI workflows", "textId": "Alur kerja AI Agen", "x": 130, "y": 140 },
+    { "zone": "ai", "textEn": "Deep learning (CV, RL, NLP)", "textId": "Deep learning (CV, RL, NLP)", "x": 110, "y": 165 },
+    { "zone": "ai", "textEn": "MLOps & deployment", "textId": "MLOps & deployment", "x": 110, "y": 190 },
+    { "zone": "ai", "textEn": "MCTS & game search", "textId": "MCTS & pencarian game", "x": 130, "y": 215 },
+    { "zone": "hci", "textEn": "Usability research", "textId": "Riset ketergunaan", "x": 545, "y": 115 },
+    { "zone": "hci", "textEn": "Product strategy", "textId": "Strategi produk", "x": 570, "y": 140 },
+    { "zone": "hci", "textEn": "Team leadership", "textId": "Kepemimpinan tim", "x": 590, "y": 165 },
+    { "zone": "hci", "textEn": "User growth strategy", "textId": "Strategi pertumbuhan pengguna", "x": 590, "y": 190 },
+    { "zone": "hci", "textEn": "Requirement analysis", "textId": "Analisis kebutuhan", "x": 570, "y": 215 },
+    { "zone": "hci", "textEn": "Game theory", "textId": "Teori game", "x": 545, "y": 240 },
+    { "zone": "design", "textEn": "Brand identity", "textId": "Identitas merek", "x": 350, "y": 435 },
+    { "zone": "design", "textEn": "Graphic Design", "textId": "Desain Grafis", "x": 350, "y": 457 },
+    { "zone": "design", "textEn": "Illustration", "textId": "Ilustrasi", "x": 350, "y": 479 },
+    { "zone": "design", "textEn": "Social media design", "textId": "Desain media sosial", "x": 350, "y": 501 },
+    { "zone": "design", "textEn": "Campaign design", "textId": "Desain kampanye", "x": 350, "y": 523 },
+    { "zone": "ai-hci", "textEn": "Prompt engineering", "textId": "Rekayasa prompt", "x": 350, "y": 55 },
+    { "zone": "ai-hci", "textEn": "AI agent evaluation", "textId": "Evaluasi agen AI", "x": 350, "y": 71 },
+    { "zone": "ai-hci", "textEn": "Conversational UX", "textId": "UX Percakapan", "x": 350, "y": 87 },
+    { "zone": "ai-hci", "textEn": "Human-AI collaboration", "textId": "Kolaborasi Manusia-AI", "x": 350, "y": 103 },
+    { "zone": "ai-hci", "textEn": "Game AI & mechanics", "textId": "Game AI & mekanik", "x": 350, "y": 119 },
+    { "zone": "ai-design", "textEn": "Generative imagery", "textId": "Gambar generatif", "x": 215, "y": 310 },
+    { "zone": "ai-design", "textEn": "Neural interpretability", "textId": "Interpretabilitas neural", "x": 200, "y": 332 },
+    { "zone": "ai-design", "textEn": "AI Video Storytelling", "textId": "Storytelling Video AI", "x": 200, "y": 354 },
+    { "zone": "ai-design", "textEn": "Data art & visual ML", "textId": "Seni data & visual ML", "x": 215, "y": 376 },
+    { "zone": "hci-design", "textEn": "UI/UX design", "textId": "Desain UI/UX", "x": 485, "y": 310 },
+    { "zone": "hci-design", "textEn": "Wireframing", "textId": "Wireframing", "x": 500, "y": 332 },
+    { "zone": "hci-design", "textEn": "Prototyping", "textId": "Prototyping", "x": 500, "y": 354 },
+    { "zone": "hci-design", "textEn": "Accessibility (a11y)", "textId": "Aksesibilitas (a11y)", "x": 485, "y": 376 },
+    { "zone": "center", "textEn": "AI product development", "textId": "Pengembangan produk AI", "x": 350, "y": 195 },
+    { "zone": "center", "textEn": "Intelligent interfaces", "textId": "Antarmuka cerdas", "x": 350, "y": 213 },
+    { "zone": "center", "textEn": "Analytics dashboards", "textId": "Dashboard analitik", "x": 350, "y": 231 },
+    { "zone": "center", "textEn": "Data visualisation", "textId": "Visualisasi data", "x": 350, "y": 249 },
+    { "zone": "center", "textEn": "AR / VR / interactive media", "textId": "AR / VR / media interaktif", "x": 350, "y": 267 },
+    { "zone": "center", "textEn": "Game design (Unity)", "textId": "Desain game (Unity)", "x": 350, "y": 285 }
+  ],
+  "zones": [
+    { "id": "ai", "titleEn": "AI / ML ENGINEERING", "titleId": "REKAYASA AI / ML" },
+    { "id": "hci", "titleEn": "HUMAN-COMPUTER INTERACTION", "titleId": "INTERAKSI MANUSIA-KOMPUTER" },
+    { "id": "design", "titleEn": "VISUAL CREATIVE", "titleId": "KREATIF VISUAL" }
+  ],
+  "hitRegions": [
+    { "zone": "ai", "cx": 132, "cy": 165, "rx": 50, "ry": 65 },
+    { "zone": "hci", "cx": 568, "cy": 177, "rx": 50, "ry": 75 },
+    { "zone": "design", "cx": 350, "cy": 480, "rx": 110, "ry": 70 },
+    { "zone": "ai-hci", "cx": 350, "cy": 87, "rx": 110, "ry": 45 },
+    { "zone": "ai-design", "cx": 207, "cy": 343, "rx": 90, "ry": 45 },
+    { "zone": "hci-design", "cx": 493, "cy": 343, "rx": 90, "ry": 45 },
+    { "zone": "center", "cx": 350, "cy": 240, "rx": 110, "ry": 60 }
+  ]
+}

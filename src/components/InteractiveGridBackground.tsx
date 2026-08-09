@@ -108,10 +108,20 @@ export default function InteractiveGridBackground() {
       attributeFilter: ['class']
     });
 
-    // 2. Track scroll
+    // 2. Track scroll — round to integers to prevent sub-pixel grid jitter
+    // and skip redundant updates to avoid visual shake during
+    // header/backdrop-blur transitions.
+    let lastScrollX = -1;
+    let lastScrollY = -1;
     const handleScroll = () => {
-      scrollRef.current.x = window.scrollX;
-      scrollRef.current.y = window.scrollY;
+      const x = Math.round(window.scrollX);
+      const y = Math.round(window.scrollY);
+      if (x !== lastScrollX || y !== lastScrollY) {
+        scrollRef.current.x = x;
+        scrollRef.current.y = y;
+        lastScrollX = x;
+        lastScrollY = y;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -435,6 +445,7 @@ export default function InteractiveGridBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent transition-opacity duration-700"
+      style={{ willChange: 'transform' }}
       id="interactive-blueprint-grid"
     />
   );

@@ -1,0 +1,56 @@
+{
+  "eyebrowLeftEn": "Get In Touch",
+  "eyebrowLeftId": "Hubungi Saya",
+  "eyebrowRightEn": "Collab & Conversation",
+  "eyebrowRightId": "Kolaborasi & Diskusi",
+  "headingEn": "Let's connect.",
+  "headingId": "Mari terhubung.",
+  "leadEn": "I'm currently fully engaged in my current role and not actively seeking new opportunities. However, I'm always energized by conversations with people executing at the boundary of smart engineering and cognitive discovery.",
+  "leadId": "Saat ini saya sepenuhnya sibuk dengan peran saya dan tidak sedang aktif mencari peluang baru. Namun, saya selalu bersemangat untuk berdiskusi dengan orang-orang yang beroperasi di batas antara rekayasa cerdas dan eksplorasi kognitif.",
+  "secondaryEn": "If you are building something novel, thinking through a hard systems bottleneck, or just want to talk through ideas from my writing, feel free to connect.",
+  "secondaryId": "Jika Anda sedang membangun sesuatu yang baru, memikirkan hambatan sistem yang sulit, atau hanya ingin membahas ide-ide dari tulisan saya, silakan hubungi.",
+  "copiedToastEn": "Copied address!",
+  "copiedToastId": "Alamat tersalin!",
+  "links": [
+    {
+      "id": "email",
+      "label": "Email",
+      "display": "faizsyam06@gmail.com",
+      "href": "mailto:faizsyam06@gmail.com",
+      "icon": "Mail",
+      "brandClass": "hover:border-highlight/35 hover:bg-[#f1f4f8]",
+      "iconBgClass": "bg-highlight/[0.06] text-highlight group-hover:bg-highlight group-hover:text-bg",
+      "accentTextClass": "group-hover:text-highlight"
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "display": "faizuddarains",
+      "href": "https://www.linkedin.com/in/faizuddarains/",
+      "icon": "Linkedin",
+      "brandClass": "hover:border-[#0077B5]/35 hover:bg-[#f0f7fa]",
+      "iconBgClass": "bg-[#0077B5]/[0.06] text-[#0077B5] group-hover:bg-[#0077B5] group-hover:text-white",
+      "accentTextClass": "group-hover:text-[#0077B5]"
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "display": "@faizuddarains",
+      "href": "https://www.instagram.com/faizuddarains/",
+      "icon": "Instagram",
+      "brandClass": "hover:border-[#E1306C]/35 hover:bg-[#fdf2f5]",
+      "iconBgClass": "bg-[#E1306C]/[0.06] text-[#E1306C] group-hover:bg-[#E1306C] group-hover:text-white",
+      "accentTextClass": "group-hover:text-[#E1306C]"
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "display": "faizsyam",
+      "href": "https://github.com/faizsyam",
+      "icon": "Github",
+      "brandClass": "hover:border-gray-900/30 hover:bg-[#f6f6f6] dark:hover:border-primary/30",
+      "iconBgClass": "bg-gray-900/[0.05] text-[#181815] dark:text-[#FFAF33] group-hover:bg-[#181815] dark:group-hover:bg-[#FFAF33] group-hover:text-white dark:group-hover:text-bg",
+      "accentTextClass": "group-hover:text-gray-950 dark:group-hover:text-primary"
+    }
+  ]
+}

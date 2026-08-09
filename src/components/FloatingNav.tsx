@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { localize } from '../lib/localize';
+import { SECTION_LABELS } from '../data/content';
 
 interface FloatingNavProps {
   activeSection: string;
@@ -24,13 +26,10 @@ export default function FloatingNav({ activeSection, lang }: FloatingNavProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = [
-    { label: lang === 'en' ? 'Brief' : 'Profil', id: 'about' },
-    { label: lang === 'en' ? 'Work' : 'Karir', id: 'work' },
-    { label: lang === 'en' ? 'Projects' : 'Proyek', id: 'projects' },
-    { label: lang === 'en' ? 'Writing' : 'Tulisan', id: 'writing' },
-    { label: lang === 'en' ? 'Contact' : 'Kontak', id: 'contact' },
-  ];
+  const navItems = SECTION_LABELS.navItems.map(item => ({
+    ...item,
+    label: localize({ en: item.labelEn, id: item.labelId }, lang)
+  }));
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

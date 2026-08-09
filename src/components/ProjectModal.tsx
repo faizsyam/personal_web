@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Project } from '../types';
 import { X, ExternalLink } from 'lucide-react';
+import { localize } from '../lib/localize';
+import { UI } from '../data/content';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -24,7 +26,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
       window.addEventListener('keydown', handleKeyDown);
       // Suppress body scroll
       document.body.style.overflow = 'hidden';
-      
+
       // Trap focus
       if (modalRef.current) {
         modalRef.current.focus();
@@ -38,6 +40,11 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
   }, [project, onClose]);
 
   if (!project) return null;
+
+  const title = localize(project.subtitle, lang);
+  const context = localize(project.context, lang);
+  const description = localize(project.description, lang);
+  const depthTradeoff = localize(project.depthTradeoff, lang);
 
   return (
     <div
@@ -56,7 +63,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
         className="absolute inset-0 bg-[#181815]/65 backdrop-blur-md cursor-pointer"
         id="modal-backdrop"
       />
- 
+
       {/* Content Panel with deep layered shadows */}
       <motion.div
         ref={modalRef}
@@ -76,7 +83,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
         {/* Close Button */}
         <button
           onClick={onClose}
-          aria-label="Close modal"
+          aria-label={localize({ en: UI.modalLabels.project.closeEn, id: UI.modalLabels.project.closeId }, lang)}
           className="absolute top-6 right-6 text-secondary hover:text-accent p-2.5 rounded-full hover:bg-surface/60 border border-transparent hover:border-surface/40 transition-colors duration-150 interactive-item focus:outline-none"
           id="modal-close-trigger"
         >
@@ -100,7 +107,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
             </span>
           </div>
           <p className="font-sans text-sm sm:text-base text-secondary italic font-light">
-            {project.subtitle}
+            {title}
           </p>
         </div>
 
@@ -112,17 +119,17 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
           {/* Problem / Context */}
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {lang === 'en' ? 'Context' : 'Konteks'}
+              {localize({ en: UI.modalLabels.project.contextEn, id: UI.modalLabels.project.contextId }, lang)}
             </span>
-            <p className="font-light">{project.context}</p>
+            <p className="font-light">{context}</p>
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {lang === 'en' ? 'The Solution' : 'Solusi'}
+              {localize({ en: UI.modalLabels.project.solutionEn, id: UI.modalLabels.project.solutionId }, lang)}
             </span>
-            <p className="font-light">{project.description}</p>
+            <p className="font-light">{description}</p>
           </div>
 
           {/* Project blueprint image */}
@@ -140,10 +147,10 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
           {/* Tradeoff - Narrative */}
           <div className="flex flex-col gap-1.5 bg-highlight/[0.04] border-l-2 border-highlight p-4 rounded-r-md">
             <span className="text-[10px] font-mono text-highlight tracking-widest uppercase font-medium">
-              {lang === 'en' ? 'Tradeoffs & Decision Design' : 'Kompromi & Desain Keputusan'}
+              {localize({ en: UI.modalLabels.project.tradeoffsEn, id: UI.modalLabels.project.tradeoffsId }, lang)}
             </span>
             <p className="font-sans text-[14px] sm:text-[15px] text-primary italic leading-relaxed font-light mt-1">
-              &ldquo;{project.depthTradeoff}&rdquo;
+              &ldquo;{depthTradeoff}&rdquo;
             </p>
           </div>
         </div>
@@ -153,7 +160,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
           {/* Stack list */}
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {lang === 'en' ? 'Architecture Stack' : 'Tumpukan Teknologi'}
+              {localize({ en: UI.modalLabels.project.stackEn, id: UI.modalLabels.project.stackId }, lang)}
             </span>
             <div className="flex flex-wrap gap-1.5" id="modal-stack-tags">
               {project.stack.map((item, idx) => (
@@ -176,7 +183,7 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
               className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline font-mono tracking-wider interactive-item mt-2 sm:mt-0 py-2"
               id="modal-external-link"
             >
-              <span>{lang === 'en' ? 'SOURCE PATH' : 'SUMBER KODE'}</span>
+              <span>{localize({ en: UI.modalLabels.project.linkEn, id: UI.modalLabels.project.linkId }, lang)}</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
           )}

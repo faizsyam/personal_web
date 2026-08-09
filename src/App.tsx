@@ -19,15 +19,21 @@ import {
 } from 'lucide-react';
 
 import {
-  HERO_DATA,
-  INTRO_PARAGRAPHS,
-  INTRO_EXPANDED,
+  HERO,
+  INTRO,
+  SECTION_LABELS,
   PROJECTS,
-  WORK_ITEMS,
-  EDUCATION_ITEMS,
+  BACKGROUND,
   WRITINGS,
-} from './data';
+  VENN,
+  INTRO_SLIDES,
+  CONTACT,
+  UI,
+} from './data/content';
 import { Project, BackgroundItem, Writing } from './types';
+import { localize } from './lib/localize';
+import { getStatusStyle, getTopicTagStyle } from './lib/styles';
+import { lookupIcon } from './lib/sectionIcons';
 
 import { useLanguage } from './hooks/useLanguage';
 import { useScrollSpy, useScrollTo } from './hooks/useScrollSpy';
@@ -46,74 +52,32 @@ const FloatingGlyph = lazy(() => import('./components/FloatingGlyph'));
 
 import { useGsapScroll } from './hooks/useGsapScroll';
 
-function renderTimelineLogo(id: string, isLatest?: boolean) {
-  const logoClass = isLatest
-    ? "w-4 h-4 text-highlight transition-colors duration-200 group-hover:text-[#F5F3EE]"
-    : "w-4 h-4 text-highlight opacity-70 dark:opacity-80 group-hover:opacity-100 transition-all duration-200";
+// Animation constants at module level
+const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const easeSnappy: [number, number, number, number] = [0.0, 0, 0.2, 1];
 
-  switch (id) {
-    case 'work-1':
-      return <Briefcase className={logoClass} strokeWidth={1.5} />;
-    case 'work-2':
-      return <Brain className={logoClass} strokeWidth={1.5} />;
-    case 'work-3':
-      return <Gamepad2 className={logoClass} strokeWidth={1.5} />;
-    case 'work-4':
-      return <Terminal className={logoClass} strokeWidth={1.5} />;
-    case 'edu-1':
-      return <GraduationCap className={logoClass} strokeWidth={1.5} />;
-    case 'edu-2':
-      return <BookOpen className={logoClass} strokeWidth={1.5} />;
-    case 'cred-0':
-      return <Trophy className={logoClass} strokeWidth={1.5} />;
-    case 'cred-1':
-      return <Award className={logoClass} strokeWidth={1.5} />;
-    case 'cred-2':
-      return <Globe className={logoClass} strokeWidth={1.5} />;
-    default:
-      return null;
-  }
-}
-
-interface ContactLink {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-  display: string;
-  href: string;
-  onClick?: (e: React.MouseEvent) => void;
-  brandClass: string;
-  iconBgClass: string;
-  accentTextClass: string;
-}
-
-const TRANSLATIONS = {
-  en: {
-    brief: "Brief",
-    work: "Work",
-    projects: "Projects",
-    writing: "Writing",
-    contact: "Contact",
-    briefIntro: "Brief intro",
-    background: "Background",
-    letConnect: "Let’s connect.",
-    contactLead: "I'm currently fully engaged in my current role and not actively seeking new opportunities. However, I'm always energized by conversations with people executing at the boundary of smart engineering and cognitive discovery.",
-    contactSecondary: "If you are building something novel, thinking through a hard systems bottleneck, or just want to talk through ideas from my writing, feel free to connect.",
-    copiedDetails: "Copied address!",
+const timelineVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.4,
+      ease: easeSnappy,
+    },
   },
-  id: {
-    brief: "Profil",
-    work: "Karir",
-    projects: "Proyek",
-    writing: "Tulisan",
-    contact: "Kontak",
-    briefIntro: "Profil Ringkas",
-    background: "Latar Belakang",
-    letConnect: "Mari terhubung.",
-    contactLead: "Saat ini saya sepenuhnya sibuk dengan peran saya dan tidak sedang aktif mencari peluang baru. Namun, saya selalu bersemangat untuk berdiskusi dengan orang-orang yang beroperasi di batas antara rekayasa cerdas dan eksplorasi kognitif.",
-    contactSecondary: "Jika Anda sedang membangun sesuatu yang baru, memikirkan hambatan sistem yang sulit, atau hanya ingin membahas ide-ide dari tulisan saya, silakan hubungi.",
-    copiedDetails: "Alamat tersalin!",
-  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: easeSnappy,
+    },
+  },
 };
 
 export default function App() {
@@ -126,7 +90,6 @@ export default function App() {
   const [isEduExpanded, setIsEduExpanded] = useState(false);
   const [isIntroArticleOpen, setIsIntroArticleOpen] = useState(false);
   const [showMoreProjects, setShowMoreProjects] = useState(false);
-  const [obfuscatedEmail, setObfuscatedEmail] = useState('Retrieve email');
   const [copied, setCopied] = useState(false);
 
   // Language with localStorage persistence
@@ -147,19 +110,9 @@ export default function App() {
     localStorage.removeItem('theme');
   }, []);
 
-  const t = useCallback(
-    (key: string) => {
-      return TRANSLATIONS[lang]?.[key as keyof typeof TRANSLATIONS['en']] || TRANSLATIONS['en']?.[key as keyof typeof TRANSLATIONS['en']] || key;
-    },
-    [lang]
-  );
+  const scrollTo = useScrollTo(56);
 
-  useEffect(() => {
-    const user = 'faizsyam06';
-    const domain = 'gmail.com';
-    setObfuscatedEmail(`${user}@${domain}`);
-  }, []);
-
+  // Handlers
   const handleEmailClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigator.clipboard.writeText('faizsyam06@gmail.com');
@@ -168,8 +121,6 @@ export default function App() {
     window.location.href = `mailto:faizsyam06@gmail.com`;
   };
 
-  const scrollTo = useScrollTo(56);
-
   const handleTimelineClick = (item: BackgroundItem) => setSelectedBackground(item);
 
   const handleWritingClick = (id: string, e: React.MouseEvent) => {
@@ -177,56 +128,6 @@ export default function App() {
       e.preventDefault();
       setExpandedWritingId(expandedWritingId === id ? null : id);
     }
-  };
-
-  // ─── Shared animation constants ──────────────────
-  const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
-  const easeSnappy: [number, number, number, number] = [0.0, 0, 0.2, 1];
-
-  const springHover = {
-    type: 'spring' as const,
-    stiffness: 650,
-    damping: 24,
-    mass: 0.35,
-  };
-
-  const springTap = {
-    type: 'spring' as const,
-    stiffness: 800,
-    damping: 20,
-    mass: 0.3,
-  };
-
-  const springReveal = {
-    type: 'spring' as const,
-    stiffness: 500,
-    damping: 26,
-    mass: 0.5,
-  };
-
-  // Animation variants — snappy and responsive, no per-card delay
-  const timelineVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.4,
-        ease: easeSnappy,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: easeSnappy,
-      },
-    },
   };
 
   return (
@@ -241,12 +142,14 @@ export default function App() {
       <CustomCursor />
       <FloatingNav activeSection={activeSection} lang={lang} />
 
-      {/* NAV */}
-      <header className={`sticky top-0 z-30 w-full transition-all duration-300 ${
-        activeSection === 'home'
-          ? 'h-16 sm:h-20 border-b border-transparent bg-transparent'
-          : 'h-14 border-b border-surface/40 bg-bg/85 backdrop-blur-md'
-      }`}>
+      {/* NAV — fixed height so scrollY never jumps when activeSection flips */}
+      <header
+        className={`sticky top-0 z-30 w-full h-14 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+          activeSection === 'home'
+            ? 'border-b border-transparent bg-transparent'
+            : 'border-b border-surface/40 bg-bg/85 backdrop-blur-md'
+        }`}
+      >
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 h-full flex items-center justify-between">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -257,16 +160,10 @@ export default function App() {
           </button>
 
           <nav className="hidden sm:flex items-center gap-8 sm:gap-10">
-            {[
-              { id: 'about', label: t('brief') },
-              { id: 'work', label: t('work') },
-              { id: 'projects', label: t('projects') },
-              { id: 'writing', label: t('writing') },
-              { id: 'contact', label: t('contact') },
-            ].map((item) => (
+            {SECTION_LABELS.navItems.map((navItem) => (
               <motion.button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
+                key={navItem.id}
+                onClick={() => scrollTo(navItem.id)}
                 whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
                 whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
                 transition={{
@@ -276,11 +173,11 @@ export default function App() {
                   mass: 0.7
                 }}
                 className={`text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-widest transition-colors duration-150 cursor-pointer focus:outline-none relative py-1 ${
-                  activeSection === item.id ? 'text-primary' : 'text-secondary hover:text-primary'
+                  activeSection === navItem.id ? 'text-primary' : 'text-secondary hover:text-primary'
                 }`}
               >
-                {item.label}
-                {activeSection === item.id && (
+                {localize({ en: navItem.labelEn, id: navItem.labelId }, lang)}
+                {activeSection === navItem.id && (
                   <motion.div
                     layoutId="activeIndicator"
                     className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-highlight"
@@ -353,85 +250,50 @@ export default function App() {
 
             {/* Description */}
             <InteractiveSubtitle className="max-w-[550px] mb-10 leading-relaxed font-light">
-              {lang === 'en' ? (
-                <span className="flex flex-col gap-3.5 text-left">
-                  <div
-                    className="relative inline-block text-[22px] sm:text-[26px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
-                  >
-                    {("I build intelligent systems with a focus on both technical depth and user experience.").split(' ').map((word, i, arr) => {
-                      const isHighlight = ["technical","depth","user","experience."].includes(word);
-                      return (
-                        <motion.span
-                          key={`${word}-${i}`}
-                          className="relative inline-block"
-                          initial={{ y: 0 }}
-                          whileHover={{ y: -2.5 }}
-                          transition={{ type: 'spring', stiffness: 450, damping: 20 }}
-                        >
-                          {isHighlight && (
-                            <motion.span
-                              className="absolute -top-[3px] -bottom-[3px] -left-[2px] -right-[2px] bg-[#fde047]/50 skew-x-[-1.5deg] rotate-[-1.5deg] rounded-sm -z-10 pointer-events-none"
-                              initial={{ scaleX: 0, opacity: 0 }}
-                              animate={{ scaleX: 1, opacity: 1 }}
-                              transition={{
-                                duration: 0.35,
-                                delay: word === "technical" ? 0.55 : word === "depth" ? 0.67 : word === "user" ? 0.95 : 1.05,
-                                ease: [0.16, 1, 0.3, 1],
-                              }}
-                              style={{ transformOrigin: "left center" }}
-                              aria-hidden
-                            />
-                          )}
-                          <span className="relative">{word}</span>
-                          {i < arr.length - 1 && <span>&nbsp;</span>}
-                        </motion.span>
-                      );
-                    })}
-                  </div>
-                  <span className="text-[16px] sm:text-[18px]">
-                    From AI agents to production applications, I care as much about how things work as how they feel to use.
+              {(() => {
+                const headline = localize({ en: HERO.tagline.headlineEn, id: HERO.tagline.headlineId }, lang);
+                const tail = localize({ en: HERO.tagline.tailEn, id: HERO.tagline.tailId }, lang);
+                const highlightWords = localize({ en: HERO.tagline.highlightWordsEn, id: HERO.tagline.highlightWordsId }, lang);
+                const words = headline.split(' ');
+                return (
+                  <span className="flex flex-col gap-3.5 text-left">
+                    <div
+                      className="relative inline-block text-[22px] sm:text-[26px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
+                    >
+                      {words.map((word, i, arr) => {
+                        const isHighlight = highlightWords.includes(word);
+                        return (
+                          <motion.span
+                            key={`${word}-${i}`}
+                            className="relative inline-block"
+                            initial={{ y: 0 }}
+                            whileHover={{ y: -2.5 }}
+                            transition={{ type: 'spring', stiffness: 450, damping: 20 }}
+                          >
+                            {isHighlight && (
+                              <motion.span
+                                className="absolute -top-[3px] -bottom-[3px] -left-[2px] -right-[2px] bg-[#fde047]/50 skew-x-[-1.5deg] rotate-[-1.5deg] rounded-sm -z-10 pointer-events-none"
+                                initial={{ scaleX: 0, opacity: 0 }}
+                                animate={{ scaleX: 1, opacity: 1 }}
+                                transition={{
+                                  duration: 0.35,
+                                  delay: i * 0.12 + 0.55,
+                                  ease: [0.16, 1, 0.3, 1],
+                                }}
+                                style={{ transformOrigin: "left center" }}
+                                aria-hidden
+                              />
+                            )}
+                            <span className="relative">{word}</span>
+                            {i < arr.length - 1 && <span>&nbsp;</span>}
+                          </motion.span>
+                        );
+                      })}
+                    </div>
+                    <span className="text-[16px] sm:text-[18px]">{tail}</span>
                   </span>
-                </span>
-              ) : (
-                <span className="flex flex-col gap-3.5 text-left">
-                  <div
-                    className="relative inline-block text-[22px] sm:text-[26px] font-serif font-semibold text-highlight leading-snug tracking-tight cursor-default px-2 py-0.5 -mx-2 rounded-lg select-all whitespace-normal"
-                  >
-                    {("Saya membangun sistem cerdas dengan fokus pada kedalaman teknis dan pengalaman pengguna.").split(' ').map((word, i, arr) => {
-                      const isHighlight = ["kedalaman","teknis","pengalaman","pengguna."].includes(word);
-                      return (
-                        <motion.span
-                          key={`${word}-${i}`}
-                          className="relative inline-block"
-                          initial={{ y: 0 }}
-                          whileHover={{ y: -2.5 }}
-                          transition={{ type: 'spring', stiffness: 450, damping: 20 }}
-                        >
-                          {isHighlight && (
-                            <motion.span
-                              className="absolute -top-[3px] -bottom-[3px] -left-[2px] -right-[2px] bg-[#fde047]/50 skew-x-[-1.5deg] rotate-[-1.5deg] rounded-sm -z-10 pointer-events-none"
-                              initial={{ scaleX: 0, opacity: 0 }}
-                              animate={{ scaleX: 1, opacity: 1 }}
-                              transition={{
-                                duration: 0.35,
-                                delay: word === "kedalaman" ? 0.55 : word === "teknis" ? 0.67 : word === "pengalaman" ? 0.95 : 1.05,
-                                ease: [0.16, 1, 0.3, 1],
-                              }}
-                              style={{ transformOrigin: "left center" }}
-                              aria-hidden
-                            />
-                          )}
-                          <span className="relative">{word}</span>
-                          {i < arr.length - 1 && <span>&nbsp;</span>}
-                        </motion.span>
-                      );
-                    })}
-                  </div>
-                  <span className="text-[16px] sm:text-[18px]">
-                    Mulai dari AI agent hingga aplikasi yang digunakan di dunia nyata, saya peduli tidak hanya pada bagaimana teknologi bekerja, tetapi juga bagaimana rasanya saat digunakan.
-                  </span>
-                </span>
-              )}
+                );
+              })()}
             </InteractiveSubtitle>
 
             {/* CTAs */}
@@ -441,24 +303,18 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
               className="flex items-center gap-3 mb-10"
             >
-              <motion.button
-                onClick={() => scrollTo('projects')}
-                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-bg text-[13.5px] font-medium hover:bg-accent/90 hover:shadow-[0_8px_20px_rgba(43,76,126,0.15)] transition-[background-color,box-shadow] duration-200 cursor-pointer focus:outline-none"
-              >
-                {lang === 'en' ? 'View projects' : 'Lihat proyek'} <span>→</span>
-              </motion.button>
-              <motion.button
-                onClick={() => scrollTo('writing')}
-                whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary text-[13.5px] transition-[background-color,border-color] duration-200 cursor-pointer focus:outline-none"
-              >
-                {lang === 'en' ? 'Read writing' : 'Baca tulisan'}
-              </motion.button>
+              {HERO.ctas.map((cta, idx) => (
+                <motion.button
+                  key={cta.target}
+                  onClick={() => scrollTo(cta.target)}
+                  whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-200 cursor-pointer focus:outline-none ${idx === 0 ? 'bg-accent text-bg hover:bg-accent/90 hover:shadow-[0_8px_20px_rgba(43,76,126,0.15)]' : 'border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary'}`}
+                >
+                  {localize({ en: cta.labelEn, id: cta.labelId }, lang)} <span>→</span>
+                </motion.button>
+              ))}
             </motion.div>
 
             {/* Socials */}
@@ -468,25 +324,23 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.34, ease: [0.16, 1, 0.3, 1] }}
               className="flex items-center gap-2 flex-wrap"
             >
-              {[
-                { label: 'LinkedIn', href: 'https://www.linkedin.com/in/faizuddarains/', icon: <Linkedin className="w-3 h-3" /> },
-                { label: 'GitHub', href: 'https://github.com/faizsyam', icon: <Github className="w-3 h-3" /> },
-                { label: 'Instagram', href: 'https://www.instagram.com/faizuddarains/', icon: <Instagram className="w-3 h-3" /> },
-                { label: 'Email', href: 'mailto:faizsyam06@gmail.com', icon: <Mail className="w-3 h-3" /> },
-              ].map(({ label, href, icon }) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                  whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 14 }}
-                  className="inline-flex items-center gap-1.5 text-[12px] text-secondary hover:text-primary px-3 py-1.5 rounded-full border border-surface/50 hover:border-primary hover:shadow-[0_4px_12px_rgba(24,24,21,0.06)] bg-white/20 hover:bg-white/60 transition-[border-color,background-color,box-shadow,color] duration-150"
-                >
-                  {icon} {label}
-                </motion.a>
-              ))}
+              {HERO.socials.map((social, idx) => {
+                const Icon = social.label === 'LinkedIn' ? Linkedin : social.label === 'GitHub' ? Github : social.label === 'Instagram' ? Instagram : Mail;
+                return (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                    whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                    transition={{ type: 'spring', stiffness: 450, damping: 14 }}
+                    className="inline-flex items-center gap-1.5 text-[12px] text-secondary hover:text-primary px-3 py-1.5 rounded-full border border-surface/50 hover:border-primary hover:shadow-[0_4px_12px_rgba(24,24,21,0.06)] bg-white/20 hover:bg-white/60 transition-[border-color,background-color,box-shadow,color] duration-150"
+                  >
+                    <Icon className="w-3 h-3" /> {social.label}
+                  </motion.a>
+                );
+              })}
             </motion.div>
 
             {/* Mobile portrait panel -- visible only on screens smaller than lg */}
@@ -506,15 +360,11 @@ export default function App() {
                 aspectRatioClass=""
               />
               <div className="flex-1 text-center sm:text-left flex flex-col gap-1.5">
-                <p className="text-[14px] font-semibold text-primary tracking-tight">Faizuddarain Syam</p>
-                <p className="text-[10px] text-highlight font-mono uppercase tracking-widest font-bold">
-                  {lang === 'en' ? 'ML Engineer · Remote Available' : 'ML Engineer · Tersedia Remote'}
-                </p>
-                <p className="text-[12px] text-secondary leading-relaxed font-light">
-                  MSc in Data Science in Engineering.
-                </p>
+                <p className="text-[14px] font-semibold text-primary tracking-tight">{HERO.profile.name}</p>
+                <p className="text-[10px] text-highlight font-mono uppercase tracking-widest font-bold">{localize({ en: HERO.profile.subtitleEn, id: HERO.profile.subtitleId }, lang)}</p>
+                <p className="text-[12px] text-secondary leading-relaxed font-light">{HERO.profile.bio}</p>
                 <div className="flex flex-wrap gap-1 items-center justify-center sm:justify-start mt-1">
-                  {['Agentic AI', 'Deep Learning', 'Product Design', 'Data Analytics'].map((tag) => (
+                  {HERO.profile.tags.map((tag) => (
                     <span key={tag} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface/50 border border-surface text-secondary/80">
                       {tag}
                     </span>
@@ -544,17 +394,13 @@ export default function App() {
                 aspectRatioClass="aspect-[4/5]"
               />
               <div className="mt-3 px-1">
-                <p className="text-[14px] font-semibold text-primary tracking-tight">Faizuddarain Syam</p>
-                <p className="text-[10px] text-highlight mt-0.5 font-mono uppercase tracking-widest font-bold">
-                  {lang === 'en' ? 'Jakarta · Remote Available' : 'Jakarta · Tersedia Remote'}
-                </p>
-                <p className="text-[11.5px] text-secondary mt-1.5 leading-relaxed font-light">
-                  MSc in Data Science in Engineering.
-                </p>
-                
+                <p className="text-[14px] font-semibold text-primary tracking-tight">{HERO.profile.name}</p>
+                <p className="text-[10px] text-highlight mt-0.5 font-mono uppercase tracking-widest font-bold">{localize({ en: HERO.profile.subtitleEn, id: HERO.profile.subtitleId }, lang)}</p>
+                <p className="text-[11.5px] text-secondary mt-1.5 leading-relaxed font-light">{HERO.profile.bio}</p>
+
                 {/* Core focus tags inside the card */}
                 <div className="flex flex-wrap gap-1 mt-3">
-                  {['Agentic AI', 'Deep Learning', 'Product Design', 'Data Analytics'].map((tag) => (
+                  {HERO.profile.tags.map((tag) => (
                     <span key={tag} className="text-[9.5px] font-mono px-2 py-0.5 rounded bg-surface/50 border border-surface text-secondary/90">
                       {tag}
                     </span>
@@ -564,6 +410,38 @@ export default function App() {
             </motion.div>
           </motion.div>
         </section>
+      </main>
+
+      {/* ── COLLABORATORS ── */}
+        <motion.section
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: '120px' }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full bg-white border-y border-surface/80 relative z-10 mb-12"
+      >
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium whitespace-nowrap">
+              {localize({ en: UI.collaboratorsLabelEn, id: UI.collaboratorsLabelId }, lang)}
+            </span>
+            <div className="hidden sm:block w-px h-5 bg-surface/30" />
+            <div className="flex items-center gap-7 sm:gap-9 flex-wrap justify-center">
+              {UI.collaborators.map((logo) => (
+                <motion.img
+                  key={logo.alt}
+                  whileHover={{ scale: 1.1, transition: { type: 'spring', stiffness: 400, damping: 18 } }}
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="h-6 sm:h-8 w-auto opacity-85 hover:opacity-100 transition-all duration-300"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      <div className="w-full max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 flex flex-col gap-32 sm:gap-40 pb-24 relative z-10">
 
         {/* ── ABOUT ── */}
         <section className="scroll-mt-14" id="about">
@@ -576,19 +454,16 @@ export default function App() {
             className="flex flex-col gap-3 mb-10"
           >
             <div className="flex items-center justify-between border-b border-surface/60 pb-3">
-              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{t('briefIntro')}</span>
-              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{t('background')}</span>
+              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.about.eyebrowLeftEn, id: SECTION_LABELS.eyebrows.about.eyebrowLeftId }, lang)}</span>
+              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.about.eyebrowRightEn, id: SECTION_LABELS.eyebrows.about.eyebrowRightId }, lang)}</span>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
               <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug mt-1 flex-1">
-                {lang === 'en' ? (
-                  <>At the intersection of<br className="hidden sm:block" /> <span className="text-highlight">AI, human, and creativity</span></>
-                ) : (
-                  <>Di persimpangan antara<br className="hidden sm:block" /> <span className="text-highlight">AI, manusia, dan kreativitas</span></>
-                )}
+                {localize({ en: SECTION_LABELS.titleHeadlines.about.line1En, id: SECTION_LABELS.titleHeadlines.about.line1Id }, lang)}<br className="hidden sm:block" />
+                <span className="text-highlight">{localize({ en: SECTION_LABELS.titleHeadlines.about.line2En, id: SECTION_LABELS.titleHeadlines.about.line2Id }, lang)}</span>
               </h2>
               <img
-                src="/images/intro_banner.png"
+                src={INTRO.bannerImage}
                 alt=""
                 className="w-full sm:w-auto sm:max-w-[480px] lg:max-w-[560px] object-contain rounded-lg flex-shrink-0"
               />
@@ -598,15 +473,7 @@ export default function App() {
           <div className="flex flex-col lg:flex-row lg:items-start gap-10 lg:gap-16">
             {/* Left Column: Paragraphs only */}
             <div className="flex flex-col gap-5 text-[14.5px] sm:text-[15.5px] leading-relaxed text-primary/90 font-light lg:max-w-[440px] lg:flex-shrink-0 w-full">
-              {(lang === 'en' ? [
-                "I am an AI/ML Engineer. I build and deploy intelligent systems, and I care deeply about the engineering behind them, from system architecture and low latency to reliable outputs. Building systems that work, scale, and deliver value is non-negotiable.",
-                "But in a time when AI capability is widely available. As the technical barrier gets lower, technology alone becomes less of a differentiator. What separates great products from average ones is not just capability, but the implementation and taste.",
-                "That's why beyond AI and engineering, my skills covers human-centered design and creativity. A product succeeds not only because it works, but because people understand it, trust it, and enjoy using it."
-              ] : [
-                "Saya adalah seorang AI/ML Engineer. Saya membangun dan menerapkan sistem cerdas, dan saya sangat peduli dengan rekayasa di baliknya—mulai dari arsitektur sistem dan latensi rendah hingga keluaran yang andal. Membangun sistem yang berfungsi, berskala, dan memberikan nilai adalah hal yang mutlak.",
-                "Namun di masa ketika kapabilitas AI telah tersedia secara luas. Seiring dengan semakin rendahnya hambatan teknis, teknologi saja tidak lagi menjadi pembeda utama. Apa yang membedakan produk hebat dari yang biasa bukanlah sekadar kapabilitas, melainkan implementasi dan selera desain.",
-                "Itulah mengapa di luar AI dan rekayasa, keahlian saya mencakup desain yang berpusat pada manusia dan kreativitas. Sebuah produk berhasil bukan hanya karena berfungsi dengan baik, tetapi karena orang-orang memahaminya, memercayainya, dan senang menggunakannya."
-              ]).map((p, i) => (
+              {INTRO.intro[lang].map((p, i) => (
                 <motion.p
                   key={i}
                   initial={{ opacity: 0, y: 24 }}
@@ -628,8 +495,8 @@ export default function App() {
                 className="mt-4 group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-accent/20 hover:bg-accent/[0.06] hover:border-accent/35 transition-all duration-200 self-start cursor-pointer focus:outline-none shadow-sm"
               >
                 <span className="flex flex-col items-start leading-tight">
-                  <span className="text-[10px] font-mono font-bold text-accent/70 tracking-wider uppercase">{lang === 'en' ? 'Read More' : 'Baca Selengkapnya'}</span>
-                  <span className="text-[13px] font-medium text-accent">Intelligence as a Craft</span>
+                  <span className="text-[10px] font-mono font-bold text-accent/70 tracking-wider uppercase">{localize({ en: UI.aboutReadMore.labelEn, id: UI.aboutReadMore.labelId }, lang)}</span>
+                  <span className="text-[13px] font-medium text-accent">{localize({ en: UI.aboutReadMore.titleEn, id: UI.aboutReadMore.titleId }, lang)}</span>
                 </span>
                 <span className="transition-transform duration-200 group-hover:translate-x-0.5 text-accent/60 group-hover:text-accent">→</span>
               </motion.button>
@@ -657,54 +524,40 @@ export default function App() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">Professional & Educational Arc</span>
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Background</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.work.eyebrowLeftEn, id: SECTION_LABELS.eyebrows.work.eyebrowLeftId }, lang)}</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">{localize({ en: SECTION_LABELS.eyebrows.work.eyebrowRightEn, id: SECTION_LABELS.eyebrows.work.eyebrowRightId }, lang)}</span>
           </motion.div>
 
           {/* Title + Image */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
             <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
-              {lang === 'en' ? (
-                <>My background<br className="hidden sm:block" /> <span className="text-highlight">work & education</span></>
-              ) : (
-                <>Latar belakang<br className="hidden sm:block" /> <span className="text-highlight">pekerjaan & pendidikan</span></>
-              )}
+              {localize({ en: SECTION_LABELS.titleHeadlines.work.line1En, id: SECTION_LABELS.titleHeadlines.work.line1Id }, lang)}<br className="hidden sm:block" />
+              <span className="text-highlight">{localize({ en: SECTION_LABELS.titleHeadlines.work.line2En, id: SECTION_LABELS.titleHeadlines.work.line2Id }, lang)}</span>
             </h2>
             <img
-              src="/images/banner_edu.png"
+              src={SECTION_LABELS.banners.work}
               alt=""
-              className="w-full sm:w-auto sm:max-w-[360px] lg:max-w-[420px] h-auto object-contain rounded-lg flex-shrink-0"
+              className="w-full sm:w-auto sm:max-w-[360px] lg:max-w-[400px] h-auto object-contain rounded-lg flex-shrink-0"
             />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Work column */}
-            {[
-              { 
-                title: lang === 'en' ? 'Work Experience' : 'Pengalaman Kerja', 
-                items: WORK_ITEMS, 
-                latestId: 'work-1', 
-                badge: lang === 'en' ? 'Current Role' : 'Peran Sekarang' 
-              },
-              { 
-                title: lang === 'en' ? 'Academy' : 'Pendidikan',
-                items: EDUCATION_ITEMS, 
-                latestId: 'edu-1', 
-                badge: lang === 'en' ? 'Latest' : 'Terbaru' 
-              },
-            ].map(({ title, items, latestId, badge }) => {
-              const isWorkCol = title === 'Work Experience' || title === 'Pengalaman Kerja';
-              const visibleItems = isWorkCol ? items.slice(0, 2) : items;
-              const hiddenItems = isWorkCol ? items.slice(2) : [];
+            {BACKGROUND.columns.map((col) => {
+              const visibleCount = col.visibleAfterLatest ?? 2;
+              const latestId = col.latestId;
+              const isWorkCol = col.id === 'work';
+              const expandLabel = localize({ en: col.expandLabelEn, id: col.expandLabelId }, lang);
+              const collapseLabel = localize({ en: col.collapseLabelEn, id: col.collapseLabelId }, lang);
+              const badge = localize({ en: col.currentBadgeEn, id: col.currentBadgeId }, lang);
+
+              const visibleItems = col.items.slice(0, visibleCount);
+              const hiddenItems = col.items.slice(visibleCount);
 
               return (
-                <div key={title} className="flex flex-col gap-5">
-                  <h4 className="text-[10.5px] font-mono tracking-widest uppercase text-highlight">{title}</h4>
-                  <div className="relative flex flex-col gap-5 pl-6 border-l border-dashed border-highlight/30 ml-3.5 py-3">
-                    <div className="absolute -left-[3px] top-0 w-1.5 h-1.5 rounded-full bg-highlight/60" />
-                    <div className="absolute -left-[3px] bottom-0 w-1.5 h-1.5 rounded-full bg-highlight/60" />
-
-                    {visibleItems.map((item: BackgroundItem, idx: number) => {
+                <div key={col.id} className="flex flex-col gap-8">
+                  {/* Visible items */}
+                  <div className="flex flex-col gap-8">
+                    {visibleItems.map((item: BackgroundItem, itemIdx: number) => {
                       const isLatest = item.id === latestId;
                       return (
                         <motion.div
@@ -735,15 +588,15 @@ export default function App() {
                             {item.logoPath ? (
                               <img src={item.logoPath} alt="" className="w-7 h-7 object-contain" />
                             ) : (
-                              renderTimelineLogo(item.id, isLatest)
+                              lookupIcon(item.id as any, isLatest)
                             )}
                           </div>
 
-                          {isLatest && (
+                          {isLatest && item.bannerImage && (
                             <div className="w-full h-24 sm:h-28 overflow-hidden rounded-t-[10px] relative border-b border-surface/40">
                               <img
-                                src={item.id === 'work-1' ? '/images/insignia.jpeg' : '/images/tue.jpg'}
-                                alt={`${item.role} Banner`}
+                                src={item.bannerImage}
+                                alt=""
                                 className="w-full h-full object-cover select-none pointer-events-none group-hover:scale-106 transition-transform duration-700 ease-out"
                                 referrerPolicy="no-referrer"
                               />
@@ -767,260 +620,189 @@ export default function App() {
                               )}
                             </div>
                             <h5 className={`text-[14.5px] font-sans font-medium transition-colors duration-150 ${isLatest ? 'text-primary group-hover:text-highlight' : 'text-primary group-hover:text-accent'}`}>
-                              {item.role}
+                              {localize(item.role, lang)}
                             </h5>
                             <span className="text-[12.5px] text-secondary font-light group-hover:text-primary/80 transition-colors duration-150">
-                              {item.organization}
+                              {localize(item.organization, lang)}
                             </span>
 
                             {/* Rich secondary layer: first-level summary outline right in the card */}
                             <p className="text-[12px] text-secondary/75 font-light leading-relaxed mt-2 line-clamp-2 border-l border-surface/80 pl-2.5 group-hover:border-highlight/30 group-hover:text-secondary transition-all">
-                              {item.popoutCopy}
+                              {localize(item.popoutCopy, lang)}
                             </p>
                           </div>
                         </motion.div>
                       );
                     })}
-
-                    {hiddenItems.length > 0 && (
-                      <div className="flex flex-col gap-4 mt-2">
-                        {/* Dropdown Toggle Button */}
-                        <button
-                          onClick={() => setIsWorkExpanded(!isWorkExpanded)}
-                          className="group/btn flex items-center gap-1.5 self-start py-1.5 px-3 -ml-3 rounded-lg text-left transition-all duration-150 cursor-pointer text-secondary/70 hover:text-highlight"
-                        >
-                          <span className="text-[11px] font-mono tracking-wider uppercase font-semibold">
-                            {isWorkExpanded 
-                              ? (lang === 'en' ? "Hide previous roles" : "Sembunyikan peran sebelumnya") 
-                              : (lang === 'en' ? "Previous roles" : "Peran sebelumnya")}
-                          </span>
-                          <motion.div
-                            animate={{ rotate: isWorkExpanded ? 180 : 0 }}
-                            transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </motion.div>
-                        </button>
-
-                        {/* Collapsible Content */}
-                        <AnimatePresence initial={false}>
-                          {isWorkExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
-                              animate={{ 
-                                height: "auto", 
-                                opacity: 1,
-                                transitionEnd: { overflow: 'visible' }
-                              }}
-                              exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
-                              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                              className="relative z-10 flex flex-col gap-5 mt-1 pl-11 -ml-11 pr-6 -mr-6"
-                            >
-                              {hiddenItems.map((item: BackgroundItem, hIdx: number) => {
-                                const isLatest = false;
-                                const idx = visibleItems.length + hIdx;
-                                return (
-                                  <motion.div
-                                    key={item.id}
-                                    id={`timeline-item-${item.id}`}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={timelineVariants}
-                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
-                                    onMouseEnter={() => setHoveredTimelineId(item.id)}
-                                    onMouseLeave={() => setHoveredTimelineId(null)}
-                                    onClick={() => handleTimelineClick(item)}
-                                    className="relative flex flex-col gap-1 p-4 -mx-4 rounded-xl border cursor-pointer border-surface/60 bg-white shadow-sm hover:border-highlight/30 group transition-all duration-300"
-                                  >
-                                    {/* Emblem */}
-                                    <div className="absolute -left-[35px] top-[14px] w-11 h-11 rounded-full border flex items-center justify-center overflow-hidden transition-[border-color,background-color,box-shadow] duration-300 z-10 border-highlight/25 dark:border-highlight/45 bg-white group-hover:border-highlight/60 group-hover:bg-bg">
-                                      {item.logoPath ? (
-                                        <img src={item.logoPath} alt="" className="w-7 h-7 object-contain" />
-                                      ) : (
-                                        renderTimelineLogo(item.id, isLatest)
-                                      )}
-                                    </div>
-
-                                    <div className="flex-1 flex flex-col gap-0.5 pl-2">
-                                      <span className="text-[10px] font-mono tracking-widest uppercase text-secondary/70">
-                                        {item.dateRange}
-                                      </span>
-                                      <h5 className="text-[14.5px] font-sans font-medium transition-colors duration-150 text-primary group-hover:text-accent">
-                                        {item.role}
-                                      </h5>
-                                      <span className="text-[12.5px] text-secondary font-light group-hover:text-primary/80 transition-colors duration-150">
-                                        {item.organization}
-                                      </span>
-
-                                      <p className="text-[12px] text-secondary/75 font-light leading-relaxed mt-2 line-clamp-2 border-l border-surface/80 pl-2.5 group-hover:border-highlight/30 group-hover:text-secondary transition-all">
-                                        {item.popoutCopy}
-                                      </p>
-                                    </div>
-                                  </motion.div>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    )}
-
-                    {!isWorkCol && (
-                      <div className="flex flex-col gap-4 mt-2">
-                        {/* Dropdown Toggle Button */}
-                        <button
-                          onClick={() => setIsEduExpanded(!isEduExpanded)}
-                          className="group/btn flex items-center gap-1.5 self-start py-1.5 px-3 -ml-3 rounded-lg text-left transition-all duration-150 cursor-pointer text-secondary/70 hover:text-highlight"
-                        >
-                          <span className="text-[11px] font-mono tracking-wider uppercase font-semibold">
-                            {isEduExpanded 
-                              ? (lang === 'en' ? "Hide credentials" : "Sembunyikan kredensial") 
-                              : (lang === 'en' ? "Other Credentials" : "Kredensial Lainnya")}
-                          </span>
-                          <motion.div
-                            animate={{ rotate: isEduExpanded ? 180 : 0 }}
-                            transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </motion.div>
-                        </button>
-
-                        {/* Collapsible Content */}
-                        <AnimatePresence initial={false}>
-                          {isEduExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
-                              animate={{ 
-                                height: "auto", 
-                                opacity: 1,
-                                transitionEnd: { overflow: 'visible' }
-                              }}
-                              exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
-                              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                              className="relative z-10 flex flex-col gap-5 mt-1 pl-11 -ml-11 pr-6 -mr-6"
-                            >
-                              {[
-                                {
-                                  id: 'cred-0',
-                                  type: 'education' as 'education',
-                                  role: 'ALSP & Holland Scholarship',
-                                  organization: 'Eindhoven University of Technology (TU/e)',
-                                  dateRange: '2020 - 2022',
-                                  popoutCopy: lang === 'en'
-                                    ? 'Highly prestigious, fully-funded double scholarship awarded for exceptional academic records to pursue a Master of Science degree at TU/e.'
-                                    : 'Beasiswa ganda legendaris dan didanai penuh yang diberikan atas prestasi akademis luar biasa untuk menempuh gelar Master of Science di TU/e.',
-                                  details: lang === 'en'
-                                    ? 'The Amandus H. Lundqvist Scholarship Program (ALSP) combined with the Holland Scholarship fully covered tuition fees and generated living stipends for the 2-year MSc curriculum.'
-                                    : 'Program Beasiswa Amandus H. Lundqvist (ALSP) yang digabungkan dengan Beasiswa Holland mencakup biaya kuliah penuh dan biaya hidup untuk kurikulum MSc selama 2 tahun.',
-                                  highlights: lang === 'en' ? [
-                                    'Full Sponsor: 100% tuition coverage and monthly allowance funding for the full Master program.',
-                                    'Academic Excellence: Selective competitive merit-based entry granted to top-percentile international applications.',
-                                    'Industrial Integration: Connected with regional brainport technology leaders and corporate sponsors.'
-                                  ] : [
-                                    'Sponsor Penuh: Cakupan biaya kuliah 100% dan pendanaan saku bulanan untuk seluruh program Master.',
-                                    'Keunggulan Akademis: Penerimaan berbasis prestasi kompetitif yang selektif diberikan kepada pemohon internasional persentil teratas.',
-                                    'Integrasi Industri: Terhubung dengan para pemimpin teknologi regional Brainport dan sponsor perusahaan.'
-                                  ],
-                                  logoPath: '/logos/tue.png',
-                                  skills: ['Academic Excellence', 'Research Funding', 'Technical Engineering', 'Data Science & Engineering']
-                                },
-                                {
-                                  id: 'cred-1',
-                                  type: 'education' as 'education',
-                                  role: lang === 'en' ? 'Data Science & Machine Learning Course' : 'Kursus Ilmu Data & Pembelajaran Mesin',
-                                  organization: 'Purwadhika Digital Technology School',
-                                  dateRange: 'Feb - Mar 2020',
-                                  popoutCopy: lang === 'en' 
-                                    ? 'Intensive professional program focusing on end-to-end data analysis, database querying, and regression/classification modeling.'
-                                    : 'Program profesional intensif dengan fokus pada analisis data ujung-ke-ujung, kueri basis data, dan pemodelan regresi/klasifikasi.',
-                                  details: lang === 'en'
-                                    ? 'Completed high-intensity professional certificate program covering predictive analytics, supervised learning, data validation, exploratory stats, and optimal SQL joining pipelines.'
-                                    : 'Menyelesaikan program sertifikat profesional intensitas tinggi yang mencakup analitik prediktif, pembelajaran terarah, validasi data, statistik eksploratif, dan pipeline penggabungan SQL yang optimal.',
-                                  highlights: lang === 'en' ? [
-                                    'Predictive Modeling: Formulated regression and classification solutions with clean optimization loops.',
-                                    'Database Querying: Integrated structured multi-table SQL querying systems to format analytics databases.',
-                                    'Exploratory Analytics: Formulated deep EDA pipelines to discover user engagement patterns.'
-                                  ] : [
-                                    'Pemodelan Prediktif: Memformulasikan solusi regresi dan klasifikasi dengan loop optimasi yang bersih.',
-                                    'Kueri Basis Data: Mengintegrasikan sistem kueri SQL multi-tabel terstruktur untuk memformat basis data analitik.',
-                                    'Analisis Eksploratif: Memformulasikan pipeline EDA mendalam untuk menemukan pola keterlibatan pengguna.'
-                                  ],
-                                  skills: ['Data Science', 'Machine Learning', 'Python', 'SQL', 'Data Analytics']
-                                },
-                                {
-                                  id: 'cred-2',
-                                  type: 'education' as 'education',
-                                  role: 'IELTS Academic',
-                                  organization: 'British Council / IDP IELTS',
-                                  dateRange: 'Jan 2020',
-                                  popoutCopy: lang === 'en'
-                                    ? 'Attained an overall Band Score of 7.0, validating professional and academic command of the English language.'
-                                    : 'Meraih Skor Band keseluruhan 7.0, memvalidasi penguasaan bahasa Inggris tingkat profesional dan akademis.',
-                                  details: lang === 'en'
-                                    ? 'Validated certified academic level fluency, supporting research reporting and collaborative software development.'
-                                    : 'Kemampuan berbahasa Inggris bersertifikat tingkat akademis yang terverifikasi, mendukung pelaporan penelitian dan pengembangan perangkat lunak kolaboratif.',
-                                  highlights: lang === 'en' ? [
-                                    'Academic Level Competencies: Efficient technical translation and literature summarization under time limits.',
-                                    'International Collaborations: Fluid conversation capability supporting worldwide engineering sprints.',
-                                    'Score: Listening 7.5, Reading 7.5, Writing 6.0, Speaking 6.5 — Overall Band: 7.0'
-                                  ] : [
-                                    'Kompetensi Tingkat Akademis: Penerjemahan teknis dan ringkasan literatur yang efisien di bawah batas waktu.',
-                                    'Kolaborasi Internasional: Kemampuan percakapan yang lancar mendukung sprint teknik di seluruh dunia.',
-                                    'Skor: Mendengarkan 7.5, Membaca 7.5, Menulis 6.0, Berbicara 6.5 — Band Keseluruhan: 7.0'
-                                  ],
-                                  skills: ['English Proficiency', 'Academic Reading', 'Technical Writing', 'International Communication']
-                                }
-                              ].map((item: BackgroundItem, cIdx: number) => {
-                                const isLatest = false;
-                                const idx = visibleItems.length + cIdx;
-                                return (
-                                  <motion.div
-                                    key={item.id}
-                                    id={`timeline-item-${item.id}`}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={timelineVariants}
-                                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
-                                    onMouseEnter={() => setHoveredTimelineId(item.id)}
-                                    onMouseLeave={() => setHoveredTimelineId(null)}
-                                    onClick={() => handleTimelineClick(item)}
-                                    className="relative flex flex-col gap-1 p-4 -mx-4 rounded-xl border cursor-pointer border-surface/60 bg-white shadow-sm hover:border-highlight/30 group transition-all duration-300"
-                                  >
-                                    {/* Emblem */}
-                                    <div className="absolute -left-[35px] top-[14px] w-11 h-11 rounded-full border flex items-center justify-center overflow-hidden transition-[border-color,background-color,box-shadow] duration-300 z-10 border-highlight/25 dark:border-highlight/45 bg-white group-hover:border-highlight/60 group-hover:bg-bg">
-                                      {item.logoPath ? (
-                                        <img src={item.logoPath} alt="" className="w-7 h-7 object-contain" />
-                                      ) : (
-                                        renderTimelineLogo(item.id, isLatest)
-                                      )}
-                                    </div>
-
-                                    <div className="flex-1 flex flex-col gap-0.5 pl-2">
-                                      <span className="text-[10px] font-mono tracking-widest uppercase text-secondary/70">
-                                        {item.dateRange}
-                                      </span>
-                                      <h5 className="text-[14.5px] font-sans font-medium transition-colors duration-150 text-primary group-hover:text-accent">
-                                        {item.role}
-                                      </h5>
-                                      <span className="text-[12.5px] text-secondary font-light group-hover:text-primary/80 transition-colors duration-150">
-                                        {item.organization}
-                                      </span>
-
-                                      <p className="text-[12px] text-secondary/75 font-light leading-relaxed mt-2 line-clamp-2 border-l border-surface/80 pl-2.5 group-hover:border-highlight/30 group-hover:text-secondary transition-all">
-                                        {item.popoutCopy}
-                                      </p>
-                                    </div>
-                                  </motion.div>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    )}
                   </div>
+
+                  {/* Hidden items expand/collapse */}
+                  {hiddenItems.length > 0 && (
+                    <div className="flex flex-col gap-4 mt-2">
+                      {/* Dropdown Toggle Button */}
+                      <button
+                        onClick={() => isWorkCol ? setIsWorkExpanded(!isWorkExpanded) : setIsEduExpanded(!isEduExpanded)}
+                        className="group/btn flex items-center gap-1.5 self-start py-1.5 px-3 -ml-3 rounded-lg text-left transition-all duration-150 cursor-pointer text-secondary/70 hover:text-highlight"
+                      >
+                        <span className="text-[11px] font-mono tracking-wider uppercase font-semibold">
+                          {(isWorkCol ? isWorkExpanded : isEduExpanded)
+                            ? collapseLabel
+                            : expandLabel}
+                        </span>
+                        <motion.div
+                          animate={{ rotate: (isWorkCol ? isWorkExpanded : isEduExpanded) ? 180 : 0 }}
+                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </motion.div>
+                      </button>
+
+                      {/* Collapsible Content */}
+                      <AnimatePresence initial={false}>
+                        {(isWorkCol ? isWorkExpanded : isEduExpanded) && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                            animate={{
+                              height: "auto",
+                              opacity: 1,
+                              transitionEnd: { overflow: 'visible' }
+                            }}
+                            exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                            className="relative z-10 flex flex-col gap-5 mt-1 pl-11 -ml-11 pr-6 -mr-6"
+                          >
+                            {hiddenItems.map((item: BackgroundItem, hIdx: number) => {
+                              const isLatest = false;
+                              return (
+                                <motion.div
+                                  key={item.id}
+                                  id={`timeline-item-${item.id}`}
+                                  initial="hidden"
+                                  animate="visible"
+                                  variants={timelineVariants}
+                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                                  onMouseEnter={() => setHoveredTimelineId(item.id)}
+                                  onMouseLeave={() => setHoveredTimelineId(null)}
+                                  onClick={() => handleTimelineClick(item)}
+                                  className="relative flex flex-col gap-1 p-4 -mx-4 rounded-xl border cursor-pointer border-surface/60 bg-white shadow-sm hover:border-highlight/30 group transition-all duration-300"
+                                >
+                                  {/* Emblem */}
+                                  <div className="absolute -left-[35px] top-[14px] w-11 h-11 rounded-full border flex items-center justify-center overflow-hidden transition-[border-color,background-color,box-shadow] duration-300 z-10 border-highlight/25 dark:border-highlight/45 bg-white group-hover:border-highlight/60 group-hover:bg-bg">
+                                    {item.logoPath ? (
+                                      <img src={item.logoPath} alt="" className="w-7 h-7 object-contain" />
+                                    ) : (
+                                      lookupIcon(item.id as any, isLatest)
+                                    )}
+                                  </div>
+
+                                  <div className="flex-1 flex flex-col gap-0.5 pl-2">
+                                    <span className="text-[10px] font-mono tracking-widest uppercase text-secondary/70">
+                                      {item.dateRange}
+                                    </span>
+                                    <h5 className="text-[14.5px] font-sans font-medium transition-colors duration-150 text-primary group-hover:text-accent">
+                                      {localize(item.role, lang)}
+                                    </h5>
+                                    <span className="text-[12.5px] text-secondary font-light group-hover:text-primary/80 transition-colors duration-150">
+                                      {localize(item.organization, lang)}
+                                    </span>
+
+                                    <p className="text-[12px] text-secondary/75 font-light leading-relaxed mt-2 line-clamp-2 border-l border-surface/80 pl-2.5 group-hover:border-highlight/30 group-hover:text-secondary transition-all">
+                                      {localize(item.popoutCopy, lang)}
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+
+                  {/* Credentials at bottom of education column */}
+                  {!isWorkCol && BACKGROUND.credentials.length > 0 && (
+                    <div className="flex flex-col gap-4 mt-2">
+                      {/* Dropdown Toggle Button - Credentials */}
+                      <button
+                        onClick={() => setIsEduExpanded(!isEduExpanded)}
+                        className="group/btn flex items-center gap-1.5 self-start py-1.5 px-3 -ml-3 rounded-lg text-left transition-all duration-150 cursor-pointer text-secondary/70 hover:text-highlight"
+                      >
+                        <span className="text-[11px] font-mono tracking-wider uppercase font-semibold">
+                          {isEduExpanded
+                            ? collapseLabel
+                            : expandLabel}
+                        </span>
+                        <motion.div
+                          animate={{ rotate: isEduExpanded ? 180 : 0 }}
+                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </motion.div>
+                      </button>
+
+                      {/* Collapsible Content - Credentials */}
+                      <AnimatePresence initial={false}>
+                        {isEduExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                            animate={{
+                              height: "auto",
+                              opacity: 1,
+                              transitionEnd: { overflow: 'visible' }
+                            }}
+                            exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                            className="relative z-10 flex flex-col gap-5 mt-1 pl-11 -ml-11 pr-6 -mr-6"
+                          >
+                            {BACKGROUND.credentials.map((item: BackgroundItem, cIdx: number) => {
+                              const isLatest = false;
+                              return (
+                                <motion.div
+                                  key={item.id}
+                                  id={`timeline-item-${item.id}`}
+                                  initial="hidden"
+                                  animate="visible"
+                                  variants={timelineVariants}
+                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                                  onMouseEnter={() => setHoveredTimelineId(item.id)}
+                                  onMouseLeave={() => setHoveredTimelineId(null)}
+                                  onClick={() => handleTimelineClick(item)}
+                                  className="relative flex flex-col gap-1 p-4 -mx-4 rounded-xl border cursor-pointer border-surface/60 bg-white shadow-sm hover:border-highlight/30 group transition-all duration-300"
+                                >
+                                  {/* Emblem */}
+                                  <div className="absolute -left-[35px] top-[14px] w-11 h-11 rounded-full border flex items-center justify-center overflow-hidden transition-[border-color,background-color,box-shadow] duration-300 z-10 border-highlight/25 dark:border-highlight/45 bg-white group-hover:border-highlight/60 group-hover:bg-bg">
+                                    {item.logoPath ? (
+                                      <img src={item.logoPath} alt="" className="w-7 h-7 object-contain" />
+                                    ) : (
+                                      lookupIcon(item.id as any, isLatest)
+                                    )}
+                                  </div>
+
+                                  <div className="flex-1 flex flex-col gap-0.5 pl-2">
+                                    <span className="text-[10px] font-mono tracking-widest uppercase text-secondary/70">
+                                      {item.dateRange}
+                                    </span>
+                                    <h5 className="text-[14.5px] font-sans font-medium transition-colors duration-150 text-primary group-hover:text-accent">
+                                      {localize(item.role, lang)}
+                                    </h5>
+                                    <span className="text-[12.5px] text-secondary font-light group-hover:text-primary/80 transition-colors duration-150">
+                                      {localize(item.organization, lang)}
+                                    </span>
+
+                                    <p className="text-[12px] text-secondary/75 font-light leading-relaxed mt-2 line-clamp-2 border-l border-surface/80 pl-2.5 group-hover:border-highlight/30 group-hover:text-secondary transition-all">
+                                      {localize(item.popoutCopy, lang)}
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -1036,21 +818,18 @@ export default function App() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">Selected Works</span>
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Built & Research</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.projects.eyebrowLeftEn, id: SECTION_LABELS.eyebrows.projects.eyebrowLeftId }, lang)}</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">{localize({ en: SECTION_LABELS.eyebrows.projects.eyebrowRightEn, id: SECTION_LABELS.eyebrows.projects.eyebrowRightId }, lang)}</span>
           </motion.div>
 
           {/* Title + Image */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
             <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
-              {lang === 'en' ? (
-                <>What I've been<br className="hidden sm:block" /> <span className="text-highlight">working on</span></>
-              ) : (
-                <>Yang sudah<br className="hidden sm:block" /> <span className="text-highlight">saya kerjakan</span></>
-              )}
+              {localize({ en: SECTION_LABELS.titleHeadlines.projects.line1En, id: SECTION_LABELS.titleHeadlines.projects.line1Id }, lang)}<br className="hidden sm:block" />
+              <span className="text-highlight">{localize({ en: SECTION_LABELS.titleHeadlines.projects.line2En, id: SECTION_LABELS.titleHeadlines.projects.line2Id }, lang)}</span>
             </h2>
             <img
-              src="/images/banner_work.png"
+              src={SECTION_LABELS.banners.projects}
               alt=""
               className="w-full sm:w-auto sm:max-w-[640px] lg:max-w-[720px] h-auto object-contain rounded-lg flex-shrink-0"
             />
@@ -1103,7 +882,7 @@ export default function App() {
                       </h4>
                     </div>
                     <p className="text-[13.5px] sm:text-[14px] leading-relaxed text-[#2C3E50] font-light">
-                      {project.subtitle}
+                      {localize(project.subtitle, lang)}
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {project.domainTags.map((tag: string, i: number) => (
@@ -1129,11 +908,6 @@ export default function App() {
                 className="grid grid-cols-1 lg:grid-cols-2 gap-5 -mt-5"
               >
                 {(() => {
-                  const getStatusStyle = (status: string) => {
-                    if (status === 'Completed') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
-                    if (status === 'Recent') return 'text-[#9A6200] bg-[#FFF8EB] border border-[#F5DFBF]';
-                    return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]'; // Active
-                  };
                   return PROJECTS.slice(4).map((project, idx) => (
                     <motion.div
                       key={project.id}
@@ -1171,7 +945,7 @@ export default function App() {
                           </h4>
                         </div>
                         <p className="text-[13.5px] sm:text-[14px] leading-relaxed text-[#2C3E50] font-light">
-                          {project.subtitle}
+                          {localize(project.subtitle, lang)}
                         </p>
                         <div className="flex flex-wrap gap-1.5 mt-1">
                           {project.domainTags.map((tag: string, i: number) => (
@@ -1199,8 +973,8 @@ export default function App() {
             >
               <span className="font-mono text-[11px] tracking-wider uppercase font-semibold">
                 {showMoreProjects
-                  ? (lang === 'en' ? 'Show Less' : 'Tampilkan Lebih Sedikit')
-                  : (lang === 'en' ? `+ ${PROJECTS.length - 4} More Projects` : `+ ${PROJECTS.length - 4} Proyek Lainnya`)}
+                  ? localize({ en: UI.projectToggle.showLessEn, id: UI.projectToggle.showLessId }, lang)
+                  : localize({ en: UI.projectToggle.showMoreEn.replace('{count}', String(PROJECTS.length - 4)), id: UI.projectToggle.showMoreId.replace('{count}', String(PROJECTS.length - 4)) }, lang)}
               </span>
               <motion.div
                 animate={{ rotate: showMoreProjects ? 180 : 0 }}
@@ -1221,21 +995,18 @@ export default function App() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">Curated Writing</span>
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">Rigorous Frames</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.writing.eyebrowLeftEn, id: SECTION_LABELS.eyebrows.writing.eyebrowLeftId }, lang)}</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">{localize({ en: SECTION_LABELS.eyebrows.writing.eyebrowRightEn, id: SECTION_LABELS.eyebrows.writing.eyebrowRightId }, lang)}</span>
           </motion.div>
 
           {/* Title */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
             <h2 className="font-serif text-2xl sm:text-3xl font-medium tracking-tight text-primary leading-snug flex-1">
-              {lang === 'en' ? (
-                <>Things I've been<br className="hidden sm:block" /> <span className="text-highlight">thinking about</span></>
-              ) : (
-                <>Hal yang sedang<br className="hidden sm:block" /> <span className="text-highlight">saya pikirkan</span></>
-              )}
+              {localize({ en: SECTION_LABELS.titleHeadlines.writing.line1En, id: SECTION_LABELS.titleHeadlines.writing.line1Id }, lang)}<br className="hidden sm:block" />
+              <span className="text-highlight">{localize({ en: SECTION_LABELS.titleHeadlines.writing.line2En, id: SECTION_LABELS.titleHeadlines.writing.line2Id }, lang)}</span>
             </h2>
             <img
-              src="/images/banner_writing.png"
+              src={SECTION_LABELS.banners.writing}
               alt=""
               className="w-full sm:w-auto sm:max-w-[300px] lg:max-w-[360px] h-auto object-contain rounded-lg flex-shrink-0"
             />
@@ -1247,12 +1018,9 @@ export default function App() {
               const isHovered = hoveredWritingId === write.id;
               const isExpanded = expandedWritingId === write.id;
 
-              const getTopicTagStyle = (tag: string) => {
-                if (tag === 'Education & AI') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
-                if (tag === 'Design & AI') return 'text-[#5A3A6A] bg-[#F7F2F9] border border-[#DFCEE6]';
-                if (tag === 'AI Engineering') return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]';
-                return 'text-[#B45028] bg-[#FAF3F0] border border-[#F3DEC2]'; // AI Strategy / default
-              };
+              const framing = localize(write.framing, lang);
+              const excerpt = localize(write.excerpt, lang);
+              const topicTag = localize(write.topicTag, lang);
 
               return (
                 <motion.a
@@ -1275,8 +1043,8 @@ export default function App() {
                   {/* Left: Text content */}
                   <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-[9px] font-mono tracking-widest uppercase px-2 py-0.5 border rounded-md font-bold ${getTopicTagStyle(write.topicTag)}`}>
-                        {write.topicTag}
+                      <span className={`text-[9px] font-mono tracking-widest uppercase px-2 py-0.5 border rounded-md font-bold ${getTopicTagStyle(topicTag)}`}>
+                        {topicTag}
                       </span>
                       <span className="text-[10px] font-mono text-secondary/60 font-semibold">{write.date}</span>
                     </div>
@@ -1286,7 +1054,7 @@ export default function App() {
                     </h4>
 
                     <p className="text-[13px] text-secondary leading-relaxed font-light line-clamp-2">
-                      {write.framing}
+                      {framing}
                     </p>
 
                     {/* Desktop: excerpt on hover */}
@@ -1300,14 +1068,14 @@ export default function App() {
                           className="hidden lg:block overflow-hidden"
                         >
                           <p className="text-[12px] leading-relaxed text-secondary/80 border-l-2 border-highlight pl-3 font-normal">
-                            {write.excerpt}
+                            {excerpt}
                           </p>
                         </motion.div>
                       )}
                     </AnimatePresence>
 
                     <div className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-highlight font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {lang === 'en' ? 'Read article' : 'Baca artikel'}
+                      {localize({ en: UI.writingActions.readArticleEn, id: UI.writingActions.readArticleId }, lang)}
                       <ArrowUpRight className="w-3 h-3" />
                     </div>
                   </div>
@@ -1333,9 +1101,9 @@ export default function App() {
                         transition={{ duration: 0.22 }}
                         className="block lg:hidden overflow-hidden bg-surface/30 p-3 rounded-lg col-span-full w-full"
                       >
-                        <p className="text-[13px] leading-relaxed text-secondary font-light mb-3">{write.excerpt}</p>
+                        <p className="text-[13px] leading-relaxed text-secondary font-light mb-3">{excerpt}</p>
                         <a href={write.link} target="_blank" rel="noopener noreferrer" className="text-[11px] text-highlight font-mono inline-flex items-center gap-1 uppercase tracking-wider font-semibold">
-                          {lang === 'en' ? 'Read on Medium' : 'Baca di Medium'} <ArrowUpRight className="h-3 w-3" />
+                          {localize({ en: UI.writingActions.readOnMediumEn, id: UI.writingActions.readOnMediumId }, lang)} <ArrowUpRight className="h-3 w-3" />
                         </a>
                       </motion.div>
                     )}
@@ -1351,7 +1119,7 @@ export default function App() {
             rel="noopener noreferrer"
             className="self-start text-[12px] font-mono text-secondary hover:text-accent transition-colors duration-150 inline-flex items-center gap-1.5 uppercase tracking-wider hover:underline underline-offset-4 focus:outline-none"
           >
-            {lang === 'en' ? '→ All writing on Medium' : '→ Semua tulisan di Medium'}
+            {localize({ en: UI.writingFooterCtaEn, id: UI.writingFooterCtaId }, lang)}
           </a>
         </section>
 
@@ -1364,117 +1132,76 @@ export default function App() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">
-              {lang === 'en' ? 'Get In Touch' : 'Hubungi Saya'}
-            </span>
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">
-              {lang === 'en' ? 'Collab & Conversation' : 'Kolaborasi & Diskusi'}
-            </span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium">{localize({ en: SECTION_LABELS.eyebrows.contact.eyebrowLeftEn, id: SECTION_LABELS.eyebrows.contact.eyebrowLeftId }, lang)}</span>
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-secondary/70 font-medium ml-auto">{localize({ en: SECTION_LABELS.eyebrows.contact.eyebrowRightEn, id: SECTION_LABELS.eyebrows.contact.eyebrowRightId }, lang)}</span>
           </motion.div>
 
           <h3 className="text-2xl sm:text-3xl font-sans font-semibold tracking-tight text-primary leading-tight -mb-2">
-            {t('letConnect')}
+            {localize({ en: CONTACT.headingEn, id: CONTACT.headingId }, lang)}
           </h3>
 
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             <div className="flex flex-col gap-4 text-[14.5px] sm:text-[15px] leading-relaxed text-secondary/85 font-light lg:col-span-12 xl:col-span-5">
               <p>
-                {t('contactLead')}
+                {localize({ en: CONTACT.leadEn, id: CONTACT.leadId }, lang)}
               </p>
               <p>
-                {t('contactSecondary')}
+                {localize({ en: CONTACT.secondaryEn, id: CONTACT.secondaryId }, lang)}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:col-span-7 w-full">
-              {[
-                {
-                  id: 'email',
-                  icon: <Mail className="w-4 h-4" />,
-                  label: 'Email',
-                  display: copied ? t('copiedDetails') : obfuscatedEmail,
-                  href: `mailto:${obfuscatedEmail}`,
-                  onClick: handleEmailClick,
-                  brandClass: 'hover:border-highlight/35 hover:bg-[#f1f4f8]',
-                  iconBgClass: 'bg-highlight/[0.06] text-highlight group-hover:bg-highlight group-hover:text-bg',
-                  accentTextClass: 'group-hover:text-highlight',
-                },
-                {
-                  id: 'linkedin',
-                  icon: <Linkedin className="w-4 h-4" />,
-                  label: 'LinkedIn',
-                  display: 'faizuddarains',
-                  href: 'https://www.linkedin.com/in/faizuddarains/',
-                  brandClass: 'hover:border-[#0077B5]/35 hover:bg-[#f0f7fa]',
-                  iconBgClass: 'bg-[#0077B5]/[0.06] text-[#0077B5] group-hover:bg-[#0077B5] group-hover:text-white',
-                  accentTextClass: 'group-hover:text-[#0077B5]',
-                },
-                {
-                  id: 'instagram',
-                  icon: <Instagram className="w-4 h-4" />,
-                  label: 'Instagram',
-                  display: '@faizuddarains',
-                  href: 'https://www.instagram.com/faizuddarains/',
-                  brandClass: 'hover:border-[#E1306C]/35 hover:bg-[#fdf2f5]',
-                  iconBgClass: 'bg-[#E1306C]/[0.06] text-[#E1306C] group-hover:bg-[#E1306C] group-hover:text-white',
-                  accentTextClass: 'group-hover:text-[#E1306C]',
-                },
-                {
-                  id: 'github',
-                  icon: <Github className="w-4 h-4" />,
-                  label: 'GitHub',
-                  display: 'faizsyam',
-                  href: 'https://github.com/faizsyam',
-                  brandClass: 'hover:border-gray-900/30 hover:bg-[#f6f6f6] dark:hover:border-primary/30',
-                  iconBgClass: 'bg-gray-900/[0.05] text-[#181815] dark:text-[#FFAF33] group-hover:bg-[#181815] dark:group-hover:bg-[#FFAF33] group-hover:text-white dark:group-hover:text-bg',
-                  accentTextClass: 'group-hover:text-gray-950 dark:group-hover:text-primary',
-                },
-              ].map(({ id, icon, label, display, href, onClick, brandClass, iconBgClass, accentTextClass }: ContactLink, gridIdx: number) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  target={id !== 'email' ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                  onClick={onClick}
-                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, margin: '-60px' }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 180,
-                    damping: 18,
-                    delay: gridIdx * 0.08
-                  }}
-                  className={`group flex items-center justify-between p-4.5 rounded-xl border border-surface/60 bg-white hover:border-surface transition-all duration-300 shadow-sm hover:shadow-md ${brandClass}`}
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 flex-shrink-0 ${iconBgClass}`}>
-                      {icon}
+              {CONTACT.links.map((link, gridIdx: number) => {
+                const Icon = link.icon === 'Mail' ? Mail : link.icon === 'Linkedin' ? Linkedin : link.icon === 'Instagram' ? Instagram : Github;
+                const isEmail = link.id === 'email';
+                const displayText = isEmail && copied ? localize({ en: CONTACT.copiedToastEn, id: CONTACT.copiedToastId }, lang) : link.display;
+                return (
+                  <motion.a
+                    key={link.id}
+                    href={link.href}
+                    target={isEmail ? undefined : '_blank'}
+                    rel="noopener noreferrer"
+                    onClick={isEmail ? handleEmailClick : undefined}
+                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                    initial={{ opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, margin: '-60px' }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 180,
+                      damping: 18,
+                      delay: gridIdx * 0.08
+                    }}
+                    className={`group flex items-center justify-between p-4.5 rounded-xl border border-surface/60 bg-white hover:border-surface transition-all duration-300 shadow-sm hover:shadow-md ${link.brandClass}`}
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 flex-shrink-0 ${link.iconBgClass}`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[10px] font-mono tracking-wider uppercase text-secondary/50 font-medium">
+                          {link.label}
+                        </span>
+                        <span className={`text-[13px] font-mono font-medium text-primary mt-0.5 truncate transition-colors duration-200 ${link.accentTextClass}`}>
+                          {displayText}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[10px] font-mono tracking-wider uppercase text-secondary/50 font-medium">
-                        {label}
-                      </span>
-                      <span className={`text-[13px] font-mono font-medium text-primary mt-0.5 truncate transition-colors duration-200 ${accentTextClass}`}>
-                        {display}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowUpRight className={`h-4 w-4 text-secondary/35 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0 ${accentTextClass}`} />
-                </motion.a>
-              ))}
+                    <ArrowUpRight className={`h-4 w-4 text-secondary/35 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0 ${link.accentTextClass}`} />
+                  </motion.a>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* FOOTER */}
         <footer className="pt-10 pb-4 border-t border-surface/30 flex items-center justify-between select-none">
-          <p className="text-[11.5px] text-secondary/50 font-mono">© Faizuddarain Syam · 2026</p>
-          <span className="text-[10px] font-mono text-secondary/30 uppercase tracking-widest">AI · Human · Creativity</span>
+          <p className="text-[11.5px] text-secondary/50 font-mono">{localize({ en: UI.footer.copyrightEn, id: UI.footer.copyrightId }, lang)}</p>
+          <span className="text-[10px] font-mono text-secondary/30 uppercase tracking-widest">{localize({ en: UI.footer.taglineEn, id: UI.footer.taglineId }, lang)}</span>
         </footer>
-      </main>
+      </div>
 
       <AnimatePresence>
         {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} />}

@@ -1,0 +1,84 @@
+{
+  "footer": {
+    "copyrightEn": "© Faizuddarain Syam · 2026",
+    "copyrightId": "© Faizuddarain Syam · 2026",
+    "taglineEn": "AI · Human · Creativity",
+    "taglineId": "AI · Manusia · Kreativitas"
+  },
+  "collaborators": [
+    { "src": "/logos/telkom.png", "alt": "Telkom" },
+    { "src": "/logos/kma.png", "alt": "KMA" },
+    { "src": "/logos/gameloft.png", "alt": "Gameloft" },
+    { "src": "/logos/metrodata.png", "alt": "Metrodata" }
+  ],
+  "collaboratorsLabelEn": "Collaborated with",
+  "collaboratorsLabelId": "Telah berkolaborasi dengan",
+  "writingFooterCtaEn": "→ All writing on Medium",
+  "writingFooterCtaId": "→ Semua tulisan di Medium",
+  "projectToggle": {
+    "showMoreEn": "+ {count} More Projects",
+    "showMoreId": "+ {count} Proyek Lainnya",
+    "showLessEn": "Show Less",
+    "showLessId": "Tampilkan Lebih Sedikit"
+  },
+  "aboutReadMore": {
+    "labelEn": "Read More",
+    "labelId": "Baca Selengkapnya",
+    "titleEn": "Intelligence as a Craft",
+    "titleId": "Kecerdasan sebagai Seni"
+  },
+  "writingActions": {
+    "readArticleEn": "Read article",
+    "readArticleId": "Baca artikel",
+    "readOnMediumEn": "Read on Medium",
+    "readOnMediumId": "Baca di Medium"
+  },
+  "introParagraphs": {
+    "en": [
+      "I am an AI/ML Engineer. I build and deploy intelligent systems, and I care deeply about the engineering behind them, from system architecture and low latency to reliable outputs. Building systems that work, scale, and deliver value is non-negotiable.",
+      "But in a time when AI capability is widely available. As the technical barrier gets lower, technology alone becomes less of a differentiator. What separates great products from average ones is not just capability, but the implementation and taste.",
+      "That's why beyond AI and engineering, my skills covers human-centered design and creativity. A product succeeds not only because it works, but because people understand it, trust it, and enjoy using it."
+    ],
+    "id": [
+      "Saya adalah seorang AI/ML Engineer. Saya membangun dan menerapkan sistem cerdas, dan saya sangat peduli dengan rekayasa di baliknya—mulai dari arsitektur sistem dan latensi rendah hingga keluaran yang andal. Membangun sistem yang berfungsi, berskala, dan memberikan nilai adalah hal yang mutlak.",
+      "Namun di masa ketika kapabilitas AI telah tersedia secara luas. Seiring dengan semakin rendahnya hambatan teknis, teknologi saja tidak lagi menjadi pembeda utama. Apa yang membedakan produk hebat dari yang biasa bukanlah sekadar kapabilitas, melainkan implementasi dan selera desain.",
+      "Itulah mengapa di luar AI dan rekayasa, keahlian saya mencakup desain yang berpusat pada manusia dan kreativitas. Sebuah produk berhasil bukan hanya karena berfungsi dengan baik, tetapi karena orang-orang memahaminya, memercayainya, dan senang menggunakannya."
+    ]
+  },
+  "modalLabels": {
+    "project": {
+      "closeEn": "Close project",
+      "closeId": "Tutup proyek",
+      "contextEn": "Context",
+      "contextId": "Konteks",
+      "solutionEn": "The Solution",
+      "solutionId": "Solusi",
+      "tradeoffsEn": "Tradeoffs & Decision Design",
+      "tradeoffsId": "Kompromi & Desain Keputusan",
+      "stackEn": "Architecture Stack",
+      "stackId": "Tumpukan Teknologi",
+      "linkEn": "SOURCE PATH",
+      "linkId": "SUMBER KODE"
+    },
+    "background": {
+      "closeEn": "Close details",
+      "closeId": "Tutup detail",
+      "roleEn": "Role",
+      "roleId": "Peran",
+      "organizationEn": "Organization",
+      "organizationId": "Organisasi",
+      "periodEn": "Period",
+      "periodId": "Periode",
+      "detailsEn": "Details",
+      "detailsId": "Detail",
+      "highlightsEn": "Highlights",
+      "highlightsId": "Sorotan",
+      "skillsEn": "Skills",
+      "skillsId": "Keterampilan",
+      "workTrackEn": "Professional Track",
+      "workTrackId": "Jalur Profesional",
+      "eduTrackEn": "Academic & Research",
+      "eduTrackId": "Akademis & Riset"
+    }
+  }
+}

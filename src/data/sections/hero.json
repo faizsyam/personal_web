@@ -1,0 +1,31 @@
+{
+  "fullName": "Faizuddarain Syam",
+  "handle": "Faiz",
+  "oneLiner": "Data Scientist and AI Engineer. I design high-reliability agentic systems and train deep learning models.",
+  "location": "Jakarta, Indonesia · Remote available",
+  "tagline": {
+    "headlineEn": "I build intelligent systems with a focus on both technical depth and user experience.",
+    "headlineId": "Saya membangun sistem cerdas dengan fokus pada kedalaman teknis dan pengalaman pengguna.",
+    "highlightWordsEn": ["technical", "depth", "user", "experience."],
+    "highlightWordsId": ["kedalaman", "teknis", "pengalaman", "pengguna."],
+    "tailEn": "From AI agents to production applications, I care as much about how things work as how they feel to use.",
+    "tailId": "Mulai dari AI agent hingga aplikasi yang digunakan di dunia nyata, saya peduli tidak hanya pada bagaimana teknologi bekerja, tetapi juga bagaimana rasanya saat digunakan."
+  },
+  "ctas": [
+    { "labelEn": "View projects", "labelId": "Lihat proyek", "target": "projects" },
+    { "labelEn": "Read writing", "labelId": "Baca tulisan", "target": "writing" }
+  ],
+  "profile": {
+    "name": "Faizuddarain Syam",
+    "subtitleEn": "ML Engineer · Remote Available",
+    "subtitleId": "ML Engineer · Tersedia Remote",
+    "bio": "MSc in Data Science in Engineering.",
+    "tags": ["Agentic AI", "Deep Learning", "Product Design", "Data Analytics"]
+  },
+  "socials": [
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/faizuddarains/" },
+    { "label": "GitHub", "href": "https://github.com/faizsyam" },
+    { "label": "Instagram", "href": "https://www.instagram.com/faizuddarains/" },
+    { "label": "Email", "href": "mailto:faizsyam06@gmail.com" }
+  ]
+}
