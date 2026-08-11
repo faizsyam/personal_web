@@ -22,9 +22,20 @@
           "role": { "en": "Machine Learning Engineer", "id": "Machine Learning Engineer" },
           "organization": "PT Kreasi Media Asia (Insignia)",
           "dateRange": "Jan 2026 - Present",
-          "popoutCopy": { "en": "Architecting agent workflows and building large-scale automated chatbots used by nationwide-level organizations. I focus on orchestration, security, and making sure the runtime behaves exactly as intended.", "id": "Mengarsitektur alur kerja agen dan membangun chatbot otomatis skala besar yang digunakan oleh organisasi tingkat nasional. Saya fokus pada orkestrasi, keamanan, dan memastikan runtime berperilaku persis seperti yang diharapkan." },
-          "details": { "en": "I design and build enterprise LLM-based agent systems and chatbot pipelines. My work involves designing agent tools, routing client queries through stateful recovery steps, and deploying reliable architectures from prototype to production.", "id": "Saya merancang dan membangun sistem agen berbasis LLM enterprise dan pipeline chatbot. Pekerjaan saya melibatkan merancang alat agen, mengarahkan kueri klien melalui langkah pemulihan berstatus, dan menerapkan arsitektur andal dari prototipe ke produksi." },
-          "highlights": { "en": ["Process complex user queries: Design and build agentic workflows with knowledge retrieval, SQL querying, and MCP integrations to automate multi-step client workflows.", "Support nationwide entities: Develop production-ready chatbot components to handle high volumes without throughput degradation or prompt context leakage.", "Ensure robust deployment: Maintain full observability across development environments, testing prompt latency, and ensuring clean model orchestration."], "id": ["Memproses kueri pengguna yang kompleks: Merancang dan membangun alur kerja agen dengan pengambilan pengetahuan, kueri SQL, dan integrasi MCP untuk mengotomatiskan alur kerja klien multi-langkah.", "Mendukung entitas nasional: Mengembangkan komponen chatbot siap produksi untuk menangani volume tinggi tanpa degradasi throughput atau kebocoran konteks prompt.", "Memastikan penyebaran yang andal: Memelihara observabilitas penuh di seluruh lingkungan pengembangan, menguji latensi prompt, dan memastikan orkestrasi model yang bersih."] },
+          "popoutCopy": { "en": "Architecting agent workflows and building large-scale automated chatbots used by nationwide organizations. I focus on orchestration, security, and making sure the runtime behaves exactly as intended.", "id": "Merancang alur kerja agen dan membangun chatbot otomatis skala besar yang digunakan oleh organisasi berskala nasional. Saya fokus pada orkestrasi, keamanan, dan memastikan runtime berperilaku persis seperti yang diharapkan." },
+          "details": { "en": "I build enterprise LLM-based agent systems and chatbot pipelines. My work covers designing agent tools, routing client queries through stateful recovery steps, and deploying reliable architectures from prototype to production.", "id": "Saya membangun sistem agen berbasis LLM enterprise dan pipeline chatbot. Pekerjaan saya mencakup merancang alat agen, mengarahkan kueri klien melalui langkah pemulihan berstatus, dan menerapkan arsitektur andal dari prototipe ke produksi." },
+          "highlights": {
+            "en": [
+              "Process complex user queries: Build agentic workflows with knowledge retrieval, SQL querying, and MCP integrations to automate multi-step client processes.",
+              "Support nationwide entities: Develop production-ready chatbot components that handle high volumes without throughput degradation or prompt context leakage.",
+              "Maintain full observability: Track prompt latency and keep model orchestration clean across development environments."
+            ],
+            "id": [
+              "Memproses kueri pengguna yang kompleks: Membangun alur kerja agen dengan pengambilan pengetahuan, kueri SQL, dan integrasi MCP untuk mengotomatiskan proses klien multi-langkah.",
+              "Mendukung entitas nasional: Mengembangkan komponen chatbot siap produksi yang menangani volume tinggi tanpa degradasi throughput atau kebocoran konteks prompt.",
+              "Menjaga observabilitas penuh: Melacak latensi prompt dan menjaga orkestrasi model tetap bersih di seluruh lingkungan pengembangan."
+            ]
+          },
           "skills": ["LLMs", "Agentic AI", "Prompt Engineering", "MCP", "Langfuse", "Python"]
         },
         {
@@ -36,8 +47,19 @@
           "organization": "PT Telkom Indonesia",
           "dateRange": "Jun 2024 - Dec 2025",
           "popoutCopy": { "en": "Led enterprise LLM-based chatbot architectures, optimizing model accuracy and RAG precision while directing a multi-disciplinary development team.", "id": "Memimpin arsitektur chatbot berbasis LLM enterprise, mengoptimalkan akurasi model dan presisi RAG sambil memimpin tim pengembangan multi-disiplin." },
-          "details": { "en": "I was the technical lead for corporate AI assistant initiatives. I designed RAG pipelines, guided UI/UX standards, and synchronized structural knowledge updates across dynamic systems.", "id": "Saya adalah pemimpin teknis untuk inisiatif asisten AI korporat. Saya merancang pipeline RAG, membimbing standar UI/UX, dan menyinkronkan pembaruan pengetahuan struktural di seluruh sistem dinamis." },
-          "highlights": { "en": ["Enterprise chatbot delivery: Architected the core system behind automated WhatsApp AI agents and company information chatbots, ensuring high-reliability text generation.", "Boosted engagement by 850%: Successfully aligned product directions with business metrics, driving outstanding user growth and high satisfaction ratings across multiple enterprise divisions.", "Developed custom dashboards: Built Streamlit trend trackers and analytics engines, tracking model inference times to guide data-driven iterations."], "id": ["Pengiriman chatbot enterprise: Mengarsitektur sistem inti di balik agen AI WhatsApp otomatis dan chatbot informasi perusahaan, memastikan generasi teks dengan keandalan tinggi.", "Meningkatkan engagement 850%: Berhasil menyelaraskan arah produk dengan metrik bisnis, mendorong pertumbuhan pengguna luar biasa dan rating kepuasan tinggi di seluruh divisi enterprise.", "Mengembangkan dashboard kustom: Membangun pelacak tren Streamlit dan mesin analitik, melacak waktu inferensi model untuk memandu iterasi berbasis data."] },
+          "details": { "en": "I was the technical lead for corporate AI assistant initiatives, designing RAG pipelines, guiding UI/UX standards, and keeping knowledge sources synchronized as the systems evolved.", "id": "Saya adalah pemimpin teknis untuk inisiatif asisten AI korporat, merancang pipeline RAG, membimbing standar UI/UX, dan menjaga sumber pengetahuan tetap sinkron seiring berkembangnya sistem." },
+          "highlights": {
+            "en": [
+              "Enterprise chatbot delivery: Architected the core system behind automated WhatsApp AI agents and company information chatbots, built for high-reliability text generation.",
+              "Boosted engagement by 850%: Aligned product direction with business metrics, driving user growth across multiple enterprise divisions.",
+              "Developed custom dashboards: Built Streamlit trend trackers that tracked model inference times to guide iteration."
+            ],
+            "id": [
+              "Pengiriman chatbot enterprise: Mengarsitektur sistem inti di balik agen AI WhatsApp otomatis dan chatbot informasi perusahaan, dibangun untuk generasi teks dengan keandalan tinggi.",
+              "Meningkatkan engagement 850%: Menyelaraskan arah produk dengan metrik bisnis, mendorong pertumbuhan pengguna di berbagai divisi enterprise.",
+              "Mengembangkan dashboard kustom: Membangun pelacak tren Streamlit yang melacak waktu inferensi model untuk memandu iterasi."
+            ]
+          },
           "skills": ["RAG Pipelines", "PostgreSQL", "MongoDB", "Laravel", "Prompt Optimization", "Streamlit"]
         },
         {
@@ -49,8 +71,19 @@
           "organization": "PT Gameloft Indonesia",
           "dateRange": "Apr 2018 - Apr 2019",
           "popoutCopy": { "en": "Designed core gameplay physics and optimized pathfinding AI for computer-controlled opponents, creating balanced and responsive experiences.", "id": "Merancang fisika gameplay inti dan mengoptimalkan AI pathfinding untuk lawan yang dikontrol komputer, menciptakan pengalaman yang seimbang dan responsif." },
-          "details": { "en": "As a gameplay developer, I specialized in rendering optimization, visual assets integration, and algorithmic enhancements inside high-performance game instances.", "id": "Sebagai pengembang gameplay, saya berspesialisasi pada optimasi rendering, integrasi aset visual, dan penyempurnaan algoritma di dalam instance game berkinerja tinggi." },
-          "highlights": { "en": ["Optimized opponent AI: Built sophisticated computer-controlled units with adaptive tactics, lowering processing costs while raising player engagement.", "Engineered game mechanics: Coded standard gameplay physics and graphics pipelines to maintain high render framerates.", "Visual asset production: Created 3D graphics, texture maps, and animation keyframes to synchronize seamlessly with written game engines."], "id": ["AI lawan yang dioptimalkan: Membangun unit yang dikontrol komputer yang canggih dengan taktik adaptif, menurunkan biaya pemrosesan sambil meningkatkan keterlibatan pemain.", "Mekanik game yang direkayasa: Menulis fisika gameplay standar dan pipeline grafis untuk menjaga framerender tinggi.", "Produksi aset visual: Menciptakan grafis 3D, peta tekstur, dan keyframe animasi untuk disinkronkan mulus dengan mesin game tertulis."] },
+          "details": { "en": "As a gameplay developer, I specialized in rendering optimization, visual asset integration, and algorithmic enhancements inside high-performance game instances.", "id": "Sebagai pengembang gameplay, saya berspesialisasi pada optimasi rendering, integrasi aset visual, dan penyempurnaan algoritma di dalam instance game berkinerja tinggi." },
+          "highlights": {
+            "en": [
+              "Optimized opponent AI: Built computer-controlled units with adaptive tactics, lowering processing costs while raising player engagement.",
+              "Engineered game mechanics: Built gameplay physics and graphics pipelines to maintain high frame rates.",
+              "Visual asset production: Created 3D graphics, texture maps, and animation keyframes that synced cleanly with the existing engine code."
+            ],
+            "id": [
+              "AI lawan yang dioptimalkan: Membangun unit yang dikontrol komputer dengan taktik adaptif, menurunkan biaya pemrosesan sambil meningkatkan keterlibatan pemain.",
+              "Mekanik game yang direkayasa: Membangun fisika gameplay dan pipeline grafis untuk menjaga frame rate tetap tinggi.",
+              "Produksi aset visual: Menciptakan grafis 3D, peta tekstur, dan keyframe animasi yang selaras dengan kode engine yang ada."
+            ]
+          },
           "skills": ["C++", "AI Algorithms", "3D Rendering", "Game Physics", "Cross-Functional Collaboration"]
         },
         {
@@ -62,8 +95,19 @@
           "organization": "PT Metrodata Electronics",
           "dateRange": "Jul 2016 - Sep 2016",
           "popoutCopy": { "en": "Built secure back-end platforms to automate internal applicant screenings and hiring evaluations.", "id": "Membangun platform back-end aman untuk mengotomatiskan penyaringan dan evaluasi pelamar internal." },
-          "details": { "en": "Designed and prototyped candidate screening tools using Microsoft ASP.NET environments, cooperating with talent acquisition teams to establish programmatic metrics.", "id": "Merancang dan membuat prototipe alat penyaringan kandidat menggunakan lingkungan Microsoft ASP.NET, berkolaborasi dengan tim akuisisi bakat untuk menetapkan metrik terprogram." },
-          "highlights": { "en": ["Streamlined recruitment: Created an automated test-evaluation portal, improving onboarding speeds and system reliability.", "Constructed custom back-ends: Focused on scalability, transaction isolation, and secure database operations.", "Requirement analysis: Translated cross-department guidelines into technical database fields and optimized workflows."], "id": ["Rekrutmen yang distremlin: Membuat portal evaluasi tes otomatis, mempercepat kecepatan onboarding dan keandalan sistem.", "Back-end kustom yang dibangun: Fokus pada skalabilitas, isolasi transaksi, dan operasi database yang aman.", "Analisis kebutuhan: Menerjemahkan pedoman lintas departemen ke bidang database teknis dan mengoptimalkan alur kerja."] },
+          "details": { "en": "Designed and prototyped candidate screening tools using Microsoft ASP.NET, working with talent acquisition teams to define programmatic metrics.", "id": "Merancang dan membuat prototipe alat penyaringan kandidat menggunakan ASP.NET, bekerja sama dengan tim akuisisi bakat untuk menetapkan metrik terprogram." },
+          "highlights": {
+            "en": [
+              "Automated recruitment testing: Built a test-evaluation portal that improved onboarding speed and system reliability.",
+              "Constructed custom back-ends: Focused on scalability, transaction isolation, and secure database operations.",
+              "Requirement analysis: Translated cross-department guidelines into technical database fields and optimized workflows."
+            ],
+            "id": [
+              "Pengujian rekrutmen otomatis: Membangun portal evaluasi tes yang mempercepat proses onboarding dan meningkatkan keandalan sistem.",
+              "Back-end kustom yang dibangun: Fokus pada skalabilitas, isolasi transaksi, dan operasi database yang aman.",
+              "Analisis kebutuhan: Menerjemahkan pedoman lintas departemen ke bidang database teknis dan mengoptimalkan alur kerja."
+            ]
+          },
           "skills": ["C#", "ASP.NET MVC", "SQL Server", "Backend Development", "System Integration"]
         }
       ]
@@ -91,8 +135,19 @@
           "organization": "Eindhoven University of Technology (TU/e)",
           "dateRange": "Sep 2020 - Feb 2023",
           "popoutCopy": { "en": "Researched deep reinforcement learning and model optimization, designing an efficient AlphaZero implementation tailored for constrained environments.", "id": "Meneliti pembelajaran penguatan mendalam dan optimasi model, merancang implementasi AlphaZero yang efisien untuk lingkungan terbatas." },
-          "details": { "en": "My graduate curriculum centered on advanced machine learning algorithms, model interpretability, and system optimization. My research was fully funded by premium regional scholarships.", "id": "Kurikulum pascasarjana saya berpusat pada algoritma machine learning lanjutan, interpretabilitas model, dan optimasi sistem. Penelitian saya didanai penuh oleh beasiswa regional premium." },
-          "highlights": { "en": ["Scholarships: Recipient of the prestigious Amandus H. Lundqvist Scholarship Program (ALSP) and the Holland Scholarship (HS) for academic achievements.", "Thesis research: Successfully adapted AlphaZero to International Draughts on high-performance high-compute clusters with 7 million self-play iterations.", "Rigorous model evaluation: Benchmarked Monte Carlo Tree Search optimization formulas to identify performance tradeoffs under strict hardware constraints."], "id": ["Beasiswa: Penerima beasiswa bergengsi Amandus H. Lundqvist Scholarship Program (ALSP) dan Holland Scholarship (HS) untuk prestasi akademis.", "Penelitian tesis: Berhasil mengadaptasi AlphaZero untuk Dam Internasional di kluster komputasi tinggi performa dengan 7 juta iterasi bermain sendiri.", "Evaluasi model ketat: Mengukur formula optimasi Monte Carlo Tree Search untuk mengidentifikasi kompromi performa di bawah batasan keras ketat."] },
+          "details": { "en": "My graduate curriculum centered on advanced machine learning algorithms, model interpretability, and system optimization. Fully funded by two competitive scholarships.", "id": "Kurikulum pascasarjana saya berpusat pada algoritma machine learning lanjutan, interpretabilitas model, dan optimasi sistem. Didanai penuh oleh dua beasiswa kompetitif." },
+          "highlights": {
+            "en": [
+              "Scholarships: Recipient of the Amandus H. Lundqvist Scholarship Program (ALSP) and the Holland Scholarship (HS).",
+              "Thesis research: Adapted AlphaZero to International Draughts, trained on high-performance compute clusters across 7 million self-play iterations.",
+              "Model benchmarking: Compared Monte Carlo Tree Search optimization formulas to identify performance tradeoffs under strict hardware constraints."
+            ],
+            "id": [
+              "Beasiswa: Penerima Amandus H. Lundqvist Scholarship Program (ALSP) dan Holland Scholarship (HS).",
+              "Penelitian tesis: Mengadaptasi AlphaZero untuk Dam Internasional, dilatih di kluster komputasi performa tinggi selama 7 juta iterasi bermain sendiri.",
+              "Benchmarking model: Membandingkan formula optimasi Monte Carlo Tree Search untuk mengidentifikasi kompromi performa di bawah batasan perangkat keras yang ketat."
+            ]
+          },
           "skills": ["Reinforcement Learning", "PyTorch", "Python", "SLURM", "HPC", "Optimization"]
         },
         {
@@ -103,9 +158,20 @@
           "role": { "en": "BSc in Informatics Engineering", "id": "Sarjana Sains Teknik Informatika" },
           "organization": "Institut Teknologi Sepuluh Nopember (ITS)",
           "dateRange": "Sep 2013 - Sep 2017",
-          "popoutCopy": { "en": "Acquired a solid grounding in software engineering, fuzzy logic, and data structures. I used my final project to design intelligent adaptive gameplay mechanics.", "id": "Memperoleh landasan yang kokoh dalam rekayasa perangkat lunak, logika fuzzy, dan struktur data. Saya menggunakan proyek akhir saya untuk merancang mekanik gameplay adaptif cerdas." },
-          "details": { "en": "Specialized in data modeling, object-oriented software patterns, and game systems. Formulated deep conceptual knowledge of lower-level compilers and parallel scripting.", "id": "Berspesialisasi pada pemodelan data, pola perangkat lunak berorientasi objek, dan sistem game. Merumuskan pengetahuan konseptual mendalam tentang compiler tingkat rendah dan skrip paralel." },
-          "highlights": { "en": ["Final Project: Developed an ANFIS fuzzy logic difficulty-balancing system in an action-adventure game to regulate interactive challenges automatically.", "Strong academic record: Graduated with honors and an IPK of 3.48/4.00, demonstrating consistent problem-solving capabilities.", "Platform optimization: Built web layouts and visual interfaces for student organizations, focusing on ergonomic layouts."], "id": ["Proyek Akhir: Mengembangkan sistem penyeimbangan kesulitan logika fuzzy ANFIS dalam game action-adventure untuk mengatur tantangan interaktif secara otomatis.", "Catatan akademis kuat: Lulus dengan predikat cum laude dan IPK 3.48/4.00, menunjukkan kemampuan pemecahan masalah yang konsisten.", "Optimasi platform: Membangun tata letak web dan antarmuka visual untuk organisasi mahasiswa, fokus pada tata letak ergonomis."] },
+          "popoutCopy": { "en": "Acquired a solid grounding in software engineering, fuzzy logic, and data structures. I used my final project to design adaptive gameplay mechanics.", "id": "Memperoleh landasan yang kokoh dalam rekayasa perangkat lunak, logika fuzzy, dan struktur data. Saya menggunakan proyek akhir untuk merancang mekanik gameplay adaptif." },
+          "details": { "en": "Specialized in data modeling, object-oriented software patterns, and game systems, with coursework in lower-level compiler design and parallel scripting.", "id": "Berspesialisasi pada pemodelan data, pola perangkat lunak berorientasi objek, dan sistem game, dengan mata kuliah tentang desain compiler tingkat rendah dan skrip paralel." },
+          "highlights": {
+            "en": [
+              "Final Project: Developed an ANFIS fuzzy logic difficulty-balancing system in an action-adventure game to regulate interactive challenges automatically.",
+              "Academic record: Graduated with honors, IPK 3.48/4.00.",
+              "Platform design: Built web layouts and visual interfaces for student organizations, with attention to usability."
+            ],
+            "id": [
+              "Proyek Akhir: Mengembangkan sistem penyeimbangan kesulitan logika fuzzy ANFIS dalam game action-adventure untuk mengatur tantangan interaktif secara otomatis.",
+              "Catatan akademis: Lulus dengan predikat cum laude, IPK 3.48/4.00.",
+              "Desain platform: Membangun tata letak web dan antarmuka visual untuk organisasi mahasiswa, dengan perhatian pada usability."
+            ]
+          },
           "skills": ["C++", "Java", "Fuzzy Systems", "Software Architecture", "Data Structures", "Algorithms"]
         }
       ]
@@ -120,22 +186,44 @@
       "role": { "en": "ALSP & Holland Scholarship", "id": "ALSP & Holland Scholarship" },
       "organization": "Eindhoven University of Technology (TU/e)",
       "dateRange": "2020 - 2022",
-      "popoutCopy": { "en": "Highly prestigious, fully-funded double scholarship awarded for exceptional academic records to pursue a Master of Science degree at TU/e.", "id": "Beasiswa ganda legendaris dan didanai penuh yang diberikan atas prestasi akademis luar biasa untuk menempuh gelar Master of Science di TU/e." },
-      "details": { "en": "The Amandus H. Lundqvist Scholarship Program (ALSP) combined with the Holland Scholarship fully covered tuition fees and generated living stipends for the 2-year MSc curriculum.", "id": "Program Beasiswa Amandus H. Lundqvist (ALSP) yang digabungkan dengan Beasiswa Holland mencakup biaya kuliah penuh dan biaya hidup untuk kurikulum MSc selama 2 tahun." },
-      "highlights": { "en": ["Full Sponsor: 100% tuition coverage and monthly allowance funding for the full Master program.", "Academic Excellence: Selective competitive merit-based entry granted to top-percentile international applications.", "Industrial Integration: Connected with regional brainport technology leaders and corporate sponsors."], "id": ["Sponsor Penuh: Cakupan biaya kuliah 100% dan pendanaan saku bulanan untuk seluruh program Master.", "Keunggulan Akademis: Penerimaan berbasis prestasi kompetitif yang selektif diberikan kepada pemohon internasional persentil teratas.", "Integrasi Industri: Terhubung dengan para pemimpin teknologi regional Brainport dan sponsor perusahaan."] },
+      "popoutCopy": { "en": "Fully-funded double scholarship awarded for academic merit to pursue a Master of Science degree at TU/e.", "id": "Beasiswa ganda yang didanai penuh, diberikan atas prestasi akademis untuk menempuh gelar Master of Science di TU/e." },
+      "details": { "en": "The Amandus H. Lundqvist Scholarship Program (ALSP) combined with the Holland Scholarship fully covered tuition and provided a living stipend for the two-year MSc program.", "id": "Program Beasiswa Amandus H. Lundqvist (ALSP) yang digabungkan dengan Holland Scholarship mencakup biaya kuliah penuh dan tunjangan hidup untuk program MSc selama dua tahun." },
+      "highlights": {
+        "en": [
+          "Full funding: 100% tuition coverage plus a monthly living allowance for the full Master's program.",
+          "Selection: Merit-based entry among top-percentile international applicants.",
+          "Industry ties: Connected with Brainport-region technology companies and corporate sponsors."
+        ],
+        "id": [
+          "Pendanaan penuh: Cakupan biaya kuliah 100% ditambah tunjangan hidup bulanan untuk seluruh program Master.",
+          "Seleksi: Penerimaan berbasis prestasi di antara pemohon internasional persentil teratas.",
+          "Koneksi industri: Terhubung dengan perusahaan teknologi kawasan Brainport dan sponsor korporat."
+        ]
+      },
       "skills": ["Academic Excellence", "Research Funding", "Technical Engineering", "Data Science & Engineering"]
     },
     {
       "id": "cred-1",
       "type": "credential",
       "iconKey": "award",
-      "logoPath": "/logs/purwadhika.png",
+      "logoPath": "/logos/purwadhika.png",
       "role": { "en": "Data Science & Machine Learning Course", "id": "Kursus Ilmu Data & Pembelajaran Mesin" },
       "organization": "Purwadhika Digital Technology School",
       "dateRange": "Feb - Mar 2020",
       "popoutCopy": { "en": "Intensive professional program focusing on end-to-end data analysis, database querying, and regression/classification modeling.", "id": "Program profesional intensif dengan fokus pada analisis data ujung-ke-ujung, kueri basis data, dan pemodelan regresi/klasifikasi." },
-      "details": { "en": "Completed high-intensity professional certificate program covering predictive analytics, supervised learning, data validation, exploratory stats, and optimal SQL joining pipelines.", "id": "Menyelesaikan program sertifikat profesional intensitas tinggi yang mencakup analitik prediktif, pembelajaran terarah, validasi data, statistik eksploratif, dan pipeline penggabungan SQL yang optimal." },
-      "highlights": { "en": ["Predictive Modeling: Formulated regression and classification solutions with clean optimization loops.", "Database Querying: Integrated structured multi-table SQL querying systems to format analytics databases.", "Exploratory Analytics: Formulated deep EDA pipelines to discover user engagement patterns."], "id": ["Pemodelan Prediktif: Memformulasikan solusi regresi dan klasifikasi dengan loop optimasi yang bersih.", "Kueri Basis Data: Mengintegrasikan sistem kueri SQL multi-tabel terstruktur untuk memformat basis data analitik.", "Analisis Eksploratif: Memformulasikan pipeline EDA mendalam untuk menemukan pola keterlibatan pengguna."] },
+      "details": { "en": "Completed a professional certificate program covering predictive analytics, supervised learning, data validation, exploratory statistics, and multi-table SQL querying.", "id": "Menyelesaikan program sertifikat profesional yang mencakup analitik prediktif, pembelajaran terarah, validasi data, statistik eksploratif, dan kueri SQL multi-tabel." },
+      "highlights": {
+        "en": [
+          "Predictive modeling: Built regression and classification models with iterative tuning.",
+          "Database querying: Built multi-table SQL queries to structure and prepare analytics data.",
+          "Exploratory analysis: Built EDA pipelines to surface user engagement patterns."
+        ],
+        "id": [
+          "Pemodelan prediktif: Membangun model regresi dan klasifikasi dengan penyesuaian iteratif.",
+          "Kueri basis data: Membangun kueri SQL multi-tabel untuk menyusun dan menyiapkan data analitik.",
+          "Analisis eksploratif: Membangun pipeline EDA untuk mengungkap pola keterlibatan pengguna."
+        ]
+      },
       "skills": ["Data Science", "Machine Learning", "Python", "SQL", "Data Analytics"]
     },
     {
@@ -147,8 +235,19 @@
       "organization": "British Council / IDP IELTS",
       "dateRange": "Jan 2020",
       "popoutCopy": { "en": "Attained an overall Band Score of 7.0, validating professional and academic command of the English language.", "id": "Meraih Skor Band keseluruhan 7.0, memvalidasi penguasaan bahasa Inggris tingkat profesional dan akademis." },
-      "details": { "en": "Validated certified academic level fluency, supporting research reporting and collaborative software development.", "id": "Kemampuan berbahasa Inggris bersertifikat tingkat akademis yang terverifikasi, mendukung pelaporan penelitian dan pengembangan perangkat lunak kolaboratif." },
-      "highlights": { "en": ["Academic Level Competencies: Efficient technical translation and literature summarization under time limits.", "International Collaborations: Fluid conversation capability supporting worldwide engineering sprints.", "Score: Listening 7.5, Reading 7.5, Writing 6.0, Speaking 6.5 — Overall Band: 7.0"], "id": ["Kompetensi Tingkat Akademis: Penerjemahan teknis dan ringkasan literatur yang efisien di bawah batas waktu.", "Kolaborasi Internasional: Kemampuan percakapan yang lancar mendukung sprint teknik di seluruh dunia.", "Skor: Mendengarkan 7.5, Membaca 7.5, Menulis 6.0, Berbicara 6.5 — Band Keseluruhan: 7.0"] },
+      "details": { "en": "Certifies academic-level English fluency, supporting research writing and collaborative work with international teams.", "id": "Mensertifikasi kelancaran bahasa Inggris tingkat akademis, mendukung penulisan riset dan kerja kolaboratif dengan tim internasional." },
+      "highlights": {
+        "en": [
+          "Reading & listening strength: Scored 7.5 in both sections, supporting fast comprehension of technical material.",
+          "International collaboration: Verbal fluency sufficient for cross-border engineering discussions.",
+          "Score: Listening 7.5, Reading 7.5, Writing 6.0, Speaking 6.5 — Overall Band: 7.0"
+        ],
+        "id": [
+          "Kekuatan membaca & mendengarkan: Meraih skor 7.5 di kedua bagian, mendukung pemahaman cepat terhadap materi teknis.",
+          "Kolaborasi internasional: Kelancaran verbal yang memadai untuk diskusi teknik lintas negara.",
+          "Skor: Mendengarkan 7.5, Membaca 7.5, Menulis 6.0, Berbicara 6.5 — Band Keseluruhan: 7.0"
+        ]
+      },
       "skills": ["English Proficiency", "Academic Reading", "Technical Writing", "International Communication"]
     }
   ]

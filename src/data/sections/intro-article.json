@@ -5,14 +5,14 @@
       "num": "01",
       "titleEn": "The Foundation: AI & ML Engineering",
       "titleId": "Pondasi Utama: Rekayasa AI & ML",
-      "image": "/images/mira.png",
+      "image": "/images/intro1.png",
       "paragraphsEn": [
-        "Think of artificial intelligence as a powerful engine. Building it requires writing clean code, setting up neural networks, testing machine learning models, and building automatic pipelines to keep everything running in the background.",
-        "But code alone is only half the story. A brilliant model tucked away inside a lonely server endpoint can't help anyone. To make it truly valuable, we have to bring it out of the lab and into the hands of real people."
+        "Building AI starts with the unglamorous parts: clean code, neural network architecture, model testing, and the pipelines that keep everything running quietly in the background.",
+        "A model that only exists on a server does nothing for anyone. Getting it in front of real people, reliably, is the other half of the job."
       ],
       "paragraphsId": [
-        "Bayangkan kecerdasan buatan seperti mesin mobil yang kuat. Membangunnya memerlukan kode pemrograman yang bersih, merancang jaringan saraf tiruan (neural networks), menguji model pintar, serta menjaga agar sistem tetap berjalan stabil di latar belakang.",
-        "Namun, baris kode barulah setengah jalan. Model yang luar biasa pintar sekalipun tidak akan membawa makna jika hanya tersimpan di dalam server yang sunyi. Agar berguna secara nyata, kita harus meluncurkannya ke dunia luar untuk bisa digunakan banyak orang."
+        "Membangun AI dimulai dari bagian yang tidak terlihat glamor: kode yang bersih, arsitektur jaringan saraf tiruan, pengujian model, dan pipeline yang menjaga semuanya tetap berjalan di latar belakang.",
+        "Model yang hanya tersimpan di server tidak berguna bagi siapa pun. Membawanya ke tangan orang-orang secara andal adalah setengah pekerjaan lainnya."
       ]
     },
     {
@@ -20,14 +20,14 @@
       "num": "02",
       "titleEn": "The Connection: Human-Computer Interaction (HCI)",
       "titleId": "Hubungan Manusia-Komputer: HCI",
-      "image": "/images/hci_layer_blueprint_1781203023489.jpg",
+      "image": "/images/intro2.png",
       "paragraphsEn": [
-        "This is where we focus on the human side of the screen. Before we write any code, we look at the big picture. We ask: <em>How do people actually work? What are their daily habits, and what are they trying to achieve?</em>",
-        "We run usability research and study workflows to design systems that feel natural, predictable, and friendly. It is not about making a system that is just technically smart; it is about building software you can easily understand and trust."
+        "Before writing code, I study how people actually work: their habits, their goals, and where technology gets in their way instead of helping.",
+        "Usability research and workflow mapping shape systems that feel natural and predictable. The bar isn't how technically smart a system is, it's whether people understand and trust what they're using."
       ],
       "paragraphsId": [
-        "Di sinilah kita mulai berfokus pada manusia di depan layar. Sebelum menulis kode, kita melihat gambaran besarnya dahulu. Kita mempelajari kebiasaan harian pengguna, apa tujuan mereka, dan bagaimana teknologi bisa membantu mempermudah hidup mereka.",
-        "Lewat riset kemudahan penggunaan (usability) dan pemetaan alur kerja, kita menciptakan sistem yang terasa akrab, ramah, dan mudah ditebak. Ini bukan sekadar membuat program yang canggih secara teknis, melainkan tentang membangun perangkat lunak yang bersahabat dan tepercaya."
+        "Sebelum menulis kode, saya mempelajari bagaimana orang benar-benar bekerja: kebiasaan mereka, tujuan mereka, dan di mana teknologi justru menghambat alih-alih membantu.",
+        "Riset usability dan pemetaan alur kerja membentuk sistem yang terasa alami dan mudah ditebak. Ukurannya bukan seberapa pintar sistem secara teknis, tapi apakah orang memahami dan memercayai apa yang mereka gunakan."
       ]
     },
     {
@@ -35,14 +35,14 @@
       "num": "03",
       "titleEn": "The Feeling: Visual & Creative Design",
       "titleId": "Sentuhan Rasa: Desain Visual & Kreatif",
-      "image": "/images/visual_layer_blueprint_1781203039742.jpg",
+      "image": "/images/intro3.png",
       "paragraphsEn": [
-        "Visual design is the comfort that makes the digital journey enjoyable. It is about crafting clear brand identities, original illustrations, and digital layouts that make a screen feel warm and approachable.",
-        "Great design is never just decoration. When we align typography perfectly and space buttons out carefully, we are making complex systems instantly easier to read. A clean, beautiful layout lowers your stress and welcomes you into the digital space."
+        "Visual design is what makes an experience feel comfortable, not just functional: brand identity, illustration, layouts that feel warm instead of clinical.",
+        "It's not decoration. Careful typography and spacing make complex systems easier to read at a glance, and that alone lowers the friction of using something."
       ],
       "paragraphsId": [
-        "Desain visual adalah kenyamanan utama ketika kita menjelajahi dunia digital. Ini meliputi penyusunan identitas merek, pembuatan ilustrasi, serta tata letak artistik yang membuat tampilan layar terasa hangat dan menyambut.",
-        "Desain yang cerdas bukan sekadar hiasan. Saat kita merapikan tipografi dan mengatur jarak tombol dengan cermat, kita sedang membuat sistem rumit menjadi sangat mudah dibaca. Tampilan yang bersih meredakan stres dan menyambut Anda ke dalam ruang digital."
+        "Desain visual adalah yang membuat pengalaman terasa nyaman, bukan sekadar berfungsi: identitas merek, ilustrasi, tata letak yang terasa hangat, bukan dingin.",
+        "Ini bukan hiasan. Tipografi dan jarak yang diatur dengan cermat membuat sistem rumit lebih mudah dibaca sekilas, dan itu saja sudah mengurangi friksi saat menggunakannya."
       ]
     },
     {
@@ -50,20 +50,20 @@
       "num": "04",
       "titleEn": "Intelligence as a Craft",
       "titleId": "Kecerdasan sebagai Karya",
-      "image": "/images/workspace_layer_blueprint_1781203056668.jpg",
+      "image": "/images/intro4.png",
       "paragraphsEn": [
-        "Right in the middle of this diagram is my absolute playground: <strong>AI Product Development</strong>. It requires bringing all these horizons together to build cohesive, user-friendly solutions.",
-        "My goal is not just to build a predictive backend model or design a static screen mockup. It is to craft living software products—like beautiful analytic dashboards, data visualizations, and interactive apps—that respect your time, clarify heavy numbers, and make complex technology feel like second nature.",
-        "Building intelligent systems is not just a technical exercise—it is a form of craftsmanship. Every line of code, every interaction design, every visual choice reflects a deliberate act of care. True intelligence in products comes not just from algorithms, but from the human intent that shapes them.",
-        "I see each project as an opportunity to blend rigor with artistry. Whether it is training a model, designing a data story, or refining a product's micro-interactions, the goal is the same: to build something that feels considered, trustworthy, and alive.",
-        "In the end, it is all about <strong className=\"text-primary\">Intelligence as a Craft</strong>—where science meets art, and every detail matters."
+        "At the center of this diagram sits the work I care most about: <strong>AI Product Development</strong>. It's where these three pull together into something people can actually use.",
+        "The goal was never a predictive backend model shipped on its own, or a static screen mockup. It's dashboards, data visualizations, and applications that respect your time and make dense technology feel ordinary to use.",
+        "This isn't just a technical exercise. Every line of code, every interaction, every visual choice is a decision, and those decisions add up to whether a product feels considered or just assembled.",
+        "Whether I'm training a model or refining how a button responds to a click, I'm working toward the same thing: something that feels trustworthy and deliberate.",
+        "That's what <strong className=\"text-primary\">Intelligence as a Craft</strong> means to me: treating the technical and the human parts of a product as one job, not two."
       ],
       "paragraphsId": [
-        "Tepat di titik temu terdalam dari diagram ini adalah dunia bermain utama saya: <strong>Pengembangan Produk AI (AI Product Development)</strong>. Ranah ini memadukan seluruh pilar untuk melahirkan solusi digital yang nyaman digunakan manusia.",
-        "Misi utama saya bukan sekadar meluncurkan sistem backend pintar secara terpisah atau menggambar sketsa layar yang diam. Melainkan merajut produk perangkat lunak utuh—seperti dashboard analitis yang indah, visualisasi data interaktif, dan aplikasi siap pakai—yang menghargai waktu Anda, menyederhanakan rumitnya data, dan membuat teknologi bekerja secara alami demi kehidupan harian Anda.",
-        "Membangun sistem cerdas bukan sekadar latihan teknis—ini adalah bentuk kriya. Setiap baris kode, setiap rancangan interaksi, setiap pilihan visual mencerminkan tindakan penuh kesungguhan. Kecerdasan sejati dalam sebuah produk tidak terlepas dari algoritma saja, tetapi dari niat manusia yang membentuknya.",
-        "Saya memandang setiap proyek sebagai kesempatan untuk memadukan ketelitian dengan seni. Baik saat melatih sebuah model, merancang narasi data, atau menyempurnakan mikro-interaksi sebuah produk, tujuannya tetap sama: membangun sesuatu yang terasa tulus, tepercaya, dan hidup.",
-        "Pada akhirnya, ini selalu tentang <strong className=\"text-primary\">Kecerdasan sebagai Karya</strong>—di sana sains bertemu seni, dan setiap detail berarti."
+        "Tepat di tengah diagram ini ada pekerjaan yang paling saya pedulikan: <strong>Pengembangan Produk AI</strong>. Di sinilah ketiga pilar itu menyatu jadi sesuatu yang benar-benar bisa dipakai orang.",
+        "Tujuannya bukan sekadar model backend prediktif yang berdiri sendiri, atau sketsa layar yang diam. Melainkan dashboard, visualisasi data, dan aplikasi yang menghargai waktu Anda dan membuat teknologi rumit terasa biasa saja untuk digunakan.",
+        "Ini bukan sekadar latihan teknis. Setiap baris kode, setiap interaksi, setiap pilihan visual adalah keputusan, dan keputusan-keputusan itu menentukan apakah sebuah produk terasa dipikirkan matang atau sekadar dirakit.",
+        "Baik saat melatih model atau menyempurnakan bagaimana sebuah tombol merespons klik, saya mengarah ke hal yang sama: sesuatu yang terasa tepercaya dan disengaja.",
+        "Itulah arti <strong className=\"text-primary\">Intelligence as a Craft</strong> bagi saya: memperlakukan bagian teknis dan bagian manusia dari sebuah produk sebagai satu pekerjaan, bukan dua."
       ]
     }
   ]

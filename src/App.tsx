@@ -48,7 +48,6 @@ import { InteractiveSubtitle } from './components/InteractiveHeroText';
 import HelloSticker from './components/HelloSticker';
 import PortraitReveal from './components/PortraitReveal';
 import IntroArticleModal from './components/IntroArticleModal';
-const FloatingGlyph = lazy(() => import('./components/FloatingGlyph'));
 
 import { useGsapScroll } from './hooks/useGsapScroll';
 
@@ -239,9 +238,6 @@ export default function App() {
 
         {/* ── HERO ── */}
         <section id="home" className="relative grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16 min-h-screen min-h-[calc(100vh-56px)] pt-14 sm:pt-18 lg:pt-20">
-          <Suspense fallback={null}>
-            <FloatingGlyph />
-          </Suspense>
 
           {/* Left */}
           <div className="flex flex-col justify-between lg:justify-start min-h-0">

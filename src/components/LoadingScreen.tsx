@@ -7,58 +7,107 @@ interface LoadingScreenProps {
 }
 
 const STATUS_MESSAGES = [
+  'Initializing…',
   'Scanning blueprints…',
   'Calibrating grids…',
   'Assembling components…',
   'Rendering layouts…',
   'Loading schematics…',
-  'Finalizing draft…',
-  'Mounting app…',
 ];
+
+const LOADING_CAP = 95;
 
 function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => resolve();
-    img.onerror = () => resolve(); // Don't fail on individual image errors
+    img.onerror = () => resolve();
     img.src = src;
   });
 }
 
+function FinalizingAnimation() {
+  return (
+    <motion.div
+      key="finalizing"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col items-center gap-3"
+    >
+      <div className="relative w-32 h-px bg-primary/15 overflow-hidden">
+        <motion.div
+          className="absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-transparent via-primary/80 to-transparent"
+          initial={{ x: '-40px', opacity: 0 }}
+          animate={{ x: 168, opacity: [0, 1, 1, 0] }}
+          transition={{
+            duration: 1.6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+     </div>
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="w-1 h-1 rounded-full bg-primary/40"
+            animate={{ opacity: [0.2, 1, 0.2] }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              delay: i * 0.2,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+     </div>
+      <div className="font-mono text-[10px] tracking-[0.25em] uppercase text-secondary/60">
+        finalizing draft
+     </div>
+   </motion.div>
+  );
+}
+
 export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState('Initializing…');
+  const [status, setStatus] = useState(STATUS_MESSAGES[0]);
+  const [phase, setPhase] = useState<'loading' | 'finalizing'>('loading');
   const completedRef = useRef(0);
   const hasCompletedRef = useRef(false);
+  const finalizingStartedRef = useRef(false);
 
   const images = useMemo(() => {
     return (imageList as string[]) || [];
   }, []);
 
+  const switchToFinalizing = () => {
+    if (finalizingStartedRef.current) return;
+    finalizingStartedRef.current = true;
+    setPhase('finalizing');
+    setStatus('');
+
+    // Defer to allow final tile of RAFs to mount the new tree before unmounting the screen.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (hasCompletedRef.current) return;
+          hasCompletedRef.current = true;
+          onComplete();
+        }, 280);
+      });
+    });
+  };
+
   useEffect(() => {
-    const total = Math.max(images.length, 1);
+    const total = images.length;
     const promises: Promise<void>[] = [];
 
-    const updateProgress = () => {
-      completedRef.current += 1;
-      const pct = Math.min((completedRef.current / total) * 100, 99);
-      setProgress(pct);
-
-      const msgIdx = Math.min(
-        Math.floor((completedRef.current / total) * (STATUS_MESSAGES.length - 1)),
-        STATUS_MESSAGES.length - 2
-      );
-      setStatus(STATUS_MESSAGES[msgIdx] || 'Finalizing');
-    };
-
-    for (const src of images) {
-      promises.push(preloadImage(src).then(updateProgress));
-    }
-
-    // Minimum display time - ensure loading screen shows for at least some time
+    // No images case — still respect minTime so the screen doesn't flash.
     const minTime = new Promise<void>((r) => setTimeout(r, 900));
 
-    // Safety timeout - if anything hangs, force complete after 10 seconds
+    // Bail-out safety net if anything hangs.
     const safetyTimeout = new Promise<void>((resolve) => {
       setTimeout(() => {
         console.warn('[LoadingScreen] Safety timeout triggered, forcing completion');
@@ -66,40 +115,45 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       }, 10000);
     });
 
-    Promise.all([...promises, minTime, safetyTimeout]).then(() => {
-      // Prevent duplicate completion calls
-      if (hasCompletedRef.current) return;
-      hasCompletedRef.current = true;
+    if (total === 0) {
+      Promise.all([minTime, safetyTimeout]).then(switchToFinalizing);
+      return;
+    }
 
-      // Cap at 99% and show mounting status while app initializes
-      setProgress(99);
-      setStatus(STATUS_MESSAGES[STATUS_MESSAGES.length - 1]); // 'Mounting app…'
+    const onImageLoaded = () => {
+      completedRef.current += 1;
+      const loaded = completedRef.current;
+      const pct = Math.min((loaded / total) * LOADING_CAP, LOADING_CAP);
+      setProgress(pct);
 
-      // Defer to next frame so React can mount the app, then complete
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setProgress(100);
-          setStatus('Complete');
-          setTimeout(onComplete, 300);
-        });
-      });
-    }).catch((err) => {
-      console.error('[LoadingScreen] Error during loading:', err);
-      if (!hasCompletedRef.current) {
-        hasCompletedRef.current = true;
-        setProgress(100);
-        setStatus('Complete');
-        setTimeout(onComplete, 300);
+      const msgIdx = Math.min(
+        Math.floor((loaded / total) * STATUS_MESSAGES.length),
+        STATUS_MESSAGES.length - 1
+      );
+      setStatus(STATUS_MESSAGES[msgIdx]);
+    };
+
+    for (const src of images) {
+      promises.push(preloadImage(src).then(onImageLoaded));
+    }
+
+    Promise.all([...promises, minTime]).then(switchToFinalizing);
+
+    // Safety timeout resolves independently — if images somehow stall it's the only path forward.
+    safetyTimeout.then(() => {
+      if (!finalizingStartedRef.current) {
+        console.warn('[LoadingScreen] Forcing finalizing phase via safety timeout');
+        switchToFinalizing();
       }
     });
   }, [images, onComplete]);
 
-  const clampedProgress = Math.min(progress, 100);
   const ticks = useMemo(() => Array.from({ length: 30 }, (_, i) => i), []);
+  const displayProgress = phase === 'loading' ? progress : LOADING_CAP;
 
   return (
     <div className="fixed inset-0 z-[100] bg-bg flex items-center justify-center overflow-hidden">
-      {/* Subtle background grid */}
+      {/* Subtle drafting grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
@@ -115,27 +169,37 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Loading text */}
-        <div className="font-mono text-[11px] tracking-[0.35em] uppercase text-secondary/70">
-          Loading
-        </div>
+        {/* Phase label */}
+        <div className="font-mono text-[11px] tracking-[0.35em] uppercase text-secondary/70 h-4">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={phase}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="inline-block"
+            >
+              {phase === 'loading' ? 'Loading' : 'Loading'}
+           </motion.span>
+         </AnimatePresence>
+       </div>
 
-        {/* Small progress bar */}
+        {/* Progress bar with tick marks */}
         <div className="w-48 relative">
           <div className="w-full h-1.5 bg-surface/60 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-highlight/80 rounded-full"
-              animate={{ width: `${clampedProgress}%` }}
+              animate={{ width: `${displayProgress}%` }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
             />
-          </div>
+         </div>
 
-          {/* Tick marks */}
           <div className="relative w-full h-2.5 flex justify-between items-end mt-1 px-[1px]">
             {ticks.map((t) => {
               const tickPos = (t / (ticks.length - 1)) * 100;
-              const isMajor = t % 10 === 0;
-              const isActive = tickPos <= clampedProgress;
+              const isActive = tickPos <= displayProgress;
+              const isMajor = t % 5 === 0;
               return (
                 <div
                   key={t}
@@ -145,32 +209,61 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
                 />
               );
             })}
-          </div>
-        </div>
+         </div>
+       </div>
 
-        {/* Percentage */}
-        <div className="font-mono text-3xl font-light tabular-nums tracking-tight text-primary leading-none">
-          <AnimatePresence mode="popLayout">
-            <motion.span
-              key={Math.round(clampedProgress)}
-              initial={{ y: 6, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -6, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 28 }}
-              className="inline-block"
-            >
-              {Math.round(clampedProgress).toString().padStart(3, '0')}
-            </motion.span>
-          </AnimatePresence>
-          <span className="text-secondary/30 text-xl ml-0.5 align-top">%</span>
-        </div>
+        {/* Percentage ↔ Finalizing swap */}
+        <div
+          className="h-16 flex items-center justify-center"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <AnimatePresence mode="wait">
+            {phase === 'loading' ? (
+              <motion.div
+                key="percentage"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.18 }}
+                className="font-mono text-3xl font-light tabular-nums tracking-tight text-primary leading-none"
+              >
+                <motion.span
+                  key={Math.round(progress)}
+                  initial={{ y: 6, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -6, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 28 }}
+                  className="inline-block"
+                >
+                  {Math.round(progress).toString().padStart(3, '0')}
+               </motion.span>
+                <span className="text-secondary/30 text-xl ml-0.5 align-top">%</span>
+             </motion.div>
+            ) : (
+              <FinalizingAnimation />
+            )}
+         </AnimatePresence>
+       </div>
 
-        {/* Status */}
+        {/* Status — only shown while actively loading */}
         <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-secondary/50 h-4">
-          {status}
-        </div>
-
-      </motion.div>
-    </div>
+          <AnimatePresence mode="wait">
+            {phase === 'loading' && status && (
+              <motion.span
+                key={status}
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="inline-block"
+              >
+                {status}
+             </motion.span>
+            )}
+         </AnimatePresence>
+       </div>
+     </motion.div>
+   </div>
   );
 }
