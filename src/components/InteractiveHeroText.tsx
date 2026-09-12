@@ -17,25 +17,25 @@ const containerVariants = {
       delayChildren: 0.1,
     },
   },
-};
+} as const;
 
 // Initial entry transition for each individual letter
 const letterVariants = {
-  hidden: { 
-    opacity: 0, 
+  hidden: {
+    opacity: 0,
     y: 12,
   },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
-      type: 'spring',
+      type: "spring" as const,
       stiffness: 280,
       damping: 24,
       mass: 0.8,
     }
   }
-};
+} as const;
 
 /**
  * InteractiveTitle maps single characters to individual motion elements.

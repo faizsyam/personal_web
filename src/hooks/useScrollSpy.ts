@@ -1,10 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface UseScrollSpyOptions {
-  /** Offset in pixels to adjust the active section calculation */
+  /**
+   * Check position offset from the top of the viewport (after header).
+   * 0 = right at the bottom of the header, positive = lower in viewport.
+   * Default 0 checks exactly at the header bottom.
+   */
   offset?: number;
-  /** Threshold before switching to a section (as fraction of viewport height) */
+  /** Minimum scrollY before activating any section (pixels) */
   threshold?: number;
+  /** Header height in pixels to account for sticky header */
+  headerOffset?: number;
 }
 
 /**
@@ -18,7 +24,7 @@ export function useScrollSpy(
   sectionIds: string[],
   options: UseScrollSpyOptions = {}
 ): string {
-  const { offset = 0.4, threshold = 180 } = options;
+  const { offset = 0, threshold = 180, headerOffset = 56 } = options;
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
@@ -35,13 +41,16 @@ export function useScrollSpy(
         return;
       }
 
-      const scrollPos = scrollY + window.innerHeight * offset;
+      // Check position is at the bottom of the header + optional offset
+      // This detects when a section reaches the top of the visible viewport
+      const checkPos = scrollY + headerOffset + offset;
+
       for (const sectionId of sectionIds) {
         const el = document.getElementById(sectionId);
         if (el) {
           const top = el.offsetTop;
           const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
+          if (checkPos >= top && checkPos < top + height) {
             setActiveSection(sectionId);
             break;
           }
@@ -61,7 +70,7 @@ export function useScrollSpy(
       window.removeEventListener('scroll', debouncedScroll);
       cancelAnimationFrame(rafId);
     };
-  }, [sectionIds, offset, threshold]);
+  }, [sectionIds, offset, threshold, headerOffset]);
 
   return activeSection;
 }

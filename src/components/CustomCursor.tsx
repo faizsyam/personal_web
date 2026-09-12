@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function CustomCursor() {
   const [hoverType, setHoverType] = useState<'link' | 'detail' | null>(null);
@@ -7,18 +6,18 @@ export default function CustomCursor() {
   const [isTouchDevice, setIsTouchDevice] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Position coordinates of primary cursor pointer
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  // Direct position refs - no motion values
+  const cursorX = useRef(-100);
+  const cursorY = useRef(-100);
+  const ringX = useRef(-100);
+  const ringY = useRef(-100);
+  const dotX = useRef(-100);
+  const dotY = useRef(-100);
 
-  // Springs for smooth movement
-  // Inner dot: very fast response
-  const dotSpringX = useSpring(cursorX, { stiffness: 900, damping: 45 });
-  const dotSpringY = useSpring(cursorY, { stiffness: 900, damping: 45 });
-
-  // Outer ring: fast response with subtle lag
-  const ringSpringX = useSpring(cursorX, { stiffness: 480, damping: 34 });
-  const ringSpringY = useSpring(cursorY, { stiffness: 480, damping: 34 });
+  // DOM refs for direct style manipulation
+  const ringRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const viewTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     // Detect touch dev
@@ -43,8 +42,8 @@ export default function CustomCursor() {
     }
 
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      cursorX.current = e.clientX;
+      cursorY.current = e.clientY;
       if (!isVisible) setIsVisible(true);
     };
 
@@ -87,6 +86,78 @@ export default function CustomCursor() {
     // Apply custom cursor active to html tag to trigger CSS cursor hide
     document.documentElement.classList.add('custom-cursor-active');
 
+    // Single rAF loop for all cursor movement - replaces 4 spring simulations
+    let animationId: number;
+    let prevHoverType: 'link' | 'detail' | null = null;
+    let prevIsHovered = false;
+
+    const animate = () => {
+      // Smooth lerp for ring (outer) - slower, more lag
+      ringX.current += (cursorX.current - ringX.current) * 0.18;
+      ringY.current += (cursorY.current - ringY.current) * 0.18;
+
+      // Smooth lerp for dot (inner) - faster, snappier
+      dotX.current += (cursorX.current - dotX.current) * 0.35;
+      dotY.current += (cursorY.current - dotY.current) * 0.35;
+
+      // Apply transforms directly to DOM - no React state updates
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${ringX.current - ringRef.current.offsetWidth / 2}px, ${ringY.current - ringRef.current.offsetHeight / 2}px)`;
+      }
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px)`;
+      }
+
+      // Handle hover type changes with CSS transitions
+      const isHovered = hoverType !== null;
+      if (hoverType !== prevHoverType || isHovered !== prevIsHovered) {
+        if (ringRef.current) {
+          const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
+          const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
+          const ringBg = hoverType === 'detail' ? 'rgba(43, 76, 126, 0.08)' : hoverType === 'link' ? 'rgba(106, 106, 98, 0.06)' : 'transparent';
+
+          ringRef.current.style.width = `${ringSize}px`;
+          ringRef.current.style.height = `${ringSize}px`;
+          ringRef.current.style.borderColor = ringColor;
+          ringRef.current.style.backgroundColor = ringBg;
+          ringRef.current.style.transition = 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, transform 0s';
+          ringRef.current.style.transformOrigin = 'center center';
+          ringRef.current.style.transform = `translate(${ringX.current - ringSize / 2}px, ${ringY.current - ringSize / 2}px) scale(${isHovered ? 1.05 : 1})`;
+        }
+
+        if (dotRef.current) {
+          const dotColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#181815' : '#181815';
+          dotRef.current.style.backgroundColor = dotColor;
+          dotRef.current.style.transition = 'background-color 0.15s ease, opacity 0.12s ease, transform 0.12s ease';
+          if (hoverType === 'detail') {
+            dotRef.current.style.opacity = '0';
+            dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px) scale(0)`;
+          } else {
+            dotRef.current.style.opacity = '1';
+            dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px) scale(1)`;
+          }
+        }
+
+        if (viewTextRef.current) {
+          viewTextRef.current.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+          if (hoverType === 'detail') {
+            viewTextRef.current.style.opacity = '1';
+            viewTextRef.current.style.transform = 'scale(1)';
+          } else {
+            viewTextRef.current.style.opacity = '0';
+            viewTextRef.current.style.transform = 'scale(0.8)';
+          }
+        }
+
+        prevHoverType = hoverType;
+        prevIsHovered = isHovered;
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
     return () => {
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
@@ -94,8 +165,9 @@ export default function CustomCursor() {
       document.removeEventListener('mouseenter', handleMouseEnterWindow);
       document.documentElement.classList.remove('custom-cursor-active');
       motionQuery.removeEventListener('change', handleMotionChange);
+      cancelAnimationFrame(animationId);
     };
-  }, [cursorX, cursorY, isVisible, isTouchDevice, prefersReducedMotion]);
+  }, [cursorX, cursorY, isVisible, isTouchDevice, prefersReducedMotion, hoverType]);
 
   // Respect prefers-reduced-motion: skip custom cursor entirely
   if (isTouchDevice || prefersReducedMotion || !isVisible) {
@@ -103,8 +175,6 @@ export default function CustomCursor() {
   }
 
   const isHovered = hoverType !== null;
-
-  // Custom design values relative to hover type
   const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
   const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
   const ringBg = hoverType === 'detail' ? 'rgba(43, 76, 126, 0.08)' : hoverType === 'link' ? 'rgba(106, 106, 98, 0.06)' : 'transparent';
@@ -113,55 +183,45 @@ export default function CustomCursor() {
   return (
     <>
       {/* Outer follow-ring */}
-      <motion.div
-        className="fixed top-0 left-0 border rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden"
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 border rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden transition-transform duration-0"
         style={{
-          x: ringSpringX,
-          y: ringSpringY,
-          translateX: '-50%',
-          translateY: '-50%',
           width: ringSize,
           height: ringSize,
           borderColor: ringColor,
           backgroundColor: ringBg,
-        }}
-        animate={{
-          scale: isHovered ? 1.05 : 1,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 450,
-          damping: 15,
+          transform: `translate(${ringX.current - ringSize / 2}px, ${ringY.current - ringSize / 2}px) scale(${isHovered ? 1.05 : 1})`,
+          willChange: 'transform, width, height, border-color, background-color',
         }}
       >
         {hoverType === 'detail' && (
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <span
+            ref={viewTextRef}
             className="text-[8px] font-mono font-bold text-accent tracking-widest uppercase select-none pointer-events-none"
+            style={{
+              opacity: 1,
+              transform: 'scale(1)',
+              transition: 'opacity 0.15s ease, transform 0.15s ease',
+            }}
           >
             VIEW
-          </motion.span>
+          </span>
         )}
-      </motion.div>
+      </div>
 
       {/* Center tiny dot */}
-      <motion.div
-        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] transition-all duration-100"
         style={{
-          x: dotSpringX,
-          y: dotSpringY,
-          translateX: '-50%',
-          translateY: '-50%',
           width: 6,
           height: 6,
           backgroundColor: dotColor,
-        }}
-        animate={{
+          transform: `translate(${dotX.current - 3}px, ${dotY.current - 3}px) ${hoverType === 'detail' ? 'scale(0)' : 'scale(1)'}`,
           opacity: hoverType === 'detail' ? 0 : 1,
-          scale: hoverType === 'detail' ? 0 : 1,
+          willChange: 'transform, opacity, background-color',
         }}
-        transition={{ duration: 0.12 }}
       />
     </>
   );

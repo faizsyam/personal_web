@@ -95,7 +95,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           if (hasCompletedRef.current) return;
           hasCompletedRef.current = true;
           onComplete();
-        }, 280);
+        }, 100);
       });
     });
   };
@@ -105,7 +105,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
     const promises: Promise<void>[] = [];
 
     // No images case — still respect minTime so the screen doesn't flash.
-    const minTime = new Promise<void>((r) => setTimeout(r, 900));
+    const minTime = new Promise<void>((r) => setTimeout(r, 400));
 
     // Bail-out safety net if anything hangs.
     const safetyTimeout = new Promise<void>((resolve) => {

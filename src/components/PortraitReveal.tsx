@@ -24,8 +24,8 @@ export default function PortraitReveal({
 }: PortraitRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [trail, setTrail] = useState<TrailPoint[]>([]);
-  const [current, setCurrent] = useState({ x: 0, y: 0 });
+  const trailRef = useRef<TrailPoint[]>([]);
+  const trailDivsRef = useRef<(HTMLDivElement | null)[]>([]);
   const idRef = useRef(0);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -34,12 +34,8 @@ export default function PortraitReveal({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    setCurrent({ x, y });
-    setTrail((prev) => {
-      const next = [...prev, { x, y, id: ++idRef.current }];
-      if (next.length > 12) next.shift();
-      return next;
-    });
+    trailRef.current.push({ x, y, id: ++idRef.current });
+    if (trailRef.current.length > 12) trailRef.current.shift();
   };
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -54,30 +50,52 @@ export default function PortraitReveal({
     const y = touch.clientY - rect.top;
 
     if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-      setCurrent({ x, y });
-      setTrail((prev) => {
-        const next = [...prev, { x, y, id: ++idRef.current }];
-        if (next.length > 12) next.shift();
-        return next;
-      });
+      trailRef.current.push({ x, y, id: ++idRef.current });
+      if (trailRef.current.length > 12) trailRef.current.shift();
       setIsHovered(true);
     } else {
       setIsHovered(false);
     }
   };
 
-  // Reduce trail on mouse leave
   useEffect(() => {
-    if (isHovered) return;
+    let animationId: number;
+    const circleRadius = 55;
 
-    const interval = setInterval(() => {
-      setTrail((prev) => (prev.length > 0 ? prev.slice(1) : prev));
-    }, 35);
+    const updateTrail = () => {
+      const trail = trailRef.current;
+      const divs = trailDivsRef.current;
 
-    return () => clearInterval(interval);
+      for (let i = 0; i < 12; i++) {
+        const div = divs[i];
+        if (!div) continue;
+
+        const point = trail[i];
+        if (point) {
+          const age = trail.length - 1 - i;
+          const opacity = Math.max(0, 1 - age * 0.08);
+          const radius = circleRadius - age * 0.5;
+
+          div.style.clipPath = `circle(${radius}px at ${point.x}px ${point.y}px)`;
+          div.style.opacity = opacity.toString();
+          div.style.display = 'block';
+        } else {
+          div.style.display = 'none';
+        }
+      }
+
+      if (!isHovered && trail.length > 0) {
+        if (Math.random() > 0.8) {
+          trailRef.current.shift();
+        }
+      }
+
+      animationId = requestAnimationFrame(updateTrail);
+    };
+
+    animationId = requestAnimationFrame(updateTrail);
+    return () => cancelAnimationFrame(animationId);
   }, [isHovered]);
-
-  const circleRadius = 55;
 
   return (
     <div
@@ -105,38 +123,23 @@ export default function PortraitReveal({
       {/* Subtle paper vignette layer */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none mix-blend-overlay" />
 
-      {/* Layer 2: Trail-Revealed Schematic Blueprint Images */}
-      <AnimatePresence>
-        {trail.map((point, index) => {
-          // Older points are smaller and more transparent
-          const age = trail.length - 1 - index;
-          const opacity = Math.max(0, 1 - age * 0.08);
-          const radius = circleRadius - age * 0.5;
-
-          if (radius <= 0 || opacity <= 0) return null;
-
-          return (
-            <div
-              key={point.id}
-              className="absolute inset-0 pointer-events-none select-none z-10"
-              style={{
-                clipPath: `circle(${radius}px at ${point.x}px ${point.y}px)`,
-                WebkitClipPath: `circle(${radius}px at ${point.x}px ${point.y}px)`,
-                opacity,
-                transition: 'opacity 0.15s ease-out',
-              }}
-            >
-              <img
-                src={revealSrc}
-                alt={`${alt} schematic reveal trail`}
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-              />
-              <div className="absolute inset-0 bg-grid-fine opacity-[0.35] bg-cyan-500/10 mix-blend-screen pointer-events-none" />
-            </div>
-          );
-        })}
-      </AnimatePresence>
+      {/* Layer 2: Trail-Revealed Schematic Blueprint Images - Pre-allocated for performance */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          key={i}
+          ref={(el) => { trailDivsRef.current[i] = el; }}
+          className="absolute inset-0 pointer-events-none select-none z-10"
+          style={{ display: 'none' }}
+        >
+          <img
+            src={revealSrc}
+            alt={`${alt} schematic reveal trail`}
+            referrerPolicy="no-referrer"
+            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+          <div className="absolute inset-0 bg-grid-fine opacity-[0.35] bg-cyan-500/10 mix-blend-screen pointer-events-none" />
+        </div>
+      ))}
 
     </div>
   );

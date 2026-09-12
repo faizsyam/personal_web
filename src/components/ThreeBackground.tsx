@@ -13,6 +13,7 @@ interface Particle {
 
 export default function ThreeBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const visibleRef = useRef(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -20,14 +21,27 @@ export default function ThreeBackground() {
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Track visibility via IntersectionObserver
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = entry.isIntersecting;
+      },
+      { rootMargin: '100px' }
+    );
+
+    // Register the observer on the container
+    observer.observe(container);
+
     // ─── Scene ───────────────────────────────────
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.z = 5;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+    // Disable antialias for better perf on integrated GPUs
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Cap pixel ratio at 1.5 for perf
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
@@ -84,10 +98,10 @@ export default function ThreeBackground() {
     scene.add(gridMesh);
 
     // ─── Floating Particles ────────────────────
-    const particleCount = 120;
+    // Reduced from 120 to 50 for significant perf gain
+    const particleCount = 50;
     const particles: Particle[] = [];
     const positions = new Float32Array(particleCount * 3);
-    const sizes = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -102,7 +116,6 @@ export default function ThreeBackground() {
       positions[i * 3] = particles[i].x;
       positions[i * 3 + 1] = particles[i].y;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
-      sizes[i] = particles[i].size;
     }
 
     const particleGeometry = new THREE.BufferGeometry();
@@ -151,6 +164,12 @@ export default function ThreeBackground() {
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
+
+      // Skip rendering if not visible (scrolled away from hero)
+      if (!visibleRef.current) {
+        return;
+      }
+
       const elapsed = clock.getElapsedTime();
 
       mouse.x += (targetMouse.x - mouse.x) * 0.05;
@@ -204,6 +223,7 @@ export default function ThreeBackground() {
       cancelAnimationFrame(animationId);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      observer.disconnect();
       renderer.dispose();
       gridGeometry.dispose();
       gridMaterial.dispose();

@@ -96,8 +96,8 @@ export default function App() {
 
   // Scroll spy with RAF debouncing
   const activeSection = useScrollSpy(['about', 'work', 'projects', 'writing', 'contact'], {
-    offset: 0.4,
     threshold: 180,
+    headerOffset: 56,
   });
 
   // GSAP ScrollTrigger scroll-driven animations
@@ -134,16 +134,16 @@ export default function App() {
       {/* Dynamic interactive background drawing grids and micro-sparks on cursor hover */}
       <InteractiveGridBackground />
 
-      {/* Ambient lights */}
-      <div className="fixed top-0 left-1/4 w-[700px] h-[700px] rounded-full bg-highlight/[0.04] blur-[160px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-accent/[0.03] blur-[140px] pointer-events-none -z-10" />
+      {/* Ambient lights - reduced size and blur for perf */}
+      <div className="fixed top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-highlight/[0.03] blur-[80px] pointer-events-none -z-10" />
+      <div className="fixed bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/[0.02] blur-[70px] pointer-events-none -z-10" />
 
       <CustomCursor />
       <FloatingNav activeSection={activeSection} lang={lang} />
 
       {/* NAV — fixed height so scrollY never jumps when activeSection flips */}
       <header
-        className={`sticky top-0 z-30 w-full h-14 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        className={`sticky top-0 z-30 w-full h-14 transition-[background-color,border-color] duration-200 ${
           activeSection === 'home'
             ? 'border-b border-transparent bg-transparent'
             : 'border-b border-surface/40 bg-bg/85 backdrop-blur-md'
@@ -163,8 +163,8 @@ export default function App() {
               <motion.button
                 key={navItem.id}
                 onClick={() => scrollTo(navItem.id)}
-                whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                whileHover={{ y: -3, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                 transition={{
                   type: 'spring',
                   stiffness: 480,
@@ -304,9 +304,9 @@ export default function App() {
                 <motion.button
                   key={cta.target}
                   onClick={() => scrollTo(cta.target)}
-                  whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+                  whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
                   whileTap={{ scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
                   className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-200 cursor-pointer focus:outline-none ${idx === 0 ? 'bg-accent text-bg hover:bg-accent/90 hover:shadow-[0_8px_20px_rgba(43,76,126,0.15)]' : 'border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary'}`}
                 >
                   {localize({ en: cta.labelEn, id: cta.labelId }, lang)} <span>→</span>
@@ -329,8 +329,8 @@ export default function App() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ y: -3, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                    whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                    whileHover={{ y: -3, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                    whileTap={{ scale: 0.95, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                     transition={{ type: 'spring', stiffness: 450, damping: 14 }}
                     className="inline-flex items-center gap-1.5 text-[12px] text-secondary hover:text-primary px-3 py-1.5 rounded-full border border-surface/50 hover:border-primary hover:shadow-[0_4px_12px_rgba(24,24,21,0.06)] bg-white/20 hover:bg-white/60 transition-[border-color,background-color,box-shadow,color] duration-150"
                   >
@@ -344,8 +344,8 @@ export default function App() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+              whileHover={{ y: -4, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="flex lg:hidden flex-col sm:flex-row gap-5 items-center sm:items-start p-5 mt-auto rounded-2xl border border-surface/60 bg-white hover:border-highlight/30 hover:shadow-md transition-all duration-300 shadow-sm cursor-pointer group"
             >
@@ -381,8 +381,8 @@ export default function App() {
           >
             {/* Photo card styled as a vintage physical specimen/draft slide */}
             <motion.div
-              whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+              whileHover={{ y: -6, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+              whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
               className="rounded-2xl border border-surface/60 bg-white p-3 hover:border-highlight/30 hover:shadow-lg transition-all duration-300 group cursor-pointer shadow-sm"
             >
               <PortraitReveal
@@ -414,7 +414,7 @@ export default function App() {
         <motion.section
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: '120px' }}
+        viewport={{ once: true, margin: '120px' }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full bg-white border-y border-surface/80 relative z-10 mb-12"
       >
@@ -447,7 +447,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3, margin: '120px' }}
+            viewport={{ once: true, amount: 0.3, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col gap-3 mb-10"
           >
@@ -476,7 +476,7 @@ export default function App() {
                   key={i}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.3, margin: '120px' }}
+                  viewport={{ once: true, amount: 0.3, margin: '120px' }}
                   transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1], delay: i * 0.12 }}
                 >
                   {p}
@@ -488,7 +488,7 @@ export default function App() {
                 onClick={() => setIsIntroArticleOpen(true)}
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3, margin: '120px' }}
+                viewport={{ once: true, amount: 0.3, margin: '120px' }}
                 transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
                 className="mt-4 group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-accent/20 hover:bg-accent/[0.06] hover:border-accent/35 transition-all duration-200 self-start cursor-pointer focus:outline-none shadow-sm"
               >
@@ -504,7 +504,7 @@ export default function App() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 24 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3, margin: '120px' }}
+              viewport={{ once: true, amount: 0.3, margin: '120px' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
               className="flex-1 min-w-0 w-full lg:max-w-[720px] xl:max-w-[820px]"
             >
@@ -518,7 +518,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3, margin: '120px' }}
+            viewport={{ once: true, amount: 0.3, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -563,11 +563,11 @@ export default function App() {
                           id={`timeline-item-${item.id}`}
                           initial="hidden"
                           whileInView="visible"
-                          viewport={{ once: false, margin: '120px' }}
+                          viewport={{ once: true, margin: '120px' }}
                           variants={timelineVariants}
-                          whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                          whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
-                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                          whileHover={{ y: -4, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                          whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
                           onMouseEnter={() => setHoveredTimelineId(item.id)}
                           onMouseLeave={() => setHoveredTimelineId(null)}
                           onClick={() => handleTimelineClick(item)}
@@ -649,7 +649,7 @@ export default function App() {
                         </span>
                         <motion.div
                           animate={{ rotate: (isWorkCol ? isWorkExpanded : isEduExpanded) ? 180 : 0 }}
-                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </motion.div>
@@ -678,8 +678,8 @@ export default function App() {
                                   initial="hidden"
                                   animate="visible"
                                   variants={timelineVariants}
-                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                                   onMouseEnter={() => setHoveredTimelineId(item.id)}
                                   onMouseLeave={() => setHoveredTimelineId(null)}
                                   onClick={() => handleTimelineClick(item)}
@@ -733,7 +733,7 @@ export default function App() {
                         </span>
                         <motion.div
                           animate={{ rotate: isEduExpanded ? 180 : 0 }}
-                          transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                          transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </motion.div>
@@ -762,8 +762,8 @@ export default function App() {
                                   initial="hidden"
                                   animate="visible"
                                   variants={timelineVariants}
-                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                                  whileHover={{ y: -4, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                                   onMouseEnter={() => setHoveredTimelineId(item.id)}
                                   onMouseLeave={() => setHoveredTimelineId(null)}
                                   onClick={() => handleTimelineClick(item)}
@@ -812,7 +812,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '120px' }}
+            viewport={{ once: true, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -847,10 +847,10 @@ export default function App() {
                   onClick={() => setSelectedProject(project)}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, margin: '120px' }}
+                  viewport={{ once: true, margin: '120px' }}
                   variants={cardVariants}
-                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                   className="group relative flex flex-col rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm overflow-hidden"
                 >
                   {/* Image at top — flush with card edges, no padding */}
@@ -914,8 +914,8 @@ export default function App() {
                       initial="hidden"
                       animate="visible"
                       variants={cardVariants}
-                      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                      whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                      whileHover={{ y: -6, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                      whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                       className="group relative flex flex-col rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm overflow-hidden"
                     >
                       {/* Image at top — flush with card edges, no padding */}
@@ -964,9 +964,9 @@ export default function App() {
           {PROJECTS.length > 4 && (
             <motion.button
               onClick={() => setShowMoreProjects(!showMoreProjects)}
-              whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
+              whileHover={{ y: -3, scale: 1.035, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
               whileTap={{ scale: 0.96 }}
-              transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
               className="self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-surface/80 hover:border-highlight/30 bg-surface/10 hover:bg-surface/30 text-primary text-[13.5px] transition-[background-color,border-color] duration-200 cursor-pointer focus:outline-none mt-2"
             >
               <span className="font-mono text-[11px] tracking-wider uppercase font-semibold">
@@ -976,7 +976,7 @@ export default function App() {
               </span>
               <motion.div
                 animate={{ rotate: showMoreProjects ? 180 : 0 }}
-                transition={{ type: 'spring', stiffness: 700, damping: 22, mass: 0.3 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 22, mass: 0.3 }}
               >
                 <ChevronDown className="w-4 h-4" />
               </motion.div>
@@ -989,7 +989,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '120px' }}
+            viewport={{ once: true, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -1029,10 +1029,10 @@ export default function App() {
                   rel="noopener noreferrer"
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, margin: '120px' }}
+                  viewport={{ once: true, margin: '120px' }}
                   variants={cardVariants}
-                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                  whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                   onMouseEnter={() => setHoveredWritingId(write.id)}
                   onMouseLeave={() => setHoveredWritingId(null)}
                   onClick={(e) => handleWritingClick(write.id, e)}
@@ -1126,7 +1126,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: '120px' }}
+            viewport={{ once: true, margin: '120px' }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-3 border-b border-surface/60 pb-3"
           >
@@ -1160,11 +1160,11 @@ export default function App() {
                     target={isEmail ? undefined : '_blank'}
                     rel="noopener noreferrer"
                     onClick={isEmail ? handleEmailClick : undefined}
-                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 700, damping: 22, mass: 0.3 } }}
-                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 800, damping: 20, mass: 0.3 } }}
+                    whileHover={{ y: -4, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                    whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                     initial={{ opacity: 0, y: 28 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, margin: '-60px' }}
+                    viewport={{ once: true, margin: '-60px' }}
                     transition={{
                       type: 'spring',
                       stiffness: 180,

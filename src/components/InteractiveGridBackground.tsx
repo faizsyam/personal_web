@@ -90,6 +90,13 @@ export default function InteractiveGridBackground() {
 
   // Track scroll position to calculate document-space coordinates
   const scrollRef = useRef({ x: 0, y: 0 });
+  const lastScrollRef = useRef({ x: -1, y: -1 });
+
+  // Frame throttling state
+  const frameCountRef = useRef(0);
+  const lastRenderTimeRef = useRef(0);
+  const needsRedrawRef = useRef(true);
+  const contentCacheRef = useRef<Map<string, boolean>>(new Map());
 
   useEffect(() => {
     // 1. Detect dark mode state and update dynamically via ref (NOT state)
@@ -111,16 +118,15 @@ export default function InteractiveGridBackground() {
     // 2. Track scroll — round to integers to prevent sub-pixel grid jitter
     // and skip redundant updates to avoid visual shake during
     // header/backdrop-blur transitions.
-    let lastScrollX = -1;
-    let lastScrollY = -1;
     const handleScroll = () => {
       const x = Math.round(window.scrollX);
       const y = Math.round(window.scrollY);
-      if (x !== lastScrollX || y !== lastScrollY) {
+      if (x !== lastScrollRef.current.x || y !== lastScrollRef.current.y) {
         scrollRef.current.x = x;
         scrollRef.current.y = y;
-        lastScrollX = x;
-        lastScrollY = y;
+        lastScrollRef.current.x = x;
+        lastScrollRef.current.y = y;
+        needsRedrawRef.current = true;
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -131,6 +137,7 @@ export default function InteractiveGridBackground() {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
       mouseRef.current.active = true;
+      needsRedrawRef.current = true;
     };
 
     const handleMouseLeave = () => {
@@ -155,6 +162,7 @@ export default function InteractiveGridBackground() {
         maxLife: 75,
         amplitude: 25 // max physical line displacement in pixels
       });
+      needsRedrawRef.current = true;
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -168,12 +176,12 @@ export default function InteractiveGridBackground() {
     if (!ctx) return;
 
     let animationId: number;
-    let frameCount = 0;
 
     // Resize function
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      needsRedrawRef.current = true;
     };
     window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
@@ -238,189 +246,236 @@ export default function InteractiveGridBackground() {
       return { x: currentX, y: currentY };
     };
 
+    // Check if anything requires rendering this frame
+    const shouldRender = () => {
+      const now = performance.now();
+
+      // Always render if we have active ripples or scroll changed
+      if (ripplesRef.current.length > 0 || needsRedrawRef.current) {
+        lastRenderTimeRef.current = now;
+        needsRedrawRef.current = false;
+        return true;
+      }
+
+      // Check if mouse moved significantly
+      const mouse = mouseRef.current;
+      if (mouse.active && (mouse.x !== lerpMouseRef.current.x || mouse.y !== lerpMouseRef.current.y)) {
+        lastRenderTimeRef.current = now;
+        return true;
+      }
+
+      // Check if warp is settling
+      if (warpStrengthRef.current > 0.1) {
+        lastRenderTimeRef.current = now;
+        return true;
+      }
+
+      // Throttle to ~10fps when idle (mouse stationary, no ripples, no warp)
+      if (now - lastRenderTimeRef.current < 100) {
+        return false;
+      }
+
+      lastRenderTimeRef.current = now;
+      return true;
+    };
+
     // 5. Start Render / Physics Loop
     const render = () => {
-      // Clear canvas on every frame
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (shouldRender()) {
+        // Clear canvas on every frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      frameCount++;
+        frameCountRef.current++;
 
-      const dX = scrollRef.current.x;
-      const dY = scrollRef.current.y;
+        const dX = scrollRef.current.x;
+        const dY = scrollRef.current.y;
 
-      // Smooth mouse follow (lerping)
-      if (mouseRef.current.active) {
-        if (lerpMouseRef.current.x === -1000) {
-          lerpMouseRef.current.x = mouseRef.current.x;
-          lerpMouseRef.current.y = mouseRef.current.y;
+        // Smooth mouse follow (lerping)
+        if (mouseRef.current.active) {
+          if (lerpMouseRef.current.x === -1000) {
+            lerpMouseRef.current.x = mouseRef.current.x;
+            lerpMouseRef.current.y = mouseRef.current.y;
+          } else {
+            lerpMouseRef.current.x += (mouseRef.current.x - lerpMouseRef.current.x) * 0.12;
+            lerpMouseRef.current.y += (mouseRef.current.y - lerpMouseRef.current.y) * 0.12;
+          }
+          // Smoothly inflate the warp power when mouse active
+          const targetWarp = 12;
+          warpStrengthRef.current += (targetWarp - warpStrengthRef.current) * 0.1;
+
+          // Smart background vs content detection (cached, every 3 frames max)
+          if (frameCountRef.current % 3 === 0 && warpStrengthRef.current > 0.5) {
+            const cacheKey = `${Math.round(mouseRef.current.x / 10)},${Math.round(mouseRef.current.y / 10)}`;
+            let cached = contentCacheRef.current.get(cacheKey);
+            if (cached === undefined) {
+              const elementAtCursor = document.elementFromPoint(mouseRef.current.x, mouseRef.current.y);
+              cached = checkIsHoveringOverContent(elementAtCursor);
+              // Limit cache size
+              if (contentCacheRef.current.size > 200) {
+                const firstKey = contentCacheRef.current.keys().next().value;
+                if (firstKey) contentCacheRef.current.delete(firstKey);
+              }
+              contentCacheRef.current.set(cacheKey, cached);
+            }
+            isHoveringOverContentRef.current = cached;
+          }
         } else {
-          lerpMouseRef.current.x += (mouseRef.current.x - lerpMouseRef.current.x) * 0.12;
-          lerpMouseRef.current.y += (mouseRef.current.y - lerpMouseRef.current.y) * 0.12;
+          // Disappear gradually if mouse goes off screen
+          lerpMouseRef.current.x += (-2000 - lerpMouseRef.current.x) * 0.08;
+          lerpMouseRef.current.y += (-2000 - lerpMouseRef.current.y) * 0.08;
+
+          // Smoothly deflate the warp back to a completely flat grid
+          warpStrengthRef.current += (0 - warpStrengthRef.current) * 0.12;
+
+          isHoveringOverContentRef.current = false;
         }
-        // Smoothly inflate the warp power when mouse active
-        const targetWarp = 12; // reduced convex warp offset in pixels slightly
-        warpStrengthRef.current += (targetWarp - warpStrengthRef.current) * 0.1;
 
-        // Smart background vs content detection (every 3 frames to maintain peak 120Hz performance)
-        if (frameCount % 3 === 0) {
-          const elementAtCursor = document.elementFromPoint(mouseRef.current.x, mouseRef.current.y);
-          isHoveringOverContentRef.current = checkIsHoveringOverContent(elementAtCursor);
+        const rx = lerpMouseRef.current.x;
+        const ry = lerpMouseRef.current.y;
+        const warpStrength = warpStrengthRef.current;
+
+        // Base Grid spacing properties
+        const gapCoarse = 40;
+        const gapFine = 10;
+
+        // Compute starting points aligned with document scrolling
+        const startX = -dX % gapCoarse;
+        const startY = -dY % gapCoarse;
+
+        // Draw Grid Lines with Highlight Hover Effects
+        const isDark = isDarkRef.current;
+        const baseLineColorCoarse = isDark ? 'rgba(236, 234, 228, 0.06)' : 'rgba(24, 24, 21, 0.07)';
+        const baseLineColorFine = isDark ? 'rgba(236, 234, 228, 0.02)' : 'rgba(24, 24, 21, 0.03)';
+
+        // 1. FINE BACKGROUND GRID (10px) - No warp applied to keep background steady and performant
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = baseLineColorFine;
+        ctx.beginPath();
+
+        for (let x = -dX % gapFine; x < canvas.width; x += gapFine) {
+          if (x % gapCoarse !== startX) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+          }
         }
-      } else {
-        // Disappear gradually if mouse goes off screen
-        lerpMouseRef.current.x += (-2000 - lerpMouseRef.current.x) * 0.08;
-        lerpMouseRef.current.y += (-2000 - lerpMouseRef.current.y) * 0.08;
-
-        // Smoothly deflate the warp back to a completely flat grid
-        warpStrengthRef.current += (0 - warpStrengthRef.current) * 0.12;
-
-        isHoveringOverContentRef.current = false;
-      }
-
-      const rx = lerpMouseRef.current.x;
-      const ry = lerpMouseRef.current.y;
-      const warpStrength = warpStrengthRef.current;
-
-      // Base Grid spacing properties
-      const gapCoarse = 40;
-      const gapFine = 10;
-
-      // Compute starting points aligned with document scrolling
-      const startX = -dX % gapCoarse;
-      const startY = -dY % gapCoarse;
-
-      // Draw Grid Lines with Highlight Hover Effects
-      const isDark = isDarkRef.current;
-      const baseLineColorCoarse = isDark ? 'rgba(236, 234, 228, 0.06)' : 'rgba(24, 24, 21, 0.07)';
-      const baseLineColorFine = isDark ? 'rgba(236, 234, 228, 0.02)' : 'rgba(24, 24, 21, 0.03)';
-
-      // 1. FINE BACKGROUND GRID (10px) - No warp applied to keep background steady and performant
-      ctx.lineWidth = 0.5;
-      ctx.strokeStyle = baseLineColorFine;
-      ctx.beginPath();
-
-      for (let x = -dX % gapFine; x < canvas.width; x += gapFine) {
-        if (x % gapCoarse !== startX) { // Skip lines shared with coarse grid
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, canvas.height);
+        for (let y = -dY % gapFine; y < canvas.height; y += gapFine) {
+          if (y % gapCoarse !== startY) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+          }
         }
-      }
-      for (let y = -dY % gapFine; y < canvas.height; y += gapFine) {
-        if (y % gapCoarse !== startY) { // Skip lines shared with coarse grid
-          ctx.moveTo(0, y);
-          ctx.lineTo(canvas.width, y);
-        }
-      }
-      ctx.stroke();
+        ctx.stroke();
 
-      // 2. COARSE GRID INTERACTIVE DRAWING & CONVEX WARPING
-      const hoverRadius = 100; // Radius where warp lens distortion applies
-      const activeRipples = ripplesRef.current;
+        // 2. COARSE GRID INTERACTIVE DRAWING & CONVEX WARPING
+        const hoverRadius = 100;
+        const activeRipples = ripplesRef.current;
+        const hasActiveWarp = warpStrength > 0.1 || activeRipples.length > 0;
 
-      // Check if a vertical line is affected by hover or ripples
-      const isVerticalLineAffected = (xVal: number) => {
-        if (rx > -500 && Math.abs(xVal - rx) < hoverRadius && warpStrength > 0) {
-          return true;
-        }
-        for (let r = 0; r < activeRipples.length; r++) {
-          const rip = activeRipples[r];
-          const rxRip = rip.x - dX;
-          if (Math.abs(xVal - rxRip) < (rip.radius + 60)) {
+        // Check if a vertical line is affected by hover or ripples
+        const isVerticalLineAffected = (xVal: number) => {
+          if (rx > -500 && Math.abs(xVal - rx) < hoverRadius && warpStrength > 0) {
             return true;
           }
-        }
-        return false;
-      };
+          for (let r = 0; r < activeRipples.length; r++) {
+            const rip = activeRipples[r];
+            const rxRip = rip.x - dX;
+            if (Math.abs(xVal - rxRip) < (rip.radius + 60)) {
+              return true;
+            }
+          }
+          return false;
+        };
 
-      // Check if a horizontal line is affected by hover or ripples
-      const isHorizontalLineAffected = (yVal: number) => {
-        if (ry > -500 && Math.abs(yVal - ry) < hoverRadius && warpStrength > 0) {
-          return true;
-        }
-        for (let r = 0; r < activeRipples.length; r++) {
-          const rip = activeRipples[r];
-          const ryRip = rip.y - dY;
-          if (Math.abs(yVal - ryRip) < (rip.radius + 60)) {
+        // Check if a horizontal line is affected by hover or ripples
+        const isHorizontalLineAffected = (yVal: number) => {
+          if (ry > -500 && Math.abs(yVal - ry) < hoverRadius && warpStrength > 0) {
             return true;
           }
-        }
-        return false;
-      };
-
-      // Draw Coarse Vertical Lines with optional local bulge warp
-      const drawVerticalLine = (xVal: number) => {
-        const affected = isVerticalLineAffected(xVal);
-
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = baseLineColorCoarse;
-
-        if (!affected) {
-          ctx.moveTo(xVal, 0);
-          ctx.lineTo(xVal, canvas.height);
-          ctx.stroke();
-        } else {
-          // Curved warped section
-          const steps = 24; // Fluid subdivision
-          const stepSize = canvas.height / steps;
-
-          ctx.moveTo(xVal, 0);
-          for (let i = 1; i <= steps; i++) {
-            const curY = i * stepSize;
-            const warped = warpPoint(xVal, curY, rx, ry, hoverRadius, warpStrength);
-            ctx.lineTo(warped.x, warped.y);
+          for (let r = 0; r < activeRipples.length; r++) {
+            const rip = activeRipples[r];
+            const ryRip = rip.y - dY;
+            if (Math.abs(yVal - ryRip) < (rip.radius + 60)) {
+              return true;
+            }
           }
-          ctx.stroke();
-        }
-      };
+          return false;
+        };
 
-      // Draw Coarse Horizontal Lines with optional local bulge warp
-      const drawHorizontalLine = (yVal: number) => {
-        const affected = isHorizontalLineAffected(yVal);
+        // Draw Coarse Vertical Lines with optional local bulge warp
+        const drawVerticalLine = (xVal: number) => {
+          const affected = isVerticalLineAffected(xVal);
 
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = baseLineColorCoarse;
+          ctx.beginPath();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = baseLineColorCoarse;
 
-        if (!affected) {
-          ctx.moveTo(0, yVal);
-          ctx.lineTo(canvas.width, yVal);
-          ctx.stroke();
-        } else {
-          const steps = 24;
-          const stepSize = canvas.width / steps;
+          if (!affected) {
+            ctx.moveTo(xVal, 0);
+            ctx.lineTo(xVal, canvas.height);
+            ctx.stroke();
+          } else {
+            // Curved warped section - reduce steps when warp is weak
+            const steps = hasActiveWarp ? 24 : 12;
+            const stepSize = canvas.height / steps;
 
-          ctx.moveTo(0, yVal);
-          for (let i = 1; i <= steps; i++) {
-            const curX = i * stepSize;
-            const warped = warpPoint(curX, yVal, rx, ry, hoverRadius, warpStrength);
-            ctx.lineTo(warped.x, warped.y);
+            ctx.moveTo(xVal, 0);
+            for (let i = 1; i <= steps; i++) {
+              const curY = i * stepSize;
+              const warped = warpPoint(xVal, curY, rx, ry, hoverRadius, warpStrength);
+              ctx.lineTo(warped.x, warped.y);
+            }
+            ctx.stroke();
           }
-          ctx.stroke();
+        };
+
+        // Draw Coarse Horizontal Lines with optional local bulge warp
+        const drawHorizontalLine = (yVal: number) => {
+          const affected = isHorizontalLineAffected(yVal);
+
+          ctx.beginPath();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = baseLineColorCoarse;
+
+          if (!affected) {
+            ctx.moveTo(0, yVal);
+            ctx.lineTo(canvas.width, yVal);
+            ctx.stroke();
+          } else {
+            const steps = hasActiveWarp ? 24 : 12;
+            const stepSize = canvas.width / steps;
+
+            ctx.moveTo(0, yVal);
+            for (let i = 1; i <= steps; i++) {
+              const curX = i * stepSize;
+              const warped = warpPoint(curX, yVal, rx, ry, hoverRadius, warpStrength);
+              ctx.lineTo(warped.x, warped.y);
+            }
+            ctx.stroke();
+          }
+        };
+
+        // Draw Coarse Vertical Lines
+        for (let x = startX; x < canvas.width; x += gapCoarse) {
+          drawVerticalLine(x);
         }
-      };
 
-      // Draw Coarse Vertical Lines
-      for (let x = startX; x < canvas.width; x += gapCoarse) {
-        drawVerticalLine(x);
-      }
+        // Draw Coarse Horizontal Lines
+        for (let y = startY; y < canvas.height; y += gapCoarse) {
+          drawHorizontalLine(y);
+        }
 
-      // Draw Coarse Horizontal Lines
-      for (let y = startY; y < canvas.height; y += gapCoarse) {
-        drawHorizontalLine(y);
-      }
+        // 3. UPDATE CLICK RIPPLES (Propagate PHYSICAL wave, no standalone circle drawings)
+        const currentRipples = ripplesRef.current;
+        for (let i = currentRipples.length - 1; i >= 0; i--) {
+          const rip = currentRipples[i];
 
-      // 3. UPDATE CLICK RIPPLES (Propagate PHYSICAL wave, no standalone circle drawings)
-      const currentRipples = ripplesRef.current;
-      for (let i = currentRipples.length - 1; i >= 0; i--) {
-        const rip = currentRipples[i];
+          // Propagate outward smoothly
+          rip.radius += (rip.maxRadius - rip.radius) * 0.075;
+          rip.life -= 1;
 
-        // Propagate outward smoothly
-        rip.radius += (rip.maxRadius - rip.radius) * 0.075;
-        rip.life -= 1;
-
-        if (rip.life <= 0 || rip.radius >= rip.maxRadius - 2) {
-          currentRipples.splice(i, 1);
+          if (rip.life <= 0 || rip.radius >= rip.maxRadius - 2) {
+            currentRipples.splice(i, 1);
+          }
         }
       }
 
