@@ -18,11 +18,10 @@ export function useGsapScroll(enabled = true) {
     sectionHeadings.forEach((el) => {
       gsap.fromTo(
         el,
-        { opacity: 0, y: 24, filter: 'blur(3px)' },
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
           duration: 0.7,
           ease: 'power3.out',
           scrollTrigger: {

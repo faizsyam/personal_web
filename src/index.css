@@ -150,6 +150,11 @@
   }
 }
 
+/* Isolate cursor elements from page layout recalculation */
+[data-cursor] {
+  contain: layout style size;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

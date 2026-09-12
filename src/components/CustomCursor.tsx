@@ -1,10 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function CustomCursor() {
-  const [hoverType, setHoverType] = useState<'link' | 'detail' | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(true);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  // All cursor state as refs — zero React re-renders during mouse movement
+  const hoverTypeRef = useRef<'link' | 'detail' | null>(null);
+  const isVisibleRef = useRef(false);
 
   // Direct position refs - no motion values
   const cursorX = useRef(-100);
@@ -20,31 +19,24 @@ export default function CustomCursor() {
   const viewTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Detect touch dev
-    const checkTouch = () => {
-      const match = window.matchMedia('(pointer: coarse)');
-      setIsTouchDevice(match.matches || 'ontouchstart' in window);
-    };
-    checkTouch();
-
-    // Respect prefers-reduced-motion for accessibility
+    // Detect touch device — no state, just a local variable
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(motionQuery.matches);
-    const handleMotionChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-    motionQuery.addEventListener('change', handleMotionChange);
+    const prefersReduced = motionQuery.matches;
 
-    if (isTouchDevice || motionQuery.matches) {
-      return () => {
-        motionQuery.removeEventListener('change', handleMotionChange);
-      };
-    }
+    if (isTouch || prefersReduced) return;
+
+    // Apply custom cursor active to html tag to trigger CSS cursor hide
+    document.documentElement.classList.add('custom-cursor-active');
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.current = e.clientX;
       cursorY.current = e.clientY;
-      if (!isVisible) setIsVisible(true);
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        if (ringRef.current) ringRef.current.style.opacity = '1';
+        if (dotRef.current) dotRef.current.style.opacity = '1';
+      }
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -62,36 +54,38 @@ export default function CustomCursor() {
       );
 
       if (isDetailItem) {
-        setHoverType('detail');
+        hoverTypeRef.current = 'detail';
       } else if (isInteractive) {
-        setHoverType('link');
+        hoverTypeRef.current = 'link';
       } else {
-        setHoverType(null);
+        hoverTypeRef.current = null;
       }
     };
 
     const handleMouseLeaveWindow = () => {
-      setIsVisible(false);
+      isVisibleRef.current = false;
+      if (ringRef.current) ringRef.current.style.opacity = '0';
+      if (dotRef.current) dotRef.current.style.opacity = '0';
     };
 
     const handleMouseEnterWindow = () => {
-      setIsVisible(true);
+      isVisibleRef.current = true;
+      if (ringRef.current) ringRef.current.style.opacity = '1';
+      if (dotRef.current) dotRef.current.style.opacity = '1';
     };
 
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousemove', moveCursor, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeaveWindow);
     document.addEventListener('mouseenter', handleMouseEnterWindow);
 
-    // Apply custom cursor active to html tag to trigger CSS cursor hide
-    document.documentElement.classList.add('custom-cursor-active');
-
-    // Single rAF loop for all cursor movement - replaces 4 spring simulations
+    // Single rAF loop for all cursor movement
     let animationId: number;
     let prevHoverType: 'link' | 'detail' | null = null;
-    let prevIsHovered = false;
 
     const animate = () => {
+      const hoverType = hoverTypeRef.current;
+
       // Smooth lerp for ring (outer) - slower, more lag
       ringX.current += (cursorX.current - ringX.current) * 0.18;
       ringY.current += (cursorY.current - ringY.current) * 0.18;
@@ -102,38 +96,36 @@ export default function CustomCursor() {
 
       // Apply transforms directly to DOM - no React state updates
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringX.current - ringRef.current.offsetWidth / 2}px, ${ringY.current - ringRef.current.offsetHeight / 2}px)`;
+        const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
+        ringRef.current.style.transform = `translate(${ringX.current - ringSize / 2}px, ${ringY.current - ringSize / 2}px)`;
       }
       if (dotRef.current) {
         dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px)`;
       }
 
-      // Handle hover type changes with CSS transitions
-      const isHovered = hoverType !== null;
-      if (hoverType !== prevHoverType || isHovered !== prevIsHovered) {
-        if (ringRef.current) {
-          const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
-          const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
-          const ringBg = hoverType === 'detail' ? 'rgba(43, 76, 126, 0.08)' : hoverType === 'link' ? 'rgba(106, 106, 98, 0.06)' : 'transparent';
+      // Handle hover type changes with CSS transitions — only when type actually changed
+      if (hoverType !== prevHoverType) {
+        const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
+        const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
+        const ringBg = hoverType === 'detail' ? 'rgba(43, 76, 126, 0.08)' : hoverType === 'link' ? 'rgba(106, 106, 98, 0.06)' : 'transparent';
 
+        if (ringRef.current) {
           ringRef.current.style.width = `${ringSize}px`;
           ringRef.current.style.height = `${ringSize}px`;
           ringRef.current.style.borderColor = ringColor;
           ringRef.current.style.backgroundColor = ringBg;
-          ringRef.current.style.transition = 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, transform 0s';
-          ringRef.current.style.transformOrigin = 'center center';
-          ringRef.current.style.transform = `translate(${ringX.current - ringSize / 2}px, ${ringY.current - ringSize / 2}px) scale(${isHovered ? 1.05 : 1})`;
+          ringRef.current.style.transition = 'width 0.15s ease, height 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease';
         }
 
         if (dotRef.current) {
-          const dotColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#181815' : '#181815';
+          const dotColor = hoverType === 'detail' ? '#2B4C7E' : '#181815';
           dotRef.current.style.backgroundColor = dotColor;
           dotRef.current.style.transition = 'background-color 0.15s ease, opacity 0.12s ease, transform 0.12s ease';
           if (hoverType === 'detail') {
             dotRef.current.style.opacity = '0';
             dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px) scale(0)`;
           } else {
-            dotRef.current.style.opacity = '1';
+            dotRef.current.style.opacity = isVisibleRef.current ? '1' : '0';
             dotRef.current.style.transform = `translate(${dotX.current - 3}px, ${dotY.current - 3}px) scale(1)`;
           }
         }
@@ -150,7 +142,6 @@ export default function CustomCursor() {
         }
 
         prevHoverType = hoverType;
-        prevIsHovered = isHovered;
       }
 
       animationId = requestAnimationFrame(animate);
@@ -164,62 +155,49 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeaveWindow);
       document.removeEventListener('mouseenter', handleMouseEnterWindow);
       document.documentElement.classList.remove('custom-cursor-active');
-      motionQuery.removeEventListener('change', handleMotionChange);
       cancelAnimationFrame(animationId);
     };
-  }, [cursorX, cursorY, isVisible, isTouchDevice, prefersReducedMotion, hoverType]);
-
-  // Respect prefers-reduced-motion: skip custom cursor entirely
-  if (isTouchDevice || prefersReducedMotion || !isVisible) {
-    return null;
-  }
-
-  const isHovered = hoverType !== null;
-  const ringSize = hoverType === 'detail' ? 48 : hoverType === 'link' ? 32 : 18;
-  const ringColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#6A6A62' : 'rgba(24, 24, 21, 0.4)';
-  const ringBg = hoverType === 'detail' ? 'rgba(43, 76, 126, 0.08)' : hoverType === 'link' ? 'rgba(106, 106, 98, 0.06)' : 'transparent';
-  const dotColor = hoverType === 'detail' ? '#2B4C7E' : hoverType === 'link' ? '#181815' : '#181815';
+    // Empty deps: runs once on mount, reads all state via refs
+  }, []);
 
   return (
     <>
-      {/* Outer follow-ring */}
+      {/* Outer follow-ring — starts hidden, shown via JS */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 border rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden transition-transform duration-0"
+        data-cursor="ring"
+        className="fixed top-0 left-0 border rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden"
         style={{
-          width: ringSize,
-          height: ringSize,
-          borderColor: ringColor,
-          backgroundColor: ringBg,
-          transform: `translate(${ringX.current - ringSize / 2}px, ${ringY.current - ringSize / 2}px) scale(${isHovered ? 1.05 : 1})`,
+          width: 18,
+          height: 18,
+          borderColor: 'rgba(24, 24, 21, 0.4)',
+          backgroundColor: 'transparent',
+          opacity: 0,
           willChange: 'transform, width, height, border-color, background-color',
         }}
       >
-        {hoverType === 'detail' && (
-          <span
-            ref={viewTextRef}
-            className="text-[8px] font-mono font-bold text-accent tracking-widest uppercase select-none pointer-events-none"
-            style={{
-              opacity: 1,
-              transform: 'scale(1)',
-              transition: 'opacity 0.15s ease, transform 0.15s ease',
-            }}
-          >
-            VIEW
-          </span>
-        )}
+        <span
+          ref={viewTextRef}
+          className="text-[8px] font-mono font-bold text-accent tracking-widest uppercase select-none pointer-events-none"
+          style={{
+            opacity: 0,
+            transform: 'scale(0.8)',
+          }}
+        >
+          VIEW
+        </span>
       </div>
 
       {/* Center tiny dot */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] transition-all duration-100"
+        data-cursor="dot"
+        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
         style={{
           width: 6,
           height: 6,
-          backgroundColor: dotColor,
-          transform: `translate(${dotX.current - 3}px, ${dotY.current - 3}px) ${hoverType === 'detail' ? 'scale(0)' : 'scale(1)'}`,
-          opacity: hoverType === 'detail' ? 0 : 1,
+          backgroundColor: '#181815',
+          opacity: 0,
           willChange: 'transform, opacity, background-color',
         }}
       />

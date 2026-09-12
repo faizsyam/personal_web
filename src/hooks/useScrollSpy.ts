@@ -2,12 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 
 interface UseScrollSpyOptions {
   /**
-   * Check position offset from the top of the viewport (after header).
-   * 0 = right at the bottom of the header, positive = lower in viewport.
-   * Default 0 checks exactly at the header bottom.
+   * Minimum scrollY before activating any section (pixels).
+   * Below this value the hook returns 'home'.
    */
-  offset?: number;
-  /** Minimum scrollY before activating any section (pixels) */
   threshold?: number;
   /** Header height in pixels to account for sticky header */
   headerOffset?: number;
@@ -15,8 +12,10 @@ interface UseScrollSpyOptions {
 
 /**
  * Hook to track which section is currently in view for scroll spy navigation.
+ * Uses IntersectionObserver so it works reliably regardless of section height
+ * or gaps between sections.
  *
- * @param sectionIds - Array of section element IDs to track
+ * @param sectionIds - Array of section element IDs to track, in document order
  * @param options - Configuration options
  * @returns The ID of the currently active section, or 'home' if at top
  */
@@ -24,53 +23,69 @@ export function useScrollSpy(
   sectionIds: string[],
   options: UseScrollSpyOptions = {}
 ): string {
-  const { offset = 0, threshold = 180, headerOffset = 56 } = options;
+  const { threshold = 180, headerOffset = 56 } = options;
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
-    let rafId: number;
-    let lastScrollY = -1;
+    // Intersection ratios keyed by section id
+    const ratios: Record<string, number> = {};
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY === lastScrollY) return;
-      lastScrollY = scrollY;
+    // Margin string: clip the top by headerOffset so the "entry" point is
+    // below the sticky header, and use a generous bottom margin so sections
+    // near the viewport bottom still register.
+    const rootMargin = `-${headerOffset}px 0px -20% 0px`;
 
-      if (scrollY < threshold) {
-        setActiveSection('home');
-        return;
-      }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Skip when user is near the very top of the page
+        if (window.scrollY < threshold) {
+          setActiveSection('home');
+          return;
+        }
 
-      // Check position is at the bottom of the header + optional offset
-      // This detects when a section reaches the top of the visible viewport
-      const checkPos = scrollY + headerOffset + offset;
+        entries.forEach((entry) => {
+          ratios[entry.target.id] = entry.intersectionRatio;
+        });
 
-      for (const sectionId of sectionIds) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (checkPos >= top && checkPos < top + height) {
-            setActiveSection(sectionId);
-            break;
+        // Pick the section with the highest intersection ratio
+        let bestId = '';
+        let bestRatio = 0;
+        for (const id of sectionIds) {
+          const r = ratios[id] ?? 0;
+          if (r > bestRatio) {
+            bestRatio = r;
+            bestId = id;
           }
         }
+
+        if (bestId) {
+          setActiveSection(bestId);
+        }
+      },
+      {
+        rootMargin,
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      }
+    );
+
+    // Also watch scrollY to snap back to 'home' when near the top
+    const handleScroll = () => {
+      if (window.scrollY < threshold) {
+        setActiveSection('home');
       }
     };
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    const debouncedScroll = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(handleScroll);
-    };
-
-    window.addEventListener('scroll', debouncedScroll, { passive: true });
-    handleScroll(); // Initial check
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
 
     return () => {
-      window.removeEventListener('scroll', debouncedScroll);
-      cancelAnimationFrame(rafId);
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [sectionIds, offset, threshold, headerOffset]);
+  }, [sectionIds, threshold, headerOffset]);
 
   return activeSection;
 }

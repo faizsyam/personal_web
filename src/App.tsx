@@ -1141,7 +1141,7 @@ export default function App() {
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             <div className="flex flex-col gap-4 text-[14.5px] sm:text-[15px] leading-relaxed text-secondary/85 font-light lg:col-span-12 xl:col-span-5">
               <p>
-                {localize({ en: CONTACT.leadEn, id: CONTACT.leadId }, lang)}
+                {localize({ en: CONTACT['leadEn:'], id: CONTACT['leadEn:'] }, lang)}
               </p>
               <p>
                 {localize({ en: CONTACT.secondaryEn, id: CONTACT.secondaryId }, lang)}

@@ -197,15 +197,15 @@ export default function InteractiveGridBackground() {
       const dX = scrollRef.current.x;
       const dY = scrollRef.current.y;
 
-      // 1. Mouse hover convex warp
+      // 1. Mouse hover convex warp — early-exit before expensive sqrt
       if (mx > -500 && strength > 0) {
         const dx = currentX - mx;
         const dy = currentY - my;
-        const distSq = dx * dx + dy * dy;
         const radiusSq = radius * radius;
+        const distSq = dx * dx + dy * dy;
 
         if (distSq < radiusSq) {
-          const dist = Math.sqrt(distSq);
+          const dist = Math.sqrt(distSq); // only called when inside radius
           if (dist > 0) {
             const t = 1 - dist / radius;
             const shift = strength * Math.sin(t * Math.PI);
@@ -219,22 +219,24 @@ export default function InteractiveGridBackground() {
       const activeRipples = ripplesRef.current;
       for (let r = 0; r < activeRipples.length; r++) {
         const rip = activeRipples[r];
-        // Convert ripple's document coordinates to screen coordinates
         const rx = rip.x - dX;
         const ry = rip.y - dY;
 
         const dx = currentX - rx;
         const dy = currentY - ry;
         const distSq = dx * dx + dy * dy;
-        const dist = Math.sqrt(distSq);
 
+        // Early-exit: skip sqrt if clearly outside wavefront range
+        const outerBound = rip.radius + 55;
+        if (distSq > outerBound * outerBound) continue;
+
+        const dist = Math.sqrt(distSq);
         if (dist > 0) {
-          const waveWidth = 55; // width of the ripple wavefront
+          const waveWidth = 55;
           const distFromWaveFront = Math.abs(dist - rip.radius);
           if (distFromWaveFront < waveWidth) {
-            const t = distFromWaveFront / waveWidth; // 0 at center of wavefront, 1 at edge
+            const t = distFromWaveFront / waveWidth;
             const ageFactor = rip.life / rip.maxLife;
-            // Cosine wave for smooth wave peak transition
             const factor = (Math.cos(t * Math.PI) * 0.5 + 0.5) * ageFactor;
             const shift = factor * rip.amplitude;
             currentX += (dx / dist) * shift;
@@ -304,7 +306,7 @@ export default function InteractiveGridBackground() {
           warpStrengthRef.current += (targetWarp - warpStrengthRef.current) * 0.1;
 
           // Smart background vs content detection (cached, every 3 frames max)
-          if (frameCountRef.current % 3 === 0 && warpStrengthRef.current > 0.5) {
+          if (frameCountRef.current % 6 === 0 && warpStrengthRef.current > 0.5) {
             const cacheKey = `${Math.round(mouseRef.current.x / 10)},${Math.round(mouseRef.current.y / 10)}`;
             let cached = contentCacheRef.current.get(cacheKey);
             if (cached === undefined) {
@@ -415,7 +417,7 @@ export default function InteractiveGridBackground() {
             ctx.stroke();
           } else {
             // Curved warped section - reduce steps when warp is weak
-            const steps = hasActiveWarp ? 24 : 12;
+            const steps = hasActiveWarp ? 16 : 10;
             const stepSize = canvas.height / steps;
 
             ctx.moveTo(xVal, 0);

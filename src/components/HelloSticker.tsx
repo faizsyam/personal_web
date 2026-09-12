@@ -21,6 +21,7 @@ export default function HelloSticker() {
         dragConstraints={{ left: -12, right: 12, top: -12, bottom: 12 }}
         dragElastic={0.15}
         dragMomentum={false}
+        dragTransition={{ bounceStiffness: 180, bounceDamping: 24 }}
         initial={{ opacity: 0, y: 55, scale: 0.92, rotate: -4.5 }}
         animate={{ opacity: 1, y: 0, scale: 1, rotate: -2 }}
         onMouseEnter={() => setIsHovered(true)}
@@ -35,7 +36,7 @@ export default function HelloSticker() {
         transition={{
           type: 'spring',
           stiffness: 220,
-          damping: 18
+          damping: 22
         }}
         className="relative w-full aspect-[16/9.5] select-none cursor-grab active:cursor-grabbing"
       >
