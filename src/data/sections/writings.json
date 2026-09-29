@@ -1,42 +1,58 @@
 [
   {
     "id": "write-1",
+    "title": "Do Self-Improving AI Agents Actually Learn?",
+    "framing": {
+      "en": "An experiment testing whether AI agents that write their own 'skills' are actually learning, or just getting better at sounding like they did.",
+      "id": "Sebuah eksperimen menguji apakah agen AI yang menulis 'skill'-nya sendiri benar-benar belajar, atau hanya semakin pandai terdengar seolah begitu."
+    },
+    "excerpt": {
+      "en": "Every year, more AI agents ship with a feature that sounds almost too good to be true: they read their own mistakes, write themselves a lesson, and get better next time. Having spent both my bachelor's and master's research applying machine learning to games, I decided to test that claim properly by teaching five AI agents to play The Resistance: Avalon, a hidden-role game built on deception and voting patterns that don't reveal what they mean until much later. After each game, every agent reviews the full reveal of who was actually lying and writes down what it thinks it learned. This piece asks the question nobody building these systems has answered yet: is that reflection actually true, or is it just confident-sounding text with nothing underneath it?",
+      "id": "Setiap tahun, semakin banyak agen AI hadir dengan fitur yang terdengar hampir terlalu bagus untuk jadi kenyataan: mereka membaca kesalahan mereka sendiri, menuliskan pelajaran untuk diri sendiri, dan menjadi lebih baik di kesempatan berikutnya. Setelah menghabiskan penelitian sarjana dan magister saya menerapkan machine learning pada permainan, saya memutuskan untuk menguji klaim itu secara serius dengan mengajari lima agen AI memainkan The Resistance: Avalon, permainan peran tersembunyi yang dibangun di atas tipu daya dan pola voting yang baru terungkap maknanya jauh kemudian. Setelah setiap permainan, setiap agen meninjau ulang siapa yang sebenarnya berbohong dan menuliskan apa yang menurutnya telah dipelajari. Tulisan ini mengajukan pertanyaan yang belum dijawab siapa pun yang membangun sistem semacam ini: apakah refleksi itu benar-benar akurat, atau hanya teks yang terdengar meyakinkan tanpa isi di baliknya?"
+    },
+    "topicTag": { "en": "AI Agents & Learning", "id": "Agen AI & Pembelajaran" },
+    "date": "Sep 21, 2026",
+    "link": "https://faizsyam.medium.com/do-self-improving-ai-agents-actually-learn-f1da678f9c36",
+    "imagePath": "/images/wrt_avalon.png"
+  },
+  {
+    "id": "write-2",
     "title": "The Passenger Problem",
     "framing": { "en": "Reflections from 'Reimagining Education in the Era of AI,' a talk by Anies Baswedan and Najelaa Shihab.", "id": "Refleksi dari 'Reimagining Education in the Era of AI,' sebuah pidato oleh Anies Baswedan dan Najelaa Shihab." },
     "excerpt": { "en": "After years of teaching my mathematics-professor father how to use AI, I found myself sitting in on a far harder conversation: if students can produce an answer in ten seconds, what is school even testing anymore? This piece takes that question into a talk featuring two of Indonesia's most prominent education voices, unpacking why 'be the driver, not the passenger' is more than a slogan, why teachers and policymakers may be even less ready than students, and why Indonesia's vast regional divides make this an especially high-stakes problem. It ends with an uncomfortable but clarifying idea: AI didn't create passive learners, it just gave them a faster vehicle.", "id": "Setelah bertahun-tahun mengajarkan ayah saya, seorang profesor matematika, cara menggunakan AI, saya duduk mendengarkan percakapan yang jauh lebih sulit: jika siswa bisa menghasilkan jawaban dalam sepuluh detik, sekolah sebenarnya menguji apa lagi? Tulisan ini membawa pertanyaan itu ke dalam pidato yang menampilkan dua suara pendidikan paling terkemuka di Indonesia, mengungkap mengapa 'jadilah pengemudi, bukan penumpang' lebih dari sekadar slogan, mengapa guru dan pembuat kebijakan mungkin bahkan kurang siap dibanding siswa, dan mengapa kesenjangan wilayah yang luas di Indonesia membuat ini masalah berisiko tinggi. Tulisan ini berakhir dengan ide yang tidak nyaman tapi menjernihkan: AI tidak menciptakan pembelajar pasif, AI hanya memberikannya kendaraan yang lebih cepat." },
     "topicTag": { "en": "Education & AI", "id": "Pendidikan & AI" },
     "date": "May 17, 2026",
     "link": "https://faizsyam.medium.com/the-passenger-problem-70be66f99508",
-    "imagePath": "/images/writing_dashboard_blueprint_1780239291988.png"
+    "imagePath": "/images/wrt_reimagining.webp"
   },
   {
-    "id": "write-2",
+    "id": "write-3",
     "title": "When AI Changes Everything: What Design Really Means Now",
-    "framing": { "en": "'We're doomed' — a designer's reaction to AI, and why that fear is built on a misunderstanding of what design actually is.", "id": "'Kita binasalah' — reaksi seorang desainer terhadap AI, dan mengapa ketakutan itu dibangun atas pemahaman keliru tentang desain sebenarnya." },
+    "framing": { "en": "'We're doomed', a designer's reaction to AI, and why that fear is built on a misunderstanding of what design actually is.", "id": "'Kita binasalah', reaksi seorang desainer terhadap AI, dan mengapa ketakutan itu dibangun atas pemahaman keliru tentang desain sebenarnya." },
     "excerpt": { "en": "When a designer friend watched an AI video generator produce in minutes what his team would need weeks to build, his reaction was simple panic. This piece traces how that panic comes from conflating design with execution, and walks through what happens to a profession when its long-standing bottleneck (craft and tool mastery) suddenly disappears. Drawing a parallel to what happened to hand-drawn illustration after Photoshop, it lays out which parts of design AI can absorb, which parts remain irreducibly human, and what skills are actually worth building if you want to stay relevant in a bifurcating industry.", "id": "Saat seorang teman desainer menyaksikan generator video AI menghasilkan dalam menit apa yang timnya butuhkan minggu untuk dibangun, reaksinya adalah kepanikan murni. Tulisan ini melacak bagaimana kepanikan itu muncul dari mengacaukan desain dengan eksekusi, dan menjelaskan apa yang terjadi pada profesi ketika hambatan lama (penguasaan keterampilan dan alat) tiba-tiba menghilang. Menarik paralel dengan apa yang terjadi pada ilustrasi tangan setelah Photoshop, tulisan ini menguraikan bagian mana desain yang bisa diserap AI, bagian mana yang tetap tidak bisa digantikan manusia, dan keterampilan apa yang benar-benar layak dibangun jika Anda ingin tetap relevan di industri yang terbelah." },
     "topicTag": { "en": "Design & AI", "id": "Desain & AI" },
     "date": "Mar 15, 2026",
     "link": "https://faizsyam.medium.com/when-ai-changes-everything-what-design-really-means-now-81c1f6a4e078",
-    "imagePath": "/images/writing_memory_blueprint_1780239310389.png"
+    "imagePath": "/images/wrt_design.webp"
   },
   {
-    "id": "write-3",
+    "id": "write-4",
     "title": "What's Left for AI Engineers?",
     "framing": { "en": "How the role of AI Engineer is changing in a fast-moving AI world.", "id": "Bagaimana peran AI Engineer berubah di dunia AI yang bergerak cepat." },
     "excerpt": { "en": "Building a conversational AI agent used to mean wrestling with raw data, training models from scratch, and surviving nights of failed experiments. Now it can mean snapping together pre-built APIs like IKEA furniture, and that ease comes with a quiet identity crisis. This piece traces the AI engineer's evolution from builder to integrator, to orchestrator, to strategic enabler, and asks what's coming next as AI itself starts to feel less like a specialty and more like electricity. It's a short, honest look at what it feels like to watch your job get easier and harder to define at the same time.", "id": "Membangun agen AI percakapan dulu berarti berjuang dengan data mentah, melatih model dari nol, dan melewati malam-malam eksperimen gagal. Sekarang itu bisa berarti menyusun API siap pakai seperti furnitur IKEA, dan kemudahan itu datang dengan krisis identitas yang diam. Tulisan ini menelusuri evolusi AI engineer dari pembangun ke integrator, ke orkestrator, ke pemberdaya strategis, dan bertanya apa yang akan datang selanjutnya saat AI mulai terasa kurang seperti keahlian dan lebih seperti listrik. Ini adalah pandangan jujur singkat tentang perasaan melihat pekerjaan Anda menjadi lebih mudah dan lebih sulit didefinisikan pada saat yang bersamaan." },
     "topicTag": { "en": "AI Engineering", "id": "Rekayasa AI" },
     "date": "Jun 12, 2025",
     "link": "https://faizsyam.medium.com/whats-left-for-ai-engineers-cae62f1b617e",
-    "imagePath": "/images/writing_loop_blueprint_1780239327797.png"
+    "imagePath": "/images/wrt_aiengineer.webp"
   },
   {
-    "id": "write-4",
+    "id": "write-5",
     "title": "More Than Just a 'Chatbot'",
     "framing": { "en": "How a chatbot can help drive company-wide transformation.", "id": "Bagaimana chatbot bisa membantu mendorong transformasi di seluruh perusahaan." },
     "excerpt": { "en": "After sitting through AI strategy sessions that never quite answered how AI creates value beyond day-to-day operations, my team and I faced a familiar problem: senior leadership wasn't excited about 'yet another internal chatbot.' This piece walks through how we reframed an internal RAG-based assistant, not as a shovel for digging, but as a treasure map showing where to dig, and lays out five reasons a simple chatbot can become the entry point for a much bigger shift in company culture, data infrastructure, and decision-making. It's a candid field report from the early, uncertain stage of trying to turn a tool into a transformation.", "id": "Setelah duduk dalam sesi strategi AI yang tidak pernah benar-benar menjawab bagaimana AI menciptakan nilai di luar operasi sehari-hari, tim saya dan saya menghadapi masalah familiar: kepemimpinan senior tidak antusias tentang 'chatbot internal lagi.' Tulisan ini menjelaskan bagaimana kami mereframing asisten berbasis RAG internal, bukan sebagai sekop untuk menggali, tetapi sebagai peta harta karun yang menunjukkan di mana harus menggali, dan menguraikan lima alasan mengapa chatbot sederhana bisa menjadi titik masuk untuk pergeseran yang jauh lebih besar dalam budaya perusahaan, infrastruktur data, dan pengambilan keputusan. Ini adalah laporan lapangan jujur dari tahap awal yang penuh ketidakpastian saat mencoba mengubah alat menjadi transformasi." },
     "topicTag": { "en": "AI Strategy", "id": "Strategi AI" },
     "date": "May 16, 2025",
     "link": "https://faizsyam.medium.com/more-than-just-a-chatbot-d3b072cb271e",
-    "imagePath": "/images/writing_creative_blueprint_1780239344330.png"
+    "imagePath": "/images/wrt_chatbot.webp"
   }
 ]
