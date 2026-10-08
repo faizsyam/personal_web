@@ -18,44 +18,44 @@ export const easeBounce: [number, number, number, number] = [0.34, 1.56, 0.64, 1
 
 // ─── Spring configs ─────────────────────────────────
 
-/** Smooth hover — slightly delayed for elegance */
+/** Smooth hover — snappy lift, sub-100ms response */
 export const springHover = {
   type: 'spring' as const,
-  stiffness: 380,
-  damping: 22,
+  stiffness: 500,
+  damping: 35,
   mass: 0.6,
 };
 
-/** Snappy hover — fast response, immediate feedback */
+/** Snappy hover — instant feel, crisp settle */
 export const springSnappy = {
   type: 'spring' as const,
-  stiffness: 500,
-  damping: 28,
-  mass: 0.55,
+  stiffness: 600,
+  damping: 38,
+  mass: 0.5,
 };
 
-/** Tactile press — bouncy, physical feel on tap */
+/** Tactile press — crisp, physical feel on tap */
 export const springTap = {
   type: 'spring' as const,
-  stiffness: 600,
-  damping: 20,
-  mass: 0.45,
+  stiffness: 700,
+  damping: 42,
+  mass: 0.5,
 };
 
-/** Scroll reveal — graceful, slightly slower entrance */
+/** Scroll reveal — slightly snappier entrance */
 export const springReveal = {
   type: 'spring' as const,
-  stiffness: 300,
+  stiffness: 280,
   damping: 28,
-  mass: 0.7,
+  mass: 0.8,
 };
 
 /** Staggered list — for cascading item reveals */
 export const springStagger = {
   type: 'spring' as const,
-  stiffness: 350,
+  stiffness: 200,
   damping: 24,
-  mass: 0.6,
+  mass: 0.8,
 };
 
 // ─── Transition presets ──────────────────────────────

@@ -59,6 +59,9 @@ export default function PortraitReveal({
   };
 
   useEffect(() => {
+    // Touch-primary devices never trigger mousemove — skip rAF entirely
+    if (window.matchMedia('(hover: none)').matches) return;
+
     let animationId: number;
     const circleRadius = 55;
 

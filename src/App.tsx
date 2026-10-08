@@ -38,46 +38,18 @@ import { lookupIcon } from './lib/sectionIcons';
 import { useLanguage } from './hooks/useLanguage';
 import { useScrollSpy, useScrollTo } from './hooks/useScrollSpy';
 
-import CustomCursor from './components/CustomCursor';
 import FloatingNav from './components/FloatingNav';
-import ProjectModal from './components/ProjectModal';
-import BackgroundModal from './components/BackgroundModal';
 import VennDiagram from './components/VennDiagram';
 import InteractiveGridBackground from './components/InteractiveGridBackground';
 import { InteractiveSubtitle } from './components/InteractiveHeroText';
 import HelloSticker from './components/HelloSticker';
 import PortraitReveal from './components/PortraitReveal';
-import IntroArticleModal from './components/IntroArticleModal';
 
-import { useGsapScroll } from './hooks/useGsapScroll';
+import { timelineVariants, cardVariants, staggerContainer, fadeUpItem } from './lib/animations';
 
-// Animation constants at module level
-const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const easeSnappy: [number, number, number, number] = [0.0, 0, 0.2, 1];
-
-const timelineVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.4,
-      ease: easeSnappy,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: easeSnappy,
-    },
-  },
-};
+const ProjectModal = lazy(() => import('./components/ProjectModal'));
+const BackgroundModal = lazy(() => import('./components/BackgroundModal'));
+const IntroArticleModal = lazy(() => import('./components/IntroArticleModal'));
 
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -99,9 +71,6 @@ export default function App() {
     threshold: 180,
     headerOffset: 56,
   });
-
-  // GSAP ScrollTrigger scroll-driven animations
-  useGsapScroll();
 
   useEffect(() => {
     // Standardizing on light mode as requested
@@ -138,7 +107,6 @@ export default function App() {
       <div className="fixed top-0 left-1/4 w-[400px] h-[400px] rounded-full bg-highlight/[0.03] blur-[80px] pointer-events-none -z-10" />
       <div className="fixed bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/[0.02] blur-[70px] pointer-events-none -z-10" />
 
-      <CustomCursor />
       <FloatingNav activeSection={activeSection} lang={lang} />
 
       {/* NAV — fixed height so scrollY never jumps when activeSection flips */}
@@ -1201,15 +1169,21 @@ export default function App() {
         </footer>
       </div>
 
-      <AnimatePresence>
-        {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} />}
-      </AnimatePresence>
-      <AnimatePresence>
-        {selectedBackground && <BackgroundModal item={selectedBackground} onClose={() => setSelectedBackground(null)} lang={lang} />}
-      </AnimatePresence>
-      <AnimatePresence>
-        {isIntroArticleOpen && <IntroArticleModal isOpen={isIntroArticleOpen} onClose={() => setIsIntroArticleOpen(false)} lang={lang} />}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} />}
+        </AnimatePresence>
+      </Suspense>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {selectedBackground && <BackgroundModal item={selectedBackground} onClose={() => setSelectedBackground(null)} lang={lang} />}
+        </AnimatePresence>
+      </Suspense>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {isIntroArticleOpen && <IntroArticleModal isOpen={isIntroArticleOpen} onClose={() => setIsIntroArticleOpen(false)} lang={lang} />}
+        </AnimatePresence>
+      </Suspense>
     </div>
   );
 }

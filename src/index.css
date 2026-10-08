@@ -138,23 +138,6 @@
     inset 0 1px 0 var(--color-glass-inset);
 }
 
-/* Custom cursor active class only on hover-capable pointer devices */
-@media (any-hover: hover) {
-  .custom-cursor-active,
-  .custom-cursor-active a,
-  .custom-cursor-active button,
-  .custom-cursor-active [role="button"],
-  .custom-cursor-active input,
-  .custom-cursor-active textarea {
-    cursor: none !important;
-  }
-}
-
-/* Isolate cursor elements from page layout recalculation */
-[data-cursor] {
-  contain: layout style size;
-}
-
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

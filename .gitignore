@@ -8,3 +8,4 @@ coverage/
 !.env.example
 CLAUDE.md
 .claude/
+.aidlc/

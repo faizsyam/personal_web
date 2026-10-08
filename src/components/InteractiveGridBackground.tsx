@@ -116,8 +116,6 @@ export default function InteractiveGridBackground() {
     });
 
     // 2. Track scroll — round to integers to prevent sub-pixel grid jitter
-    // and skip redundant updates to avoid visual shake during
-    // header/backdrop-blur transitions.
     const handleScroll = () => {
       const x = Math.round(window.scrollX);
       const y = Math.round(window.scrollY);
@@ -138,6 +136,7 @@ export default function InteractiveGridBackground() {
       mouseRef.current.y = e.clientY;
       mouseRef.current.active = true;
       needsRedrawRef.current = true;
+      resetIdleTimer();
     };
 
     const handleMouseLeave = () => {
@@ -152,7 +151,6 @@ export default function InteractiveGridBackground() {
       const gridX = Math.round(docMouseX / 40) * 40;
       const gridY = Math.round(docMouseY / 40) * 40;
 
-      // Add physical grid wave ripple which bends coordinates outward
       ripplesRef.current.push({
         x: gridX,
         y: gridY,
@@ -160,9 +158,10 @@ export default function InteractiveGridBackground() {
         maxRadius: 360,
         life: 75,
         maxLife: 75,
-        amplitude: 25 // max physical line displacement in pixels
+        amplitude: 25
       });
       needsRedrawRef.current = true;
+      resetIdleTimer();
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -176,6 +175,26 @@ export default function InteractiveGridBackground() {
     if (!ctx) return;
 
     let animationId: number;
+    let isActive = true;
+    let idleTimer: ReturnType<typeof setTimeout>;
+
+    const stopLoop = () => {
+      isActive = false;
+      cancelAnimationFrame(animationId);
+    };
+
+    const startLoop = () => {
+      if (!isActive) {
+        isActive = true;
+        animationId = requestAnimationFrame(render);
+      }
+    };
+
+    const resetIdleTimer = () => {
+      clearTimeout(idleTimer);
+      startLoop();
+      idleTimer = setTimeout(stopLoop, 3000);
+    };
 
     // Resize function
     const resizeCanvas = () => {
@@ -283,6 +302,7 @@ export default function InteractiveGridBackground() {
 
     // 5. Start Render / Physics Loop
     const render = () => {
+      if (!isActive) return;
       if (shouldRender()) {
         // Clear canvas on every frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -305,8 +325,8 @@ export default function InteractiveGridBackground() {
           const targetWarp = 12;
           warpStrengthRef.current += (targetWarp - warpStrengthRef.current) * 0.1;
 
-          // Smart background vs content detection (cached, every 3 frames max)
-          if (frameCountRef.current % 6 === 0 && warpStrengthRef.current > 0.5) {
+          // Smart background vs content detection (cached, every 6 frames max)
+          if (frameCountRef.current % 12 === 0 && warpStrengthRef.current > 0.5) {
             const cacheKey = `${Math.round(mouseRef.current.x / 10)},${Math.round(mouseRef.current.y / 10)}`;
             let cached = contentCacheRef.current.get(cacheKey);
             if (cached === undefined) {
@@ -484,10 +504,12 @@ export default function InteractiveGridBackground() {
       animationId = requestAnimationFrame(render);
     };
 
-    render();
+    // Start loop and begin idle countdown
+    resetIdleTimer();
 
     return () => {
       cancelAnimationFrame(animationId);
+      clearTimeout(idleTimer);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);

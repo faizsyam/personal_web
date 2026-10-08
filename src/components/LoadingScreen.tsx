@@ -74,6 +74,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState(STATUS_MESSAGES[0]);
   const [phase, setPhase] = useState<'loading' | 'finalizing'>('loading');
+  const [isComplete, setIsComplete] = useState(false);
   const completedRef = useRef(0);
   const hasCompletedRef = useRef(false);
   const finalizingStartedRef = useRef(false);
@@ -88,13 +89,13 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
     setPhase('finalizing');
     setStatus('');
 
-    // Defer to allow final tile of RAFs to mount the new tree before unmounting the screen.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setTimeout(() => {
           if (hasCompletedRef.current) return;
           hasCompletedRef.current = true;
-          onComplete();
+          setIsComplete(true);
+          setTimeout(onComplete, 300);
         }, 100);
       });
     });
@@ -162,6 +163,20 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           backgroundSize: '40px 40px',
         }}
       />
+
+      {/* Skeleton content preview — fades out when loading completes */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+        style={{ opacity: isComplete ? 0 : 1 }}
+      >
+        {/* Hero name shimmer */}
+        <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-64 h-7 rounded-md bg-white/[0.06] animate-pulse" />
+        {/* Hero subtitle shimmer */}
+        <div className="absolute top-[42%] left-1/2 -translate-x-1/2 w-44 h-4 rounded-md bg-white/[0.04] animate-pulse" />
+        {/* Section band shimmers */}
+        <div className="absolute top-[62%] left-8 right-8 h-1.5 rounded bg-white/[0.03] animate-pulse" />
+        <div className="absolute top-[70%] left-8 right-8 h-1.5 rounded bg-white/[0.03] animate-pulse" />
+      </div>
 
       <motion.div
         className="relative flex flex-col items-center gap-6 px-6 w-full max-w-sm"
