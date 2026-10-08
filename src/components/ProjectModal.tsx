@@ -11,28 +11,24 @@ interface ProjectModalProps {
   lang: 'en' | 'id';
 }
 
+const getTypeStyle = (type: string) => {
+  if (type === 'Academic') return 'text-[#3B3F8C] bg-[#EEEFFE] border border-[#C5C8F0]';
+  if (type === 'Professional') return 'text-[#1A5C52] bg-[#E8F5F3] border border-[#B3D9D4]';
+  return 'text-[#7A4F1E] bg-[#FDF3E7] border border-[#EDD5B0]';
+};
+
 export default function ProjectModal({ project, onClose, lang }: ProjectModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
-
     if (project) {
       window.addEventListener('keydown', handleKeyDown);
-      // Suppress body scroll
       document.body.style.overflow = 'hidden';
-
-      // Trap focus
-      if (modalRef.current) {
-        modalRef.current.focus();
-      }
+      if (modalRef.current) modalRef.current.focus();
     }
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
@@ -49,12 +45,12 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 select-none md:select-text"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 select-none md:select-text"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-project-title"
     >
-      {/* Dimmed glass overlay backdrop */}
+      {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -62,140 +58,148 @@ export default function ProjectModal({ project, onClose, lang }: ProjectModalPro
         transition={{ duration: 0.18 }}
         onClick={onClose}
         className="absolute inset-0 bg-[#181815]/65 backdrop-blur-md cursor-pointer"
-        id="modal-backdrop"
       />
 
-      {/* Content Panel with deep layered shadows */}
+      {/* Panel */}
       <motion.div
         ref={modalRef}
         tabIndex={-1}
-        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 12, scale: 0.97 }}
-        transition={{
-          type: 'spring',
-          stiffness: 450,
-          damping: 20,
-          mass: 0.8
-        }}
-        className="relative bg-bg w-full max-w-2xl h-auto max-h-[88vh] rounded-2xl shadow-[0_32px_80px_rgba(24,24,21,0.22),0_1px_3px_rgba(24,24,21,0.04),inset_0_1px_0_rgba(255,255,255,0.7)] border border-surface/80 overflow-y-auto z-10 p-5 sm:p-8 md:p-10 flex flex-col gap-6 font-sans text-primary focus:outline-none scrollbar"
-        id="modal-content-panel"
+        exit={{ opacity: 0, y: 14, scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 450, damping: 20, mass: 0.8 }}
+        className="relative bg-bg w-full max-w-3xl max-h-[92vh] rounded-2xl shadow-[0_32px_80px_rgba(24,24,21,0.22),0_1px_3px_rgba(24,24,21,0.04),inset_0_1px_0_rgba(255,255,255,0.7)] border border-surface/80 overflow-y-auto z-10 flex flex-col font-sans text-primary focus:outline-none scrollbar"
       >
-        {/* Close Button */}
+        {/* Close button */}
         <button
           onClick={onClose}
           aria-label={localize({ en: UI.modalLabels.project.closeEn, id: UI.modalLabels.project.closeId }, lang)}
-          className="absolute top-6 right-6 text-secondary hover:text-accent p-2.5 rounded-full hover:bg-surface/60 border border-transparent hover:border-surface/40 transition-colors duration-150 interactive-item focus:outline-none"
-          id="modal-close-trigger"
+          className="absolute top-4 right-4 z-20 text-white/80 hover:text-white p-2 rounded-full bg-black/30 hover:bg-black/50 border border-white/10 transition-colors duration-150 interactive-item focus:outline-none"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
 
-        {/* Content Section */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mt-2">
-            <h2
-              id="modal-project-title"
-              className="text-2xl sm:text-3xl font-serif tracking-tight text-primary font-semibold"
-            >
-              {project.name}
-            </h2>
-            <span
-              className="inline-flex self-start sm:self-auto px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-widest uppercase border border-surface bg-surface/30 text-secondary"
-              id="modal-project-status"
-            >
+        {/* Hero image — full bleed at top */}
+        {project.imagePath && (
+          <div className="relative w-full h-56 sm:h-64 flex-shrink-0 overflow-hidden rounded-t-2xl">
+            <div className="absolute inset-0 bg-grid-fine opacity-10 pointer-events-none z-10" />
+            <img
+              src={project.imagePath}
+              alt={`${project.name} technical blueprint`}
+              className="w-full h-full object-cover"
+            />
+            {/* Gradient fade into content */}
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-bg to-transparent pointer-events-none z-10" />
+            {/* Type + status badges over image */}
+            <div className="absolute bottom-4 left-5 z-20 flex items-center gap-2">
+              <span className={`text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full font-bold shadow-sm ${getTypeStyle(project.type)}`}>
+                {project.type}
+              </span>
+              <span className="text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full font-bold shadow-sm text-secondary bg-bg/80 border border-surface/60 backdrop-blur-sm">
+                {project.status}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* If no image, show badges in header area */}
+        {!project.imagePath && (
+          <div className="flex items-center gap-2 pt-6 px-6 sm:px-8">
+            <span className={`text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full font-bold ${getTypeStyle(project.type)}`}>
+              {project.type}
+            </span>
+            <span className="text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full font-bold text-secondary bg-surface/30 border border-surface">
               {project.status}
             </span>
           </div>
-          <p className="font-sans text-sm sm:text-base text-secondary italic font-light">
-            {title}
-          </p>
-        </div>
+        )}
 
-        {/* Divider line */}
-        <div className="h-[1px] w-full bg-surface" />
+        {/* Content area */}
+        <div className="flex flex-col gap-7 px-6 sm:px-8 pb-8 pt-2">
 
-        {/* Core content */}
-        <div className="flex flex-col gap-6 text-[15px] sm:text-base leading-relaxed text-primary">
-          {/* Problem / Context */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {localize({ en: UI.modalLabels.project.contextEn, id: UI.modalLabels.project.contextId }, lang)}
-            </span>
-            <p className="font-light">{context}</p>
-          </div>
-
-          {/* The Challenge */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {localize({ en: UI.modalLabels.project.challengeEn, id: UI.modalLabels.project.challengeId }, lang)}
-            </span>
-            <p className="font-light">{challenge}</p>
-          </div>
-
-          {/* Description */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {localize({ en: UI.modalLabels.project.solutionEn, id: UI.modalLabels.project.solutionId }, lang)}
-            </span>
-            <p className="font-light">{description}</p>
-          </div>
-
-          {/* Project blueprint image */}
-          {project.imagePath && (
-            <div className="flex flex-col gap-2 border border-surface/50 rounded overflow-hidden bg-bg p-2 sm:p-4 my-2" id="modal-image-wrapper">
-              <img
-                src={project.imagePath}
-                alt={`${project.name} technical blueprint`}
-                referrerPolicy="no-referrer"
-                className="w-full h-auto aspect-video object-cover rounded opacity-90 hover:opacity-100 transition-opacity duration-300"
-              />
-            </div>
-          )}
-
-          {/* Tradeoff - Narrative */}
-          <div className="flex flex-col gap-1.5 bg-highlight/[0.04] border-l-2 border-highlight p-4 rounded-r-md">
-            <span className="text-[10px] font-mono text-highlight tracking-widest uppercase font-medium">
-              {localize({ en: UI.modalLabels.project.tradeoffsEn, id: UI.modalLabels.project.tradeoffsId }, lang)}
-            </span>
-            <p className="font-sans text-[14px] sm:text-[15px] text-primary italic leading-relaxed font-light mt-1">
-              &ldquo;{depthTradeoff}&rdquo;
+          {/* Title + subtitle */}
+          <div className="flex flex-col gap-2">
+            <h2
+              id="modal-project-title"
+              className="text-2xl sm:text-3xl font-serif tracking-tight text-primary font-semibold leading-tight pr-10"
+            >
+              {project.name}
+            </h2>
+            <p className="text-sm sm:text-[15px] text-secondary italic font-light leading-relaxed">
+              {title}
             </p>
           </div>
-        </div>
 
-        {/* Footer info: stack & external link */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-4 border-t border-surface/50 mt-auto">
-          {/* Stack list */}
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
-              {localize({ en: UI.modalLabels.project.stackEn, id: UI.modalLabels.project.stackId }, lang)}
-            </span>
-            <div className="flex flex-wrap gap-1.5" id="modal-stack-tags">
-              {project.stack.map((item, idx) => (
-                <span
-                  key={idx}
-                  className="bg-surface/60 border border-surface/20 text-secondary text-xs font-sans font-light px-2.5 py-1 rounded"
-                >
-                  {item}
-                </span>
-              ))}
+          <div className="h-px w-full bg-surface" />
+
+          {/* Content sections */}
+          <div className="flex flex-col gap-7 text-[14.5px] sm:text-[15px] leading-relaxed text-primary">
+
+            {/* Context */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
+                {localize({ en: UI.modalLabels.project.contextEn, id: UI.modalLabels.project.contextId }, lang)}
+              </span>
+              <p className="font-light text-primary/90">{context}</p>
+            </div>
+
+            {/* Challenge */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
+                {localize({ en: UI.modalLabels.project.challengeEn, id: UI.modalLabels.project.challengeId }, lang)}
+              </span>
+              <p className="font-light text-primary/90">{challenge}</p>
+            </div>
+
+            {/* Solution */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
+                {localize({ en: UI.modalLabels.project.solutionEn, id: UI.modalLabels.project.solutionId }, lang)}
+              </span>
+              <p className="font-light text-primary/90">{description}</p>
+            </div>
+
+            {/* Tradeoff callout */}
+            <div className="flex flex-col gap-2 bg-highlight/[0.04] border-l-2 border-highlight px-5 py-4 rounded-r-lg">
+              <span className="text-[10px] font-mono text-highlight tracking-widest uppercase font-medium">
+                {localize({ en: UI.modalLabels.project.tradeoffsEn, id: UI.modalLabels.project.tradeoffsId }, lang)}
+              </span>
+              <p className="text-[13.5px] sm:text-[14.5px] text-primary italic leading-relaxed font-light">
+                &ldquo;{depthTradeoff}&rdquo;
+              </p>
             </div>
           </div>
 
-          {/* Link action */}
-          {project.link && (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline font-mono tracking-wider interactive-item mt-2 sm:mt-0 py-2"
-              id="modal-external-link"
-            >
-              <span>{localize({ en: UI.modalLabels.project.linkEn, id: UI.modalLabels.project.linkId }, lang)}</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
+          {/* Footer: stack + link */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 pt-5 border-t border-surface/50">
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-secondary tracking-widest uppercase">
+                {localize({ en: UI.modalLabels.project.stackEn, id: UI.modalLabels.project.stackId }, lang)}
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {project.stack.map((item, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-surface/60 border border-surface/20 text-secondary text-xs font-sans font-light px-2.5 py-1 rounded"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline font-mono tracking-wider interactive-item shrink-0 py-1"
+              >
+                <span>{localize({ en: UI.modalLabels.project.linkEn, id: UI.modalLabels.project.linkId }, lang)}</span>
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>

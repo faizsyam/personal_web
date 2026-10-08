@@ -50,13 +50,13 @@ import { timelineVariants, cardVariants, staggerContainer, fadeUpItem } from './
 const ProjectModal = lazy(() => import('./components/ProjectModal'));
 const BackgroundModal = lazy(() => import('./components/BackgroundModal'));
 const IntroArticleModal = lazy(() => import('./components/IntroArticleModal'));
+const WritingModal = lazy(() => import('./components/WritingModal'));
 
 export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedBackground, setSelectedBackground] = useState<BackgroundItem | null>(null);
+  const [selectedWriting, setSelectedWriting] = useState<Writing | null>(null);
   const [hoveredTimelineId, setHoveredTimelineId] = useState<string | null>(null);
-  const [hoveredWritingId, setHoveredWritingId] = useState<string | null>(null);
-  const [expandedWritingId, setExpandedWritingId] = useState<string | null>(null);
   const [isWorkExpanded, setIsWorkExpanded] = useState(false);
   const [isEduExpanded, setIsEduExpanded] = useState(false);
   const [isIntroArticleOpen, setIsIntroArticleOpen] = useState(false);
@@ -91,11 +91,16 @@ export default function App() {
 
   const handleTimelineClick = (item: BackgroundItem) => setSelectedBackground(item);
 
-  const handleWritingClick = (id: string, e: React.MouseEvent) => {
-    if (window.innerWidth < 1024) {
-      e.preventDefault();
-      setExpandedWritingId(expandedWritingId === id ? null : id);
-    }
+  const getStatusStyle = (status: string) => {
+    if (status === 'Completed') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
+    if (status === 'Research') return 'text-[#9A6200] bg-[#FFF8EB] border border-[#F5DFBF]';
+    return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]';
+  };
+
+  const getTypeStyle = (type: string) => {
+    if (type === 'Academic') return 'text-[#3B3F8C] bg-[#EEEFFE] border border-[#C5C8F0]';
+    if (type === 'Professional') return 'text-[#1A5C52] bg-[#E8F5F3] border border-[#B3D9D4]';
+    return 'text-[#7A4F1E] bg-[#FDF3E7] border border-[#EDD5B0]';
   };
 
   return (
@@ -803,11 +808,6 @@ export default function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {(() => {
-              const getStatusStyle = (status: string) => {
-                if (status === 'Completed') return 'text-[#2B4C7E] bg-[#EBF1FA] border border-[#BFCEE2]';
-                if (status === 'Research') return 'text-[#9A6200] bg-[#FFF8EB] border border-[#F5DFBF]';
-                return 'text-[#16785A] bg-[#EDF7F4] border border-[#C2E3D8]'; // Active
-              };
               return PROJECTS.slice(0, 4).map((project, idx) => (
                 <motion.div
                   key={project.id}
@@ -821,7 +821,7 @@ export default function App() {
                   whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
                   className="group relative flex flex-col rounded-2xl border border-surface/60 bg-white cursor-pointer hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item shadow-sm overflow-hidden"
                 >
-                  {/* Image at top — flush with card edges, no padding */}
+                      {/* Image at top — flush with card edges, no padding */}
                   {project.imagePath && (
                     <div className="w-full h-48 relative overflow-hidden">
                       <div className="absolute inset-0 bg-grid-fine opacity-10 pointer-events-none z-10" />
@@ -832,9 +832,9 @@ export default function App() {
                       />
                       {/* Subtle bottom fade for seamless transition to content */}
                       <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
-                      {/* Status badge — overlaid on image */}
-                      <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getStatusStyle(project.status)}`}>
-                        {project.status}
+                      {/* Type badge — top-right */}
+                      <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getTypeStyle(project.type)}`}>
+                        {project.type}
                       </span>
                     </div>
                   )}
@@ -896,8 +896,9 @@ export default function App() {
                             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                           />
                           <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
-                          <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getStatusStyle(project.status)}`}>
-                            {project.status}
+                          {/* Type badge — top-right */}
+                          <span className={`absolute top-3 right-3 text-[9px] font-mono tracking-widest uppercase px-2.5 py-0.5 rounded-full flex-shrink-0 font-bold shadow-sm ${getTypeStyle(project.type)}`}>
+                            {project.type}
                           </span>
                         </div>
                       )}
@@ -981,30 +982,21 @@ export default function App() {
           {/* Medium-style list layout */}
           <div className="flex flex-col gap-4">
             {WRITINGS.map((write: Writing, idx: number) => {
-              const isHovered = hoveredWritingId === write.id;
-              const isExpanded = expandedWritingId === write.id;
-
               const framing = localize(write.framing, lang);
-              const excerpt = localize(write.excerpt, lang);
               const topicTag = localize(write.topicTag, lang);
 
               return (
-                <motion.a
+                <motion.div
                   key={write.id}
                   id={`writing-item-${write.id}`}
-                  href={write.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={() => setSelectedWriting(write)}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, margin: '120px' }}
                   variants={cardVariants}
-                  whileHover={{ y: -2, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
-                  whileTap={{ scale: 0.98, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
-                  onMouseEnter={() => setHoveredWritingId(write.id)}
-                  onMouseLeave={() => setHoveredWritingId(null)}
-                  onClick={(e) => handleWritingClick(write.id, e)}
-                  className="group flex flex-wrap items-start gap-4 sm:gap-5 p-4 sm:p-5 cursor-pointer rounded-2xl border border-surface/60 bg-white shadow-sm hover:border-highlight/40 hover:shadow-lg transition-all duration-300"
+                  whileHover={{ y: -6, transition: { type: 'spring', stiffness: 500, damping: 22, mass: 0.3 } }}
+                  whileTap={{ scale: 0.96, transition: { type: 'spring', stiffness: 600, damping: 20, mass: 0.3 } }}
+                  className="group flex flex-wrap items-start gap-4 sm:gap-5 p-4 sm:p-5 cursor-pointer rounded-2xl border border-surface/60 bg-white shadow-sm hover:border-highlight/40 hover:shadow-lg transition-all duration-300 interactive-item"
                 >
                   {/* Left: Text content */}
                   <div className="flex-1 flex flex-col gap-1.5 min-w-0">
@@ -1015,35 +1007,14 @@ export default function App() {
                       <span className="text-[10px] font-mono text-secondary/60 font-semibold">{write.date}</span>
                     </div>
 
-                    <h4 className="text-[15.5px] sm:text-[17px] font-serif tracking-tight text-primary group-hover:text-highlight transition-colors duration-150 font-semibold leading-snug">
+                    <h4 className="text-[15.5px] sm:text-[17px] font-serif tracking-tight text-primary group-hover:text-highlight transition-colors duration-150 font-semibold leading-snug flex items-center gap-1.5">
                       {write.title}
+                      <ArrowUpRight className="w-4 h-4 opacity-0 scale-50 -translate-x-1.5 translate-y-1.5 group-hover:opacity-90 group-hover:scale-100 group-hover:translate-x-0 group-hover:translate-y-0 text-highlight flex-shrink-0 group-hover:rotate-12 transition-all duration-300" />
                     </h4>
 
                     <p className="text-[13px] text-secondary leading-relaxed font-light line-clamp-2">
                       {framing}
                     </p>
-
-                    {/* Desktop: excerpt on hover */}
-                    <AnimatePresence initial={false}>
-                      {isHovered && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                          className="hidden lg:block overflow-hidden"
-                        >
-                          <p className="text-[12px] leading-relaxed text-secondary/80 border-l-2 border-highlight pl-3 font-normal">
-                            {excerpt}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    <div className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-highlight font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {localize({ en: UI.writingActions.readArticleEn, id: UI.writingActions.readArticleId }, lang)}
-                      <ArrowUpRight className="w-3 h-3" />
-                    </div>
                   </div>
 
                   {/* Right: Thumbnail */}
@@ -1052,29 +1023,11 @@ export default function App() {
                       <img
                         src={write.imagePath}
                         alt=""
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                       />
                     </div>
                   )}
-
-                  {/* Mobile expand */}
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.22 }}
-                        className="block lg:hidden overflow-hidden bg-surface/30 p-3 rounded-lg col-span-full w-full"
-                      >
-                        <p className="text-[13px] leading-relaxed text-secondary font-light mb-3">{excerpt}</p>
-                        <a href={write.link} target="_blank" rel="noopener noreferrer" className="text-[11px] text-highlight font-mono inline-flex items-center gap-1 uppercase tracking-wider font-semibold">
-                          {localize({ en: UI.writingActions.readOnMediumEn, id: UI.writingActions.readOnMediumId }, lang)} <ArrowUpRight className="h-3 w-3" />
-                        </a>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.a>
+                </motion.div>
               );
             })}
           </div>
@@ -1182,6 +1135,11 @@ export default function App() {
       <Suspense fallback={null}>
         <AnimatePresence>
           {isIntroArticleOpen && <IntroArticleModal isOpen={isIntroArticleOpen} onClose={() => setIsIntroArticleOpen(false)} lang={lang} />}
+        </AnimatePresence>
+      </Suspense>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {selectedWriting && <WritingModal writing={selectedWriting} onClose={() => setSelectedWriting(null)} lang={lang} />}
         </AnimatePresence>
       </Suspense>
     </div>

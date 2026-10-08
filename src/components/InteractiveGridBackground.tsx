@@ -504,8 +504,8 @@ export default function InteractiveGridBackground() {
       animationId = requestAnimationFrame(render);
     };
 
-    // Start loop and begin idle countdown
-    resetIdleTimer();
+    // Start loop immediately — idle countdown only begins on first mouse interaction
+    animationId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animationId);

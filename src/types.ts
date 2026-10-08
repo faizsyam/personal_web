@@ -21,6 +21,7 @@ export interface Project {
   subtitle: LocStr;
   domainTags: string[];
   status: 'Active' | 'Completed' | 'Research';
+  type: 'Personal' | 'Academic' | 'Professional';
   context: LocStr;
   challenge: LocStr;
   description: LocStr;
